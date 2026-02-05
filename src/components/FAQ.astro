@@ -159,13 +159,14 @@ const content = lang === "en" ? {
             <button 
               class="w-full flex items-center justify-between p-8 md:p-10 rounded-[2.5rem] bg-white border border-slate-100 text-left transition-all duration-500 hover:border-accent/30 hover:shadow-[0_20px_40px_-10px_rgba(0,163,129,0.08)] group-[.active]:border-accent group-[.active]:shadow-[0_30px_60px_-15px_rgba(0,163,129,0.12)]"
               aria-expanded="false"
+              data-faq-btn
             >
               <span class="text-lg md:text-xl font-black text-primary pr-8 leading-tight group-[.active]:text-accent transition-colors">{item.question}</span>
               <div class="shrink-0 w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-[.active]:bg-accent group-[.active]:border-accent group-[.active]:text-white transition-all duration-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500 group-[.active]:rotate-180"><path d="m6 9 6 6 6-6"/></svg>
               </div>
             </button>
-            <div class="faq-answer hidden opacity-0 overflow-hidden transition-all duration-700">
+            <div class="faq-answer max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out">
               <div class="p-10 pt-2 text-slate-500 text-lg leading-relaxed font-medium" set:html={item.answer.replace(/p-4 rounded-xl bg-white\/5 border border-white\/5/g, 'p-6 rounded-3xl bg-slate-50 border border-slate-100 hover:border-accent/20 transition-all duration-500').replace(/text-primary font-bold block mb-1/g, 'text-accent font-black uppercase text-[10px] tracking-widest block mb-2').replace(/text-muted-foreground/g, 'text-slate-500')} />
             </div>
           </div>
@@ -176,40 +177,52 @@ const content = lang === "en" ? {
 </section>
 
 <script>
-  const faqItems = document.querySelectorAll('.faq-item');
-  
-  faqItems.forEach(item => {
-    const btn = item.querySelector('[data-faq-btn]');
-    const answer = item.querySelector('.faq-answer');
+  function initFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
     
-    btn?.addEventListener('click', () => {
-      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+    faqItems.forEach(item => {
+      const btn = item.querySelector('[data-faq-btn]');
+      const answer = item.querySelector('.faq-answer') as HTMLElement;
       
-      // Close all others
-      faqItems.forEach(otherItem => {
-         if (otherItem !== item) {
-           otherItem.querySelector('[data-faq-btn]')?.setAttribute('aria-expanded', 'false');
-           otherItem.querySelector('.faq-answer')?.classList.add('hidden', 'opacity-0', 'h-0');
-         }
-      });
-      
-      if (isExpanded) {
-        btn.setAttribute('aria-expanded', 'false');
-        answer?.classList.add('hidden', 'opacity-0', 'h-0');
-      } else {
-        btn.setAttribute('aria-expanded', 'true');
-        answer?.classList.remove('hidden', 'opacity-0', 'h-0');
-        requestAnimationFrame(() => {
-          answer?.classList.add('opacity-100');
-          (answer as HTMLElement).style.height = 'auto';
+      btn?.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        // Close all others
+        faqItems.forEach(otherItem => {
+           if (otherItem !== item) {
+             otherItem.classList.remove('active');
+             otherItem.querySelector('[data-faq-btn]')?.setAttribute('aria-expanded', 'false');
+             const otherAnswer = otherItem.querySelector('.faq-answer') as HTMLElement;
+             if (otherAnswer) {
+               otherAnswer.style.maxHeight = '0';
+               otherAnswer.style.opacity = '0';
+             }
+           }
         });
-      }
+        
+        // Toggle current
+        if (isActive) {
+          item.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+          if (answer) {
+            answer.style.maxHeight = '0';
+            answer.style.opacity = '0';
+          }
+        } else {
+          item.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+          if (answer) {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+            answer.style.opacity = '1';
+          }
+        }
+      });
     });
-  });
-</script>
-
-<style>
-  .faq-item[aria-expanded="true"] .faq-answer {
-    display: block;
   }
-</style>
+
+  // Run on initial load
+  initFAQ();
+  
+  // Run on View Transitions (Astro)
+  document.addEventListener('astro:page-load', initFAQ);
+</script>
