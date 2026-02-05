@@ -60,106 +60,122 @@ const content = lang === "en" ? {
 };
 ---
 
-<section id="mission" class="section-padding relative overflow-hidden bg-[#02040a]">
+<section id="mission" class="section-padding relative overflow-hidden bg-white">
 	<!-- Decorative background elements -->
 	<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-		<div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
-		<div class="absolute top-[20%] -right-[5%] w-[30%] h-[30%] bg-accent/5 rounded-full blur-[100px]"></div>
+		<div class="absolute top-[20%] -right-[5%] w-[40%] h-[40%] bg-accent/[0.04] rounded-full blur-[100px]"></div>
+		<div class="absolute -bottom-[10%] -left-[10%] w-[30%] h-[30%] bg-accent/[0.02] rounded-full blur-[120px]"></div>
 	</div>
 
 	<div class="container mx-auto px-4 relative z-10">
-		<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-32 items-center">
 			
 			<!-- Left Column: The Story -->
-			<div class="lg:col-span-6 space-y-12 animate-fade-in">
-				<div class="space-y-6">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
-            <span class="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
-            {lang === 'en' ? 'Our Mission' : 'Nuestra Misión'}
+			<div class="lg:col-span-5 space-y-12 animate-fade-in">
+				<div class="space-y-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+            {lang === 'en' ? 'Core Purpose' : 'Propósito Central'}
           </div>
-					<h2 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-white">
-						{lang === 'en' ? 'Leading the' : 'Liderando el'} <span class="text-gradient">Progress.</span>
+					<h2 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] text-primary">
+						{lang === 'en' ? 'Pioneering' : 'Liderando'} <br/>
+            <span class="text-gradient leading-tight">{lang === 'en' ? 'Patient Care.' : 'el Cuidado.'}</span>
 					</h2>
-					<p class="text-xl md:text-2xl font-bold text-white/90 leading-tight max-w-xl">
+					<p class="text-xl md:text-2xl font-bold text-slate-500 leading-[1.3] max-w-xl">
 						{content.subtitle}
 					</p>
 				</div>
 
-				<div class="space-y-8">
-          <div class="relative pl-8 border-l-2 border-primary/30 py-2">
-            <p class="text-lg md:text-xl text-white font-medium leading-relaxed italic opacity-90">
+				<div class="space-y-10">
+          <div class="relative pl-10 border-l-[3px] border-accent/30 py-2">
+            <p class="text-lg md:text-xl text-slate-400 font-medium leading-relaxed italic">
               {content.founded}
             </p>
           </div>
           
-          <div class="space-y-6 text-muted-foreground/80 text-base md:text-lg leading-relaxed font-medium">
-            <p>{content.scope}</p>
-            <p class="p-6 rounded-2xl bg-white/[0.02] border border-white/5 text-sm md:text-base leading-relaxed">
-              <span class="text-primary font-black uppercase text-[10px] tracking-widest block mb-2">NYC Local Access</span>
-              {lang === 'en' 
-                ? 'We proudly connect patients across the entire NYC metro area, including Queens, Brooklyn, Manhattan, and the Bronx. Conveniently accessible via MTA subway lines.'
-                : 'Conectamos con orgullo a pacientes en toda el área metropolitana de NYC, incluyendo Queens, Brooklyn, Manhattan y el Bronx. Acceso conveniente a través de las líneas de metro de la MTA.'}
-            </p>
+          <div class="space-y-8">
+            <div class="p-8 rounded-[2.5rem] bg-slate-50/50 border border-slate-100 shadow-sm text-sm md:text-base leading-relaxed group hover:border-accent/40 transition-all duration-500">
+              <span class="text-accent font-black uppercase text-[10px] tracking-[0.4em] block mb-4">NYC Global Reach</span>
+              <p class="text-slate-600 font-medium leading-[1.6]">
+                {lang === 'en' 
+                  ? 'Strategic presence across the entire NYC metro area, bridging leading clinicians with the community.'
+                  : 'Presencia estratégica en toda el área metropolitana de NYC, uniendo a los mejores médicos con la comunidad.'}
+              </p>
+            </div>
           </div>
 				</div>
 
-				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 					{content.features.map(feature => (
-						<div class="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] hover:border-primary/30 transition-all duration-500 group">
-							<h4 class="font-black text-[10px] uppercase tracking-[0.2em] text-primary/70 mb-2 group-hover:text-primary transition-colors">{feature.title}</h4>
-							<p class="text-[11px] text-muted-foreground/50 font-bold leading-tight line-clamp-2">{feature.desc}</p>
+						<div class="space-y-3">
+							<h4 class="font-black text-[10px] uppercase tracking-[0.3em] text-primary">{feature.title}</h4>
+							<div class="w-8 h-1 bg-accent/30 rounded-full group-hover:w-12 transition-all group-hover:bg-accent"></div>
 						</div>
 					))}
 				</div>
 			</div>
 
 			<!-- Right Column: Visual Bento & Principles -->
-			<div class="lg:col-span-6 space-y-6 animate-fade-in" style="animation-delay: 0.2s;">
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+			<div class="lg:col-span-7 space-y-8 animate-fade-in" style="animation-delay: 0.2s;">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <!-- Principle 1 -->
-          <div class="group p-8 rounded-[2.5rem] glass border-white/[0.05] hover:bg-white/[0.08] transition-all duration-700 space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-700 text-primary" set:html={content.principles[0].icon} />
-            <h3 class="text-xl font-black text-white tracking-tighter">{content.principles[0].title}</h3>
-            <p class="text-muted-foreground/70 leading-relaxed text-xs font-medium">{content.principles[0].desc}</p>
+          <div class="group p-10 rounded-[3.5rem] bg-white border border-slate-100 hover:border-accent/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_40px_80px_-20px_rgba(0,163,129,0.12)] transition-all duration-700 space-y-6">
+            <div class="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:bg-accent group-hover:border-accent group-hover:text-white transition-all duration-700 text-accent" set:html={content.principles[0].icon} />
+            <h3 class="text-2xl font-black text-primary tracking-tighter">{content.principles[0].title}</h3>
+            <p class="text-slate-500 leading-relaxed text-sm font-bold opacity-80">{content.principles[0].desc}</p>
           </div>
 
           <!-- Principle 2 -->
-          <div class="group p-8 rounded-[2.5rem] glass border-white/[0.05] hover:bg-white/[0.08] transition-all duration-700 space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 group-hover:bg-accent/20 transition-all duration-700 text-accent" set:html={content.principles[1].icon} />
-            <h3 class="text-xl font-black text-white tracking-tighter">{content.principles[1].title}</h3>
-            <p class="text-muted-foreground/70 leading-relaxed text-xs font-medium">{content.principles[1].desc}</p>
+          <div class="group p-10 rounded-[3.5rem] bg-white border border-slate-100 hover:border-accent/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_40px_80px_-20px_rgba(0,163,129,0.12)] transition-all duration-700 space-y-6">
+            <div class="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:bg-accent group-hover:border-accent group-hover:text-white transition-all duration-700 text-accent" set:html={content.principles[1].icon} />
+            <h3 class="text-2xl font-black text-primary tracking-tighter">{content.principles[1].title}</h3>
+            <p class="text-slate-500 leading-relaxed text-sm font-bold opacity-80">{content.principles[1].desc}</p>
           </div>
 
           <!-- Large Visual Card / Principle 3 -->
-          <div class="group sm:col-span-2 p-8 rounded-[2.5rem] bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-white/[0.08] flex flex-col md:flex-row items-center gap-10 hover:border-primary/20 transition-all duration-700 overflow-hidden relative">
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/10 rounded-full blur-[60px] group-hover:w-60 group-hover:h-60 transition-all duration-700"></div>
+          <div class="group sm:col-span-2 p-10 rounded-[3.5rem] bg-gradient-to-br from-white to-slate-50/50 border border-slate-100 flex flex-col md:flex-row items-center gap-12 hover:border-accent/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_40px_80px_-20px_rgba(0,163,129,0.12)] transition-all duration-700 overflow-hidden relative">
+            <div class="absolute -right-20 -bottom-20 w-60 h-60 bg-accent/[0.04] rounded-full blur-[80px] group-hover:w-80 group-hover:h-80 transition-all duration-700"></div>
             
-            <div class="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:rotate-12 transition-all duration-700 text-white" set:html={content.principles[2].icon} />
+            <div class="w-24 h-24 rounded-[2rem] bg-white flex items-center justify-center shrink-0 border border-slate-100 group-hover:rotate-12 group-hover:bg-accent group-hover:text-white transition-all duration-700 shadow-sm text-accent" set:html={content.principles[2].icon} />
             
-            <div class="space-y-2 relative z-10 text-center md:text-left">
-              <h3 class="text-2xl font-black text-white tracking-tighter">{content.principles[2].title}</h3>
-              <p class="text-muted-foreground/80 leading-relaxed text-sm font-medium italic max-w-sm">
+            <div class="space-y-4 relative z-10 text-center md:text-left">
+              <h3 class="text-3xl font-black text-primary tracking-tighter">{content.principles[2].title}</h3>
+              <p class="text-slate-500 leading-relaxed text-base font-bold italic max-w-md opacity-80">
                 "{content.principles[2].desc}"
               </p>
             </div>
           </div>
         </div>
 
-				<!-- Advanced NYC Metric Card -->
-				<div class="relative p-10 rounded-[3rem] bg-[#0b1120] border border-white/[0.1] overflow-hidden shadow-3xl group">
-					<div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-					<div class="relative z-10 flex flex-col items-center text-center space-y-4">
-            <div class="flex items-center gap-4 text-xs font-black tracking-[0.4em] text-primary uppercase">
-              <span class="w-12 h-px bg-primary/30"></span>
-              The Network
-              <span class="w-12 h-px bg-primary/30"></span>
+				<!-- Highly Advanced NYC Dashboard Card -->
+				<div class="relative p-12 rounded-[4rem] bg-white border border-slate-100 overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.04)] group">
+					<div class="absolute inset-0 bg-gradient-to-br from-accent/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+					<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+            <div class="space-y-4 text-center md:text-left">
+              <div class="flex items-center justify-center md:justify-start gap-4">
+                <span class="w-8 h-1 bg-accent/40 rounded-full"></span>
+                <span class="text-[10px] font-black tracking-[0.5em] text-accent uppercase">Active Network</span>
+              </div>
+              <h4 class="text-6xl md:text-8xl font-black text-accent tracking-tighter leading-none">NYC</h4>
             </div>
-						<div class="text-6xl md:text-7xl font-black text-white tracking-[10px] leading-none ml-[10px]">NYC</div>
-						<div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[9px] font-black tracking-[0.2em] text-muted-foreground/60 uppercase">
-              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Bronx</span>
-              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Brooklyn</span>
-              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Manhattan</span>
-              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Queens</span>
+
+						<div class="grid grid-cols-2 gap-4 w-full md:w-auto">
+              <div class="px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/40 transition-all duration-500 group/item hover:bg-white shadow-sm">
+                <div class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 group-hover/item:text-accent transition-colors">Manhattan</div>
+                <div class="text-xs font-black text-primary">Connected</div>
+              </div>
+              <div class="px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/40 transition-all duration-500 group/item hover:bg-white shadow-sm">
+                <div class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 group-hover/item:text-accent transition-colors">Brooklyn</div>
+                <div class="text-xs font-black text-primary">Connected</div>
+              </div>
+              <div class="px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/40 transition-all duration-500 group/item hover:bg-white shadow-sm">
+                <div class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 group-hover/item:text-accent transition-colors">Queens</div>
+                <div class="text-xs font-black text-primary">Connected</div>
+              </div>
+              <div class="px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/40 transition-all duration-500 group/item hover:bg-white shadow-sm">
+                <div class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 group-hover/item:text-accent transition-colors">Bronx</div>
+                <div class="text-xs font-black text-primary">Connected</div>
+              </div>
             </div>
 					</div>
 				</div>

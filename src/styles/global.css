@@ -26,35 +26,34 @@
 @layer base {
     :root {
         --background: #fdfdfe;
-        --foreground: #0a0f1e;
-        --primary: #2563eb;
+        --foreground: #001b3a;
+        /* Deep navy from logo - Trust & Authority */
+        --primary: #002147;
         --primary-foreground: #ffffff;
-        --secondary: #f1f5f9;
-        --secondary-foreground: #0a0f1e;
-        --accent: #0ea5e9;
+        --secondary: #f8fafc;
+        --secondary-foreground: #002147;
+        /* Precise Medical Emerald Green */
+        --accent: #00a381;
         --accent-foreground: #ffffff;
         --muted: #f1f5f9;
         --muted-foreground: #64748b;
         --card: #ffffff;
-        --card-foreground: #0a0f1e;
+        --card-foreground: #002147;
         --border: #e2e8f0;
     }
 
     .dark {
-        --background: #02040a;
-        /* Richer, deeper black */
+        --background: #001b3a;
         --foreground: #f8fafc;
-        --primary: #4f46e5;
-        /* Indigo-blue for premium feel */
+        --primary: #00a381;
         --primary-foreground: #ffffff;
-        --secondary: #0f172a;
+        --secondary: #002147;
         --secondary-foreground: #f8fafc;
-        --accent: #06b6d4;
-        /* Cyan for medical tech accent */
-        --accent-foreground: #02040a;
-        --muted: #0f172a;
+        --accent: #10b981;
+        --accent-foreground: #001b3a;
+        --muted: #002147;
         --muted-foreground: #94a3b8;
-        --card: #0b1120;
+        --card: #002147;
         --card-foreground: #f8fafc;
         --border: rgba(255, 255, 255, 0.08);
     }
@@ -66,22 +65,22 @@
     }
 
     body {
-        @apply bg-background text-foreground antialiased selection:bg-primary/20;
+        @apply bg-background text-foreground antialiased selection:bg-accent/20;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
 }
 
 @layer utilities {
     .glass {
-        @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-premium;
+        @apply bg-white/70 backdrop-blur-xl border border-black/[0.03] shadow-[0_8px_32px_0_rgba(0, 0, 0, 0.04)];
     }
 
-    .glass-light {
-        @apply bg-white/40 backdrop-blur-md border border-white/20;
+    .glass-premium {
+        @apply bg-white/80 backdrop-blur-2xl border border-white/40 shadow-[0_20px_50px_-12px_rgba(0, 0, 0, 0.06)];
     }
 
     .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-400 font-bold;
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-accent via-[#00cba0] to-primary font-black;
     }
 
     .section-padding {

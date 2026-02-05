@@ -2,83 +2,97 @@
 const { lang = "en" } = Astro.props;
 ---
 
-<section class="relative flex items-center pt-40 pb-16 overflow-hidden bg-[#02040a]">
-	<!-- Ambient Background Light -->
-	<div class="absolute inset-0 -z-10">
-		<div class="absolute top-1/4 -right-1/4 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] animate-float opacity-50"></div>
-		<div class="absolute -bottom-1/4 -left-1/4 w-[800px] h-[800px] bg-accent/20 rounded-full blur-[160px] animate-float opacity-50" style="animation-delay: 3s;"></div>
-    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dust.png')] opacity-[0.03]"></div>
+<section class="relative flex items-center pt-32 md:pt-48 pb-24 md:pb-32 overflow-hidden bg-white">
+	<!-- Luxury Ambient Background -->
+	<div class="absolute inset-0 -z-10 overflow-hidden">
+		<div class="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-accent/[0.08] rounded-full blur-[160px] animate-float"></div>
+		<div class="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-accent/[0.04] rounded-full blur-[140px] animate-float opacity-50" style="animation-delay: 2s;"></div>
+    <!-- Luxury Mesh Grid -->
+    <div class="absolute inset-0 opacity-[0.25]" style="background-image: radial-gradient(circle, #00a381 1px, transparent 1px); background-size: 40px 40px;"></div>
 	</div>
 
 	<div class="container mx-auto px-4 z-10">
-		<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+		<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
 			
-			<!-- Content -->
-			<div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-				<div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] text-primary text-[9px] font-black uppercase tracking-[0.2em] animate-fade-in">
-					<span class="relative flex h-2 w-2">
-						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-						<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
-					</span>
-					{lang === 'en' ? 'Pioneering Medical Research' : 'Investigación Médica de Vanguardia'}
-				</div>
+			<!-- Premium Narrative -->
+			<div class="lg:col-span-7 space-y-12 text-center lg:text-left">
+        <div class="space-y-8">
+          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.3em] animate-fade-in shadow-sm">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            {lang === 'en' ? 'Excellence in Clinical Research' : 'Excelencia en Investigación Clínica'}
+          </div>
 
-				<h1 class="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white animate-fade-in">
-					{lang === 'en' ? 'Trust in' : 'Confianza en'} <br/>
-					<span class="text-gradient leading-tight">{lang === 'en' ? 'Excellence.' : 'Excelencia.'}</span>
-				</h1>
+          <h1 class="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-primary animate-fade-in">
+            {lang === 'en' ? 'The Future of' : 'El Futuro de'} <br/>
+            <span class="text-gradient leading-tight">{lang === 'en' ? 'Clinical Care.' : 'la Medicina.'}</span>
+          </h1>
 
-				<p class="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium animate-fade-in" style="animation-delay: 0.2s;">
-					{lang === 'en' 
-						? 'Decades of clinical expertise, bridging the gap between innovative breakthroughs and the community. Join the Registry today.' 
-						: 'Décadas de experiencia clínica, cerrando la brecha entre los avances médicos y la comunidad. Únase al Registro hoy mismo.'}
-				</p>
+          <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto lg:mx-0 leading-[1.4] font-medium animate-fade-in opacity-80" style="animation-delay: 0.2s;">
+            {lang === 'en' 
+              ? 'Dedicated to the highest standards of safety and transparency in patient recruitment for life-changing trials.' 
+              : 'Dedicados a los más altos estándares de seguridad y transparencia en el reclutamiento para ensayos médicos.'}
+          </p>
+        </div>
 
-				<div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-4 animate-fade-in" style="animation-delay: 0.4s;">
-					<a href="#trials" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-primary text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all text-center">
-						{lang === 'en' ? 'Explore Active Trials' : 'Explorar Ensayos Activos'}
+				<div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 pt-6 animate-fade-in" style="animation-delay: 0.4s;">
+					<a href="#trials" class="w-full sm:w-auto px-14 py-7 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_40px_-10px_rgba(0,163,129,0.3)] hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-500 text-center">
+						{lang === 'en' ? 'Active Studies' : 'Estudios Activos'}
 					</a>
-					<a href="#contact" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-black text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all text-center active:scale-95">
+					<a href="#contact" class="w-full sm:w-auto px-14 py-7 rounded-2xl bg-white border border-accent/20 text-accent font-black text-sm uppercase tracking-[0.2em] hover:bg-accent hover:text-white transition-all duration-500 text-center active:scale-95 shadow-sm">
 						{lang === 'en' ? 'Join Registry' : 'Unirse al Registro'}
 					</a>
 				</div>
 
-				<!-- Trust Badges -->
-				<div class="pt-10 flex flex-wrap items-center justify-center lg:justify-start gap-x-12 gap-y-8 animate-fade-in" style="animation-delay: 0.6s;">
-					<div class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
-						<div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/50 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+				<!-- Premium Trust Micro-Details -->
+				<div class="pt-12 flex flex-wrap items-center justify-center lg:justify-start gap-x-16 gap-y-10 animate-fade-in" style="animation-delay: 0.6s;">
+					<div class="flex items-center gap-4 group">
+						<div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-accent/40 group-hover:bg-accent/5 transition-all duration-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-accent"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
             </div>
-						<span class="text-[10px] font-black uppercase tracking-[0.2em]">FDA Regulated</span>
+						<div class="flex flex-col">
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">FDA Regulated</span>
+              <span class="text-[9px] font-bold text-slate-400">Strict Compliance</span>
+            </div>
 					</div>
-					<div class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
-						<div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/50 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+					<div class="flex items-center gap-4 group">
+						<div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-accent/40 group-hover:bg-accent/5 transition-all duration-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-accent"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
             </div>
-						<span class="text-[10px] font-black uppercase tracking-[0.2em]">IRB Compliant</span>
+						<div class="flex flex-col">
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">IRB Approved</span>
+              <span class="text-[9px] font-bold text-slate-400">Ethical Standards</span>
+            </div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Visual Side -->
+			<!-- Luxury Medical Visual Block -->
 			<div class="lg:col-span-5 relative hidden lg:block animate-fade-in" style="animation-delay: 0.4s;">
-				<div class="relative w-full aspect-square">
-					<div class="absolute inset-0 bg-primary/20 rounded-[5rem] rotate-12 blur-[100px] animate-pulse"></div>
-					<div class="relative h-full w-full glass rounded-[5rem] border-white/[0.08] flex items-center justify-center p-16 shadow-2xl">
-						<div class="relative w-full aspect-square bg-gradient-to-br from-[#4f46e5] to-[#06b6d4] rounded-[4rem] shadow-3xl overflow-hidden flex items-center justify-center group">
-							<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-							<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform duration-[2s] opacity-90"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+				<div class="relative w-full aspect-[4/5] perspective-1000">
+					<div class="absolute inset-0 bg-accent/[0.04] rounded-[5rem] rotate-6 blur-[120px]"></div>
+					<div class="relative h-full w-full bg-white border border-slate-100 rounded-[5rem] shadow-[0_60px_100px_-30px_rgba(0,33,71,0.08)] flex flex-col items-center justify-center p-12 group">
+						<div class="absolute inset-0 bg-gradient-to-br from-accent/[0.02] to-transparent pointer-events-none rounded-[5rem]"></div>
+            
+            <div class="relative w-full aspect-square bg-slate-50 rounded-[4rem] border border-slate-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-[3s] shadow-inner overflow-hidden">
+							<div class="absolute inset-0 opacity-20 bg-[radial-gradient(#00a381_1px,transparent_1px)] [background-size:20px_20px]"></div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-30"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-32 h-32 rounded-full border-[10px] border-accent/10 border-t-accent animate-spin-slow"></div>
+              </div>
 						</div>
 						
-						<!-- Floating Stats -->
-						<div class="absolute -top-12 -right-12 glass p-8 rounded-[2.5rem] border-white/20 shadow-3xl animate-float">
-							<div class="text-4xl font-black text-white leading-none mb-1">100%</div>
-							<div class="text-[9px] font-black uppercase tracking-widest text-primary">Safety Protocol</div>
+						<!-- Luxury Floating Data Nodes - Moved out of overflow-hidden parent -->
+						<div class="absolute top-16 -right-16 px-10 py-8 bg-white border border-slate-100 rounded-[3rem] shadow-2xl animate-float z-20">
+							<div class="text-5xl font-black text-primary tracking-tighter mb-1">100%</div>
+							<div class="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Security</div>
 						</div>
 						
-						<div class="absolute -bottom-8 -left-12 glass p-8 rounded-[2.5rem] border-white/20 shadow-3xl animate-float" style="animation-delay: 2s;">
-							<div class="text-4xl font-black text-white leading-none mb-1">50+</div>
-							<div class="text-[9px] font-black uppercase tracking-widest text-accent">Active Partners</div>
+						<div class="absolute bottom-16 -left-16 px-10 py-8 bg-white border border-slate-100 rounded-[3rem] shadow-2xl animate-float z-20" style="animation-delay: 2s;">
+							<div class="text-5xl font-black text-accent tracking-tighter mb-1">50+</div>
+							<div class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Clinics</div>
 						</div>
 					</div>
 				</div>
@@ -87,3 +101,13 @@ const { lang = "en" } = Astro.props;
 		</div>
 	</div>
 </section>
+
+<style>
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
