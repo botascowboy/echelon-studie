@@ -1,0 +1,211 @@
+---
+const { lang = "en" } = Astro.props;
+
+const content = lang === "en" ? {
+  title: "Understanding Clinical Research",
+  subtitle: "Learn how clinical trials work and what to expect when participating in medical progress.",
+  faq: [
+    {
+      question: "What are clinical trials?",
+      answer: "A clinical trial is a research study to answer specific questions about new treatments or vaccines for a health-related condition. Clinical trials are used to determine whether new drugs or treatments are both safe and effective and are also used to determine the best way to use a standard treatment. All clinical trials are based on a set of rules called a protocol, which describes what types of people may participate, the schedule and doses of the treatment, and the length of the study."
+    },
+    {
+      question: "How are clinical trials for medications structured?",
+      answer: `Clinical trials for medications proceed through four phases:
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Phase I</span>
+            <p class="text-xs text-muted-foreground">Researchers test in a small group (20-80) for the first time to evaluate safety, dosage, and side effects.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Phase II</span>
+            <p class="text-xs text-muted-foreground">The treatment is given to a larger group (100-300) to see if it is effective and further evaluate safety.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Phase III</span>
+            <p class="text-xs text-muted-foreground">Given to large groups (1,000-3,000) to confirm effectiveness, monitor effects, and compare to standard treatments.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Phase IV</span>
+            <p class="text-xs text-muted-foreground">Done after marketing to collect info on long-term use and effects in various populations.</p>
+          </div>
+        </div>`
+    },
+    {
+      question: "Does it cost anything to participate?",
+      answer: "No. Qualified participants never pay for care related to the study. All study-related medications, doctor visits, and health monitoring are provided at no cost. You do not need health insurance to join."
+    },
+    {
+      question: "Is compensation provided for my time?",
+      answer: "Yes. Most clinical trials offer compensation to cover your time and travel expenses for each clinic visit. The specific amount varies by study, and details will be fully disclosed to you before you sign any consent forms."
+    },
+    {
+      question: "Will I receive a placebo (sugar pill)?",
+      answer: "It depends on the specific study protocol. Some studies compare a new treatment against a placebo, while others compare it against an existing standard medication. However, you will always be informed of the probability of receiving a placebo during the informed consent process."
+    },
+    {
+      question: "Is Clinical Research safe?",
+      answer: "Patient safety is the top priority. All studies in our network are regulated by the FDA and monitored by an Independent Review Board (IRB) to ensure ethical standards are met. You will be under the close supervision of top board certified physicians who monitor your health throughout the entire process."
+    },
+    {
+      question: "Can I leave the study if I change my mind?",
+      answer: "Absolutely. Participation is 100% voluntary. You have the right to withdraw from a clinical trial at any time, for any reason, with no penalty to your future medical care."
+    },
+    {
+      question: "Will my personal information be kept private?",
+      answer: "Yes. Echelon Studies and our partner clinics adhere to strict protocols and regulations. Your personal information is only shared with the specific medical staff evaluating your eligibility. We do not sell your medical data to advertisers."
+    },
+    {
+      question: "Why clinical trials are important?",
+      answer: "Clinical trials ensure treatments are safe and effective based on evidence. They transform scientific discovery into reliable medical solutions. One key reason to participate is knowing you contribute to new treatments for people with the same condition."
+    },
+    {
+      question: "How you are protected when you participate?",
+      answer: "Every trial in the US must be approved and monitored by an Institutional Review Board (IRB) to ensure risks are low and ethically sound. Research staff also provide informed consent documents detailing all risks and study procedures before you join."
+    },
+    {
+      question: "What can I expect?",
+      answer: "Before joining, you must qualify based on factors like age and medical history. Once you start, a team will check your health, give instructions on responsibilities, and monitor you closely during and after the study."
+    }
+  ]
+} : {
+  title: "Entendiendo la Investigación Clínica",
+  subtitle: "Aprenda cómo funcionan los ensayos clínicos y qué esperar al participar en el progreso médico.",
+  faq: [
+    {
+      question: "¿Qué son los ensayos clínicos?",
+      answer: "Un ensayo clínico es un estudio de investigación para responder preguntas específicas sobre nuevos tratamientos o vacunas para una condición de salud. Se utilizan para determinar si los nuevos medicamentos son seguros y efectivos, y la mejor manera de usar un tratamiento estándar. Todos se basan en un protocolo que describe quién puede participar, el cronograma, las dosis y la duración del estudio."
+    },
+    {
+      question: "¿Cómo se estructuran los ensayos clínicos?",
+      answer: `Los ensayos clínicos para medicamentos pasan por cuatro fases:
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Fase I</span>
+            <p class="text-xs text-muted-foreground">Se prueba en un grupo pequeño (20-80) por primera vez para evaluar seguridad, dosis y efectos secundarios.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Fase II</span>
+            <p class="text-xs text-muted-foreground">Se administra a un grupo más grande (100-300) para ver si es efectivo y evaluar más la seguridad.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Fase III</span>
+            <p class="text-xs text-muted-foreground">Se administra a grupos grandes (1,000-3,000) para confirmar efectividad y monitorear efectos secundarios.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-primary font-bold block mb-1">Fase IV</span>
+            <p class="text-xs text-muted-foreground">Se realiza después de la comercialización para recopilar información sobre el uso a largo plazo.</p>
+          </div>
+        </div>`
+    },
+    {
+        question: "¿Tiene algún costo participar?",
+        answer: "No. Los participantes calificados nunca pagan por la atención relacionada con el estudio. Todo se proporciona sin costo: medicamentos, visitas al médico y monitoreo de salud. No necesita seguro médico para unirse."
+    },
+    {
+        question: "¿Se ofrece compensación por mi tiempo?",
+        answer: "Sí. La mayoría de los ensayos clínicos ofrecen compensación para cubrir su tiempo y gastos de viaje por cada visita a la clínica. El monto varía según el estudio y se le informará detalladamente antes de firmar cualquier consentimiento."
+    },
+    {
+        question: "¿Recibiré un placebo (pastilla de azúcar)?",
+        answer: "Depende del protocolo. Algunos estudios comparan un tratamiento con un placebo, otros con un medicamento estándar existente. Siempre se le informará la probabilidad de recibir un placebo durante el proceso de consentimiento informado."
+    },
+    {
+        question: "¿Es segura la Investigación Clínica?",
+        answer: "La seguridad del paciente es la prioridad. Todos los estudios en nuestra red están regulados por la FDA y monitoreados por una Junta de Revisión Independiente (IRB). Estará bajo la supervisión de médicos certificados que monitorearán su salud constantemente."
+    },
+    {
+        question: "¿Puedo dejar el estudio si cambio de opinión?",
+        answer: "Absolutamente. La participación es 100% voluntaria. Tiene derecho a retirarse de un ensayo clínico en cualquier momento y por cualquier motivo, sin penalización para su futura atención médica."
+    },
+    {
+        question: "¿Se mantendrá privada mi información personal?",
+        answer: "Sí. Echelon Studies y nuestras clínicas adherimos a protocolos estrictos. Su información solo se comparte con el personal médico específico que evalúa su elegibilidad. No vendemos sus datos médicos."
+    },
+    {
+        question: "¿Por qué son importantes los ensayos clínicos?",
+        answer: "Son la base para garantizar que los tratamientos sean seguros y efectivos basados en evidencia. Sin ellos, la medicina se basaría en suposiciones. Al participar, contribuye al desarrollo de nuevos tratamientos para otras personas."
+    },
+    {
+        question: "¿Cómo se le protege al participar?",
+        answer: "Cada ensayo en los EE. UU. debe ser aprobado y monitoreado por una Junta de Revisión Institucional (IRB). Además, recibirá documentos de consentimiento informado que describen el estudio, los riesgos y sus derechos antes de unirse."
+    },
+    {
+        question: "¿Qué puedo esperar?",
+        answer: "Antes de unirse, debe calificar según factores como edad e historial médico. Al comenzar, un equipo verificará su salud, le dará instrucciones y le monitoreará de cerca durante y después del estudio."
+    }
+  ]
+};
+---
+
+<section id="faq" class="section-padding bg-black/20">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-10 animate-fade-in">
+        <h2 class="text-3xl md:text-5xl font-black mb-3 tracking-tighter text-white">
+          {lang === 'en' ? 'Everything you need' : 'Todo lo que necesitas'} <span class="text-gradient leading-tight">{lang === 'en' ? 'to know.' : 'saber.'}</span>
+        </h2>
+        <p class="text-muted-foreground text-sm md:text-base max-w-xl mx-auto font-medium">{content.subtitle}</p>
+      </div>
+
+      <div class="space-y-3">
+        {content.faq.map((item, i) => (
+          <div class="faq-item group">
+            <button 
+              class="w-full flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-primary/30 hover:bg-white/[0.03] transition-all duration-500 text-left group-aria-expanded:bg-white/[0.03] group-aria-expanded:border-primary/20"
+              aria-expanded="false"
+              data-faq-btn
+            >
+              <span class="text-base md:text-[19px] font-bold text-white/70 group-hover:text-white transition-colors pr-6 leading-tight">{item.question}</span>
+              <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 transition-all duration-500 group-aria-expanded:rotate-45 group-aria-expanded:bg-primary/10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </div>
+            </button>
+            <div class="faq-answer hidden opacity-0 overflow-hidden transition-all duration-500 px-5 md:px-6">
+              <div class="py-6 text-muted-foreground/80 leading-relaxed text-base md:text-[17px] font-medium" set:html={item.answer} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const faqItems = document.querySelectorAll('.faq-item');
+  
+  faqItems.forEach(item => {
+    const btn = item.querySelector('[data-faq-btn]');
+    const answer = item.querySelector('.faq-answer');
+    
+    btn?.addEventListener('click', () => {
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      
+      // Close all others
+      faqItems.forEach(otherItem => {
+         if (otherItem !== item) {
+           otherItem.querySelector('[data-faq-btn]')?.setAttribute('aria-expanded', 'false');
+           otherItem.querySelector('.faq-answer')?.classList.add('hidden', 'opacity-0', 'h-0');
+         }
+      });
+      
+      if (isExpanded) {
+        btn.setAttribute('aria-expanded', 'false');
+        answer?.classList.add('hidden', 'opacity-0', 'h-0');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        answer?.classList.remove('hidden', 'opacity-0', 'h-0');
+        requestAnimationFrame(() => {
+          answer?.classList.add('opacity-100');
+          (answer as HTMLElement).style.height = 'auto';
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .faq-item[aria-expanded="true"] .faq-answer {
+    display: block;
+  }
+</style>

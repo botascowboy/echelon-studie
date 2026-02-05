@@ -1,0 +1,170 @@
+---
+const { lang = "en" } = Astro.props;
+
+const content = lang === "en" ? {
+	title: "Bridging the Gap Between Patients and Medical Progress.",
+	subtitle: "Dedicated to transparent, safe, and accessible clinical research in New York City.",
+	founded: "Echelon Studies was founded on a simple belief: accessing breakthrough medical care shouldn't be complicated.",
+	scope: "We operate as a specialized patient advocacy and recruitment partner, connecting qualified individuals with the region’s most reputable, FDA-regulated clinical research sites. Proudly connecting patients across the NYC Metro area, including Queens, Brooklyn, Manhattan, and the Bronx. Convenient access via MTA Subway lines.",
+	notDatabase: "We are not just a database. We are the bridge between you and the leading physicians working to solve today’s most challenging health conditions. Our role is to ensure you are informed, comfortable, and supported at every step of your research journey.",
+	principles: [
+		{ 
+			title: "Patient Safety First", 
+			desc: "We only partner with sites that adhere to strict Institutional Review Board (IRB) and FDA safety guidelines.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>`
+		},
+		{ 
+			title: "Total Transparency", 
+			desc: "No hidden costs. No confusing jargon. You get all the details before you commit to any study.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5Z"></path><path d="M12 12h10"></path><circle cx="12" cy="12" r="3"></circle></svg>`
+		},
+		{ 
+			title: "Local Focus", 
+			desc: "We specialize in connecting New York residents with New York clinics.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
+		}
+	],
+	features: [
+		{ title: "Vetted Partners", desc: "We rigorously screen every clinic in our network." },
+		{ title: "Patient Advocacy", desc: "Your comfort and consent are our priority." },
+		{ title: "Advancing Science", desc: "Helping bring new treatments to the world." }
+	]
+} : {
+	title: "Cerrando la brecha entre los pacientes y el progreso médico.",
+	subtitle: "Dedicados a la investigación clínica transparente, segura y accesible en la ciudad de Nueva York.",
+	founded: "Echelon Studies se fundó bajo una creencia simple: acceder a una atención médica innovadora no debería ser complicado.",
+	scope: "Operamos como un socio especializado en la defensa y el reclutamiento de pacientes, conectando a personas cualificadas con los centros de investigación clínica más reputados y regulados por la FDA de la región. Conectamos con orgullo a pacientes en toda el área metropolitana de NYC, incluyendo Queens, Brooklyn, Manhattan y el Bronx. Acceso conveniente a través de las líneas de metro de la MTA.",
+	notDatabase: "No somos solo una base de datos. Somos el puente entre usted y los médicos líderes que trabajan para resolver las condiciones de salud más desafiantes de hoy. Nuestro papel es asegurar que esté informado, cómodo y apoyado en cada paso de su viaje de investigación.",
+	principles: [
+		{ 
+			title: "La Seguridad del Paciente es lo Primero", 
+			desc: "Solo colaboramos con centros que se adhieren a las estrictas directrices de seguridad de la Junta de Revisión Institucional (IRB) y la FDA.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>`
+		},
+		{ 
+			title: "Transparencia Total", 
+			desc: "Sin costes ocultos. Sin tecnicismos confusos. Usted recibe todos los detalles antes de comprometerse con cualquier estudio.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5Z"></path><path d="M12 12h10"></path><circle cx="12" cy="12" r="3"></circle></svg>`
+		},
+		{ 
+			title: "Enfoque Local", 
+			desc: "Nos especializamos en conectar a los residentes de Nueva York con las clínicas de Nueva York.",
+			icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
+		}
+	],
+	features: [
+		{ title: "Socios Verificados", desc: "Examinamos rigurosamente cada clínica de nuestra red." },
+		{ title: "Defensa del Paciente", desc: "Su comodidad y consentimiento son nuestra prioridad." },
+		{ title: "Avance de la Ciencia", desc: "Ayudando a traer nuevos tratamientos al mundo." }
+	]
+};
+---
+
+<section id="mission" class="section-padding relative overflow-hidden bg-[#02040a]">
+	<!-- Decorative background elements -->
+	<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+		<div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+		<div class="absolute top-[20%] -right-[5%] w-[30%] h-[30%] bg-accent/5 rounded-full blur-[100px]"></div>
+	</div>
+
+	<div class="container mx-auto px-4 relative z-10">
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+			
+			<!-- Left Column: The Story -->
+			<div class="lg:col-span-6 space-y-12 animate-fade-in">
+				<div class="space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+            <span class="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+            {lang === 'en' ? 'Our Mission' : 'Nuestra Misión'}
+          </div>
+					<h2 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-white">
+						{lang === 'en' ? 'Leading the' : 'Liderando el'} <span class="text-gradient">Progress.</span>
+					</h2>
+					<p class="text-xl md:text-2xl font-bold text-white/90 leading-tight max-w-xl">
+						{content.subtitle}
+					</p>
+				</div>
+
+				<div class="space-y-8">
+          <div class="relative pl-8 border-l-2 border-primary/30 py-2">
+            <p class="text-lg md:text-xl text-white font-medium leading-relaxed italic opacity-90">
+              {content.founded}
+            </p>
+          </div>
+          
+          <div class="space-y-6 text-muted-foreground/80 text-base md:text-lg leading-relaxed font-medium">
+            <p>{content.scope}</p>
+            <p class="p-6 rounded-2xl bg-white/[0.02] border border-white/5 text-sm md:text-base leading-relaxed">
+              <span class="text-primary font-black uppercase text-[10px] tracking-widest block mb-2">NYC Local Access</span>
+              {lang === 'en' 
+                ? 'We proudly connect patients across the entire NYC metro area, including Queens, Brooklyn, Manhattan, and the Bronx. Conveniently accessible via MTA subway lines.'
+                : 'Conectamos con orgullo a pacientes en toda el área metropolitana de NYC, incluyendo Queens, Brooklyn, Manhattan y el Bronx. Acceso conveniente a través de las líneas de metro de la MTA.'}
+            </p>
+          </div>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+					{content.features.map(feature => (
+						<div class="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] hover:border-primary/30 transition-all duration-500 group">
+							<h4 class="font-black text-[10px] uppercase tracking-[0.2em] text-primary/70 mb-2 group-hover:text-primary transition-colors">{feature.title}</h4>
+							<p class="text-[11px] text-muted-foreground/50 font-bold leading-tight line-clamp-2">{feature.desc}</p>
+						</div>
+					))}
+				</div>
+			</div>
+
+			<!-- Right Column: Visual Bento & Principles -->
+			<div class="lg:col-span-6 space-y-6 animate-fade-in" style="animation-delay: 0.2s;">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Principle 1 -->
+          <div class="group p-8 rounded-[2.5rem] glass border-white/[0.05] hover:bg-white/[0.08] transition-all duration-700 space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-700 text-primary" set:html={content.principles[0].icon} />
+            <h3 class="text-xl font-black text-white tracking-tighter">{content.principles[0].title}</h3>
+            <p class="text-muted-foreground/70 leading-relaxed text-xs font-medium">{content.principles[0].desc}</p>
+          </div>
+
+          <!-- Principle 2 -->
+          <div class="group p-8 rounded-[2.5rem] glass border-white/[0.05] hover:bg-white/[0.08] transition-all duration-700 space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 group-hover:bg-accent/20 transition-all duration-700 text-accent" set:html={content.principles[1].icon} />
+            <h3 class="text-xl font-black text-white tracking-tighter">{content.principles[1].title}</h3>
+            <p class="text-muted-foreground/70 leading-relaxed text-xs font-medium">{content.principles[1].desc}</p>
+          </div>
+
+          <!-- Large Visual Card / Principle 3 -->
+          <div class="group sm:col-span-2 p-8 rounded-[2.5rem] bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-white/[0.08] flex flex-col md:flex-row items-center gap-10 hover:border-primary/20 transition-all duration-700 overflow-hidden relative">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/10 rounded-full blur-[60px] group-hover:w-60 group-hover:h-60 transition-all duration-700"></div>
+            
+            <div class="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:rotate-12 transition-all duration-700 text-white" set:html={content.principles[2].icon} />
+            
+            <div class="space-y-2 relative z-10 text-center md:text-left">
+              <h3 class="text-2xl font-black text-white tracking-tighter">{content.principles[2].title}</h3>
+              <p class="text-muted-foreground/80 leading-relaxed text-sm font-medium italic max-w-sm">
+                "{content.principles[2].desc}"
+              </p>
+            </div>
+          </div>
+        </div>
+
+				<!-- Advanced NYC Metric Card -->
+				<div class="relative p-10 rounded-[3rem] bg-[#0b1120] border border-white/[0.1] overflow-hidden shadow-3xl group">
+					<div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+					<div class="relative z-10 flex flex-col items-center text-center space-y-4">
+            <div class="flex items-center gap-4 text-xs font-black tracking-[0.4em] text-primary uppercase">
+              <span class="w-12 h-px bg-primary/30"></span>
+              The Network
+              <span class="w-12 h-px bg-primary/30"></span>
+            </div>
+						<div class="text-6xl md:text-7xl font-black text-white tracking-[10px] leading-none ml-[10px]">NYC</div>
+						<div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[9px] font-black tracking-[0.2em] text-muted-foreground/60 uppercase">
+              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Bronx</span>
+              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Brooklyn</span>
+              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Manhattan</span>
+              <span class="px-2 py-1 rounded bg-white/5 border border-white/5">Queens</span>
+            </div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>

@@ -1,0 +1,592 @@
+---
+const { lang = "en" } = Astro.props;
+
+const content = lang === "en" ? {
+  title: "Thanks for joining the registry.",
+  subtitle: "Please answer a few basic questions to check your eligibility for current studies.",
+  steps: [
+    {
+      title: "Basic Info",
+      fields: [
+        { label: "Date of birth", name: "dob", type: "date", required: true },
+        { label: "Gender", name: "gender", type: "select", options: ["Male", "Female", "Non-binary", "Prefer not to say"], required: true }
+      ]
+    },
+    {
+      title: "Primary Goal",
+      fields: [
+        { 
+          label: "What is your primary goal for joining this program?", 
+          name: "goal", 
+          type: "radio", 
+          options: [
+            "I want to maintain my current weight / I have no weight concerns.",
+            "I am looking to lose a small amount (10–25 lbs).",
+            "I need to lose a significant amount (30 lbs or more)."
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Prescription History",
+      fields: [
+        { 
+          label: "Have you used any prescription medications for weight loss in the past 6 months?", 
+          name: "medications", 
+          type: "radio", 
+          options: [
+            "Yes, currently taking.",
+            "Used in the past, but stopped more than 3 months ago.",
+            "Used in the past, but stopped less than 3 months ago.",
+            "No, never used."
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Interests",
+      fields: [
+        { 
+          label: "Besides Weight Management and Metabolic Health, are you interested in studies related to any of the following? (Select all that apply)", 
+          name: "interests", 
+          type: "checkbox", 
+          options: [
+            "Blood Sugar / Metabolism",
+            "Heart Health & Blood Pressure",
+            "Liver Health",
+            "Breathing & Lungs",
+            "Skin Care & Health",
+            "Cholesterol Management",
+            "Sleep Health",
+            "Kidney Function & Health",
+            "Joint Pain & Mobility",
+            "Mood & Brain",
+            "None of the above"
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Location",
+      fields: [
+        { 
+          label: "Are you willing to attend recurring study visits at leading research clinics in New York City?", 
+          name: "willing_to_visit", 
+          type: "radio", 
+          options: ["Yes", "No"], 
+          required: true 
+        },
+        { label: "Zip Code", name: "zipcode", type: "text", placeholder: "10001", required: true }
+      ]
+    },
+    {
+      title: "Contact Info",
+      fields: [
+        { label: "First Name", name: "first_name", type: "text", required: true },
+        { label: "Last Name", name: "last_name", type: "text", required: true },
+        { label: "Phone", name: "phone", type: "tel", required: true },
+        { label: "Email", name: "email", type: "email", required: true }
+      ]
+    }
+  ],
+  legal: "By clicking \"Submit,\" I authorize Echelon Clinical Research to contact me at the number provided above regarding current and future matching research opportunities. I understand these communications may be sent via text/SMS, email, or phone, and may utilize automated technology, including pre-recorded messages or artificial voice. I agree to the [Privacy Policy] and [Terms of Service]. Reply STOP to opt out.",
+  buttons: {
+    next: "Next Step",
+    prev: "Previous",
+    submit: "Submit"
+  },
+  success: {
+    title: "Application Received!",
+    message: "Thank you for joining our registry. Our team will review your information and contact you if you match any of our current or upcoming studies.",
+    dismiss: "Dismiss"
+  }
+} : {
+  title: "Gracias por unirse al registro.",
+  subtitle: "Responda algunas preguntas básicas para verificar su elegibilidad para los estudios actuales.",
+  steps: [
+    {
+      title: "Información Básica",
+      fields: [
+        { label: "Fecha de nacimiento", name: "dob", type: "date", required: true },
+        { label: "Género", name: "gender", type: "select", options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"], required: true }
+      ]
+    },
+    {
+      title: "Objetivo Principal",
+      fields: [
+        { 
+          label: "¿Cuál es su objetivo principal al unirse a este programa?", 
+          name: "goal", 
+          type: "radio", 
+          options: [
+            "Quiero mantener mi peso actual / No tengo preocupaciones de peso.",
+            "Busco perder una pequeña cantidad (10–25 lbs).",
+            "Necesito perder una cantidad significativa (30 lbs o más)."
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Historial de Medicamentos",
+      fields: [
+        { 
+          label: "¿Ha usado algún medicamento recetado para perder peso en los últimos 6 meses?", 
+          name: "medications", 
+          type: "radio", 
+          options: [
+            "Sí, los tomo actualmente.",
+            "Usado en el pasado, pero dejé de tomarlo hace más de 3 meses.",
+            "Usado en el pasado, pero dejé de tomarlo hace menos de 3 meses.",
+            "No, nunca usado."
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Intereses",
+      fields: [
+        { 
+          label: "Además del control de peso y la salud metabólica, ¿le interesan estudios relacionados con alguno de los siguientes? (Seleccione todos los que correspondan)", 
+          name: "interests", 
+          type: "checkbox", 
+          options: [
+            "Azúcar en Sangre / Metabolismo",
+            "Salud del Corazón y Presión Arterial",
+            "Salud del Hígado",
+            "Respiración y Pulmones",
+            "Cuidado de la Piel y Salud",
+            "Control del Colesterol",
+            "Salud del Sueño",
+            "Función Renal y Salud",
+            "Dolor Articular y Movilidad",
+            "Estado de Ánimo y Cerebro",
+            "Ninguno de los anteriores"
+          ], 
+          required: true 
+        }
+      ]
+    },
+    {
+      title: "Ubicación",
+      fields: [
+        { 
+          label: "¿Está dispuesto a asistir a visitas recurrentes del estudio en clínicas de investigación líderes en la ciudad de Nueva York?", 
+          name: "willing_to_visit", 
+          type: "radio", 
+          options: ["Sí", "No"], 
+          required: true 
+        },
+        { label: "Código Postal", name: "zipcode", type: "text", placeholder: "10001", required: true }
+      ]
+    },
+    {
+      title: "Información de Contacto",
+      fields: [
+        { label: "Nombre", name: "first_name", type: "text", required: true },
+        { label: "Apellido", name: "last_name", type: "text", required: true },
+        { label: "Teléfono", name: "phone", type: "tel", required: true },
+        { label: "Correo Electrónico", name: "email", type: "email", required: true }
+      ]
+    }
+  ],
+  legal: "Al hacer clic en \"Enviar\", autorizo a Echelon Clinical Research a contactarme al número proporcionado anteriormente con respecto a las oportunidades de investigación actuales y futuras que coincidan. Entiendo que estas comunicaciones pueden enviarse a través de mensajes de texto/SMS, correo electrónico o teléfono, y pueden utilizar tecnología automatizada, incluidos mensajes pregrabados o voz artificial. Acepto la [Política de Privacidad] y los [Términos de Servicio]. Responda STOP para darse de baja.",
+  buttons: {
+    next: "Siguiente Paso",
+    prev: "Anterior",
+    submit: "Enviar"
+  },
+  success: {
+    title: "¡Solicitud Recibida!",
+    message: "Gracias por unirse a nuestro registro. Nuestro equipo revisará su información y se comunicará con usted si coincide con alguno de nuestros estudios actuales o futuros.",
+    dismiss: "Descartar"
+  }
+};
+
+---
+
+<section id="contact" class="section-padding relative overflow-hidden bg-black/60">
+  <!-- Decorative background elements -->
+  <div class="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 animate-float"></div>
+  <div class="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] -z-10 animate-float" style="animation-delay: 2s;"></div>
+
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto glass rounded-[2.5rem] md:rounded-[3rem] p-6 sm:p-8 md:p-12 border border-white/[0.08] shadow-2xl relative">
+      <!-- Form Header -->
+      <div class="text-center mb-8 md:mb-10">
+        <h2 class="text-3xl md:text-4xl font-black mb-3 tracking-tighter text-white">
+          {lang === 'en' ? 'Join the' : 'Únete al'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Registry.' : 'Registro.'}</span>
+        </h2>
+        <p class="text-muted-foreground text-sm md:text-base max-w-xl mx-auto font-medium">{content.subtitle}</p>
+      </div>
+
+      <form 
+        id="multi-step-form"
+        name="registry" 
+        method="POST" 
+        class="space-y-6 md:space-y-10"
+      >
+        <input type="hidden" name="form-name" value="registry" />
+        
+        <!-- Premium Step Progress -->
+        <div class="relative flex justify-between items-center mb-10 md:mb-16 px-1 sm:px-4">
+          <!-- Connector Line Layer -->
+          <div class="absolute top-4 sm:top-5 left-10 right-10 h-[1.5px] bg-white/[0.05] -z-10">
+            <div id="progress-line" class="h-full bg-primary transition-all duration-700" style="width: 0%"></div>
+          </div>
+
+          {content.steps.map((step, i) => (
+            <div class="flex flex-col items-center gap-2 group relative z-10" data-step-nav={i}>
+              <div 
+                class={`step-indicator w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-500 border-2 
+                  ${i === 0 ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30' : 'bg-[#0b1120] border-white/10 text-muted-foreground'}`}
+                data-index={i}
+              >
+                {i + 1}
+              </div>
+              <span class={`hidden xs:block text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${i === 0 ? 'text-primary' : 'text-muted-foreground/40'}`}>
+                {step.title.split(' ')[0]}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <!-- Form Steps -->
+        <div class="form-steps-container">
+          {content.steps.map((step, i) => (
+            <div 
+              class={`form-step space-y-6 md:space-y-8 transition-all duration-500 ${i === 0 ? 'block opacity-100' : 'hidden opacity-0 h-0 overflow-hidden'}`}
+              data-step={i}
+            >
+              <div class="flex items-center gap-3 mb-1">
+                <span class="w-8 h-[2px] bg-primary"></span>
+                <h3 class="text-xs sm:text-sm font-black text-primary uppercase tracking-[0.2em]">{step.title}</h3>
+              </div>
+              
+              <div class="grid grid-cols-1 gap-4 md:gap-8">
+                {step.fields.map(field => (
+                  <div class="space-y-3 md:space-y-4 group">
+                    <label class="block text-sm sm:text-base font-bold text-white/70 ml-1 group-has-[:focus]:text-primary transition-colors">
+                      {field.label} {field.required && <span class="text-primary">*</span>}
+                    </label>
+
+                    {field.type === 'select' ? (
+                      <div class="relative">
+                        <select 
+                          name={field.name} 
+                          required={field.required}
+                          class="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all text-white appearance-none text-base"
+                        >
+                          <option value="" disabled selected>{lang === 'en' ? 'Select an option' : 'Seleccione una opción'}</option>
+                          {field.options?.map(opt => <option value={opt}>{opt}</option>)}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                      </div>
+                    ) : field.type === 'radio' ? (
+                      <div class="grid grid-cols-1 gap-3">
+                        {field.options?.map(opt => (
+                          <label class="flex items-center gap-3 p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] hover:border-primary/30 transition-all cursor-pointer group active:scale-[0.98]">
+                            <div class="relative flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-white/20 group-has-[:checked]:border-primary group-has-[:checked]:bg-primary transition-all">
+                              <input 
+                                type="radio" 
+                                name={field.name} 
+                                value={opt} 
+                                required={field.required}
+                                class="sr-only" 
+                              />
+                              <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+                            </div>
+                            <span class="text-sm md:text-base font-medium text-muted-foreground group-has-[:checked]:text-white transition-colors">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : field.type === 'checkbox' ? (
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {field.options?.map(opt => (
+                          <label class="flex items-center gap-3 p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] hover:border-primary/30 transition-all cursor-pointer group active:scale-[0.98]">
+                            <div class="relative flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-lg border-2 border-white/20 group-has-[:checked]:border-primary group-has-[:checked]:bg-primary transition-all">
+                              <input 
+                                type="checkbox" 
+                                name={field.name} 
+                                value={opt} 
+                                class="sr-only" 
+                              />
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-[:checked]:opacity-100 transition-opacity"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <span class="text-[11px] md:text-[13px] font-medium text-muted-foreground group-has-[:checked]:text-white leading-tight transition-colors">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <input 
+                        type={field.type} 
+                        name={field.name} 
+                        required={field.required}
+                        placeholder={field.placeholder || ''}
+                        class="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all text-white placeholder:text-muted-foreground/20 text-base"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {i === content.steps.length - 1 && (
+                <div class="pt-4 md:pt-8 space-y-4 md:space-y-6">
+                  <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-primary/5 border border-primary/10 text-[11px] md:text-sm leading-relaxed text-muted-foreground/80 font-medium font-medium">
+                    <p>{content.legal}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-5 pt-4">
+          <button 
+            type="button" 
+            id="prev-btn" 
+            class="hidden flex-1 py-4 md:py-5 rounded-xl md:rounded-2xl bg-white/[0.05] border border-white/[0.1] text-white font-black text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all active:scale-95"
+          >
+            {content.buttons.prev}
+          </button>
+          <button 
+            type="button" 
+            id="next-btn" 
+            class="flex-1 py-4 md:py-5 rounded-xl md:rounded-2xl bg-primary text-white font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            {content.buttons.next}
+          </button>
+          <button 
+            type="submit" 
+            id="submit-btn" 
+            class="hidden flex-1 py-4 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            {content.buttons.submit}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  let currentStep = 0;
+  const form = document.getElementById('multi-step-form') as HTMLFormElement;
+  const steps = document.querySelectorAll('.form-step');
+  const indicators = document.querySelectorAll('.step-indicator');
+  const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+  const prevBtn = document.getElementById('prev-btn') as HTMLButtonElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const formContainer = form.parentElement;
+
+  function updateStep(shouldScroll = false) {
+    const progressLine = document.getElementById('progress-line');
+    if (progressLine) {
+      const progress = (currentStep / (steps.length - 1)) * 100;
+      progressLine.style.width = `${progress}%`;
+    }
+
+    steps.forEach((step, i) => {
+      if (i === currentStep) {
+        step.classList.remove('hidden', 'opacity-0', 'h-0');
+        step.classList.add('block', 'opacity-100');
+        // Simple animation entry
+        (step as HTMLElement).style.transform = 'translateY(10px)';
+        (step as HTMLElement).style.opacity = '0';
+        requestAnimationFrame(() => {
+          (step as HTMLElement).style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+          (step as HTMLElement).style.transform = 'translateY(0)';
+          (step as HTMLElement).style.opacity = '1';
+        });
+      } else {
+        step.classList.add('hidden', 'opacity-0', 'h-0');
+        step.classList.remove('block', 'opacity-100');
+      }
+    });
+
+    indicators.forEach((ind, i) => {
+      const parent = ind.parentElement;
+      const label = parent?.querySelector('span');
+
+      if (i === currentStep) {
+        ind.classList.add('bg-primary', 'border-primary', 'text-white', 'scale-110', 'shadow-xl', 'shadow-primary/30');
+        ind.classList.remove('bg-[#0b1120]', 'border-white/10', 'text-muted-foreground');
+        label?.classList.add('text-primary');
+        label?.classList.remove('text-muted-foreground/40');
+      } else if (i < currentStep) {
+        ind.classList.add('bg-primary', 'border-primary', 'text-white');
+        ind.classList.remove('bg-[#0b1120]', 'border-white/10', 'text-muted-foreground', 'scale-110', 'shadow-xl', 'shadow-primary/30');
+        label?.classList.add('text-primary');
+        label?.classList.remove('text-muted-foreground/40');
+      } else {
+        ind.classList.remove('bg-primary', 'text-white', 'border-primary', 'scale-110', 'shadow-xl', 'shadow-primary/30');
+        ind.classList.add('bg-[#0b1120]', 'border-white/10', 'text-muted-foreground');
+        label?.classList.remove('text-primary');
+        label?.classList.add('text-muted-foreground/40');
+      }
+    });
+
+    if (currentStep === 0) {
+      prevBtn.classList.add('hidden', 'opacity-0');
+      prevBtn.classList.remove('opacity-100');
+    } else {
+      prevBtn.classList.remove('hidden');
+      requestAnimationFrame(() => prevBtn.classList.add('opacity-100'));
+    }
+
+    if (currentStep === steps.length - 1) {
+      nextBtn.classList.add('hidden');
+      submitBtn.classList.remove('hidden');
+    } else {
+      nextBtn.classList.remove('hidden');
+      submitBtn.classList.add('hidden');
+    }
+
+    // Scroll to top of the form with an offset only if requested
+    if (shouldScroll) {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        const yOffset = -100; 
+        const y = contactSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({top: y, behavior: 'smooth'});
+      }
+    }
+  }
+
+  function validateStep() {
+    const currentStepEl = steps[currentStep];
+    const inputs = currentStepEl.querySelectorAll('input, select, textarea');
+    let isValid = true;
+
+    // Reset styles
+    inputs.forEach((input: any) => {
+      const parent = input.closest('.space-y-3') || input.parentElement;
+      if (parent) parent.classList.remove('ring-1', 'ring-red-500/50');
+    });
+
+    inputs.forEach((input: any) => {
+      if (input.hasAttribute('required')) {
+        let fieldValid = true;
+        
+        if (input.type === 'radio') {
+          const name = input.getAttribute('name');
+          const checked = currentStepEl.querySelector(`input[name="${name}"]:checked`);
+          if (!checked) fieldValid = false;
+        } else if (input.type === 'checkbox') {
+          const name = input.getAttribute('name');
+          const checked = currentStepEl.querySelectorAll(`input[name="${name}"]:checked`);
+          if (checked.length === 0) fieldValid = false;
+        } else if (!input.value.trim()) {
+          fieldValid = false;
+        }
+
+        if (!fieldValid) {
+          isValid = false;
+          const parent = input.closest('.space-y-3') || input.parentElement;
+          if (parent) {
+            parent.classList.add('ring-1', 'ring-red-500/50', 'rounded-2xl');
+            // Shake animation
+            parent.style.animation = 'shake 0.4s ease-in-out';
+            setTimeout(() => parent.style.animation = '', 400);
+          }
+        }
+      }
+    });
+
+    return isValid;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (validateStep()) {
+      currentStep++;
+      updateStep(true);
+    }
+  });
+
+  prevBtn.addEventListener('click', () => {
+    currentStep--;
+    updateStep(true);
+  });
+
+  // Handle 'None of the above' logic for checkboxes
+  const interestsCheckboxes = document.querySelectorAll('input[name="interests"]') as NodeListOf<HTMLInputElement>;
+  const noneOption = Array.from(interestsCheckboxes).find(cb => cb.value.toLowerCase().includes('none') || cb.value.toLowerCase().includes('ninguno'));
+
+  if (noneOption) {
+    noneOption.addEventListener('change', () => {
+      if (noneOption.checked) {
+        interestsCheckboxes.forEach(cb => {
+          if (cb !== noneOption) cb.checked = false;
+        });
+      }
+    });
+
+    interestsCheckboxes.forEach(cb => {
+      if (cb !== noneOption) {
+        cb.addEventListener('change', () => {
+          if (cb.checked) noneOption.checked = false;
+        });
+      }
+    });
+  }
+
+  // Handle form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!validateStep()) return;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${lang === 'en' ? 'Sending...' : 'Enviando...'}</span>`;
+
+    try {
+      const formData = new FormData(form);
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      if (res.ok) {
+        if (formContainer) {
+          const successContent = (form as any)._successContent; // We'll pass this differently if needed, but for now use Astro props translated values
+          formContainer.innerHTML = `
+            <div class="text-center py-12 space-y-6 animate-fade-in">
+              <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 class="text-3xl font-bold text-white">${content.success.title}</h3>
+              <p class="text-muted-foreground text-lg max-w-md mx-auto">
+                ${content.success.message}
+              </p>
+              <button onclick="window.location.reload()" class="mt-8 px-8 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all font-medium">
+                ${content.success.dismiss}
+              </button>
+            </div>
+          `;
+        }
+      } else {
+        throw new Error('Form submission failed');
+      }
+    } catch (err) {
+      console.error(err);
+      const errorMsg = lang === 'en' ? 'There was an error submitting the form. Please try again.' : 'Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.';
+      alert(errorMsg);
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = lang === 'en' ? 'Submit' : 'Enviar';
+    }
+  });
+
+  // Initial update
+  updateStep();
+
+</script>

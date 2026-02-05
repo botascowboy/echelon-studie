@@ -1,0 +1,142 @@
+---
+const { lang = "en" } = Astro.props;
+
+const content = lang === "en" ? {
+	processTitle: "A Seamless Path to Participation",
+	steps: [
+		{
+			title: "Registry Sign-Up",
+			desc: "Submit your basic health profile via our secure and confidential portal.",
+			icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+		},
+		{
+			title: "Clinical Pre-Screening",
+			desc: "Our medical team reviews your health profile.",
+			icon: "M22 12h-4l-3 9L9 3l-3 9H2"
+		},
+		{
+			title: "Contact",
+			desc: "Our team will reach out if you are eligible.",
+			icon: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+		},
+		{
+			title: "Site Visit",
+			desc: "We schedule a private appointment for you at the research clinic in New York City.",
+			icon: "M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"
+		},
+		{
+			title: "Informed Decision",
+			desc: "Meet the doctor, review the informed consent, and decide if joining is right for you.",
+			icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"
+		}
+	],
+	whoTitle: "Who Can Participate?",
+	whoDesc: "We are currently seeking candidates in the New York City area who meet the following criteria:",
+	criteria: [
+		"Adults between 18 and 75 years old.",
+		"Body Mass Index (BMI) of 30 or higher (or 27+ with a related condition like High Blood Pressure, Diabetes mellitus, etc.).",
+		"Have attempted to lose weight through diet and exercise without long-term success.",
+		"Willing to attend clinic visits and follow the study protocol."
+	]
+} : {
+	processTitle: "Un camino fluido hacia la participación",
+	steps: [
+		{
+			title: "Registro en el Portal",
+			desc: "Envíe su perfil de salud básico a través de nuestro portal seguro y confidencial.",
+			icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+		},
+		{
+			title: "Preselección Clínica",
+			desc: "Nuestro equipo médico revisa su perfil de salud.",
+			icon: "M22 12h-4l-3 9L9 3l-3 9H2"
+		},
+		{
+			title: "Contacto",
+			desc: "Nuestro equipo se pondrá en contacto si usted es elegible.",
+			icon: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+		},
+		{
+			title: "Visita al Centro",
+			desc: "Programamos una cita privada para usted en la clínica de investigación en la ciudad de Nueva York.",
+			icon: "M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"
+		},
+		{
+			title: "Decisión Informada",
+			desc: "Conozca al médico, revise el consentimiento informado y decida si participar es adecuado para usted.",
+			icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"
+		}
+	],
+	whoTitle: "¿Quién puede participar?",
+	whoDesc: "Actualmente buscamos candidatos en el área de la ciudad de Nueva York que cumplan con los siguientes criterios:",
+	criteria: [
+		"Adultos de entre 18 y 75 años.",
+		"Índice de Masa Corporal (IMC) de 30 o más (o 27+ con una condición relacionada como Presión Arterial Alta, Diabetes mellitus, etc.).",
+		"Haber intentado perder peso mediante dieta y ejercicio sin éxito a largo plazo.",
+		"Disposición para asistir a las visitas clínicas y seguir el protocolo del estudio."
+	]
+};
+---
+
+<section class="section-padding bg-black/40 relative">
+	<div class="container mx-auto px-4">
+		<!-- Participation Process -->
+		<div class="mb-24">
+			<h2 class="text-3xl md:text-5xl font-bold mb-16 text-center tracking-tight">
+				{lang === 'en' ? (
+					<>A Seamless Path to <span class="text-gradient">Participation</span></>
+				) : (
+					<>Un camino fluido hacia la <span class="text-gradient">participación</span></>
+				)}
+			</h2>
+			
+			<div class="relative">
+				<!-- Connector line for desktop -->
+				<div class="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+				
+				<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+					{content.steps.map((step, index) => (
+						<div class="relative group text-center">
+							<div class="w-24 h-24 rounded-3xl bg-card border border-white/5 flex items-center justify-center mx-auto mb-6 relative z-10 shadow-xl group-hover:scale-110 group-hover:border-primary/50 transition-all">
+								<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d={step.icon}></path></svg>
+								<div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-lg">{index + 1}</div>
+							</div>
+							<h3 class="text-xl font-bold mb-3 text-white">{step.title}</h3>
+							<p class="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+
+		<!-- Who Can Participate -->
+		<div class="max-w-4xl mx-auto">
+			<div class="glass rounded-[3rem] p-8 md:p-16 border border-white/10 shadow-3xl relative overflow-hidden">
+				<div class="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[80px] -z-10"></div>
+				
+				<div class="text-center mb-12">
+					<h2 class="text-3xl md:text-4xl font-bold mb-4 tracking-tight">{content.whoTitle}</h2>
+					<p class="text-muted-foreground text-lg">{content.whoDesc}</p>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+					{content.criteria.map(item => (
+						<div class="flex gap-4 p-6 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all">
+							<div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"></polyline></svg>
+							</div>
+							<p class="text-sm md:text-base text-muted-foreground font-medium leading-relaxed">{item}</p>
+						</div>
+					))}
+				</div>
+
+				<div class="mt-12 text-center">
+					<a href="#contact" class="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all uppercase tracking-widest text-sm">
+						{lang === 'en' ? 'Check your eligibility' : 'Verifica tu elegibilidad'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

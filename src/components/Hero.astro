@@ -1,0 +1,89 @@
+---
+const { lang = "en" } = Astro.props;
+---
+
+<section class="relative flex items-center pt-40 pb-16 overflow-hidden bg-[#02040a]">
+	<!-- Ambient Background Light -->
+	<div class="absolute inset-0 -z-10">
+		<div class="absolute top-1/4 -right-1/4 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] animate-float opacity-50"></div>
+		<div class="absolute -bottom-1/4 -left-1/4 w-[800px] h-[800px] bg-accent/20 rounded-full blur-[160px] animate-float opacity-50" style="animation-delay: 3s;"></div>
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dust.png')] opacity-[0.03]"></div>
+	</div>
+
+	<div class="container mx-auto px-4 z-10">
+		<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+			
+			<!-- Content -->
+			<div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+				<div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] text-primary text-[9px] font-black uppercase tracking-[0.2em] animate-fade-in">
+					<span class="relative flex h-2 w-2">
+						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+						<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
+					</span>
+					{lang === 'en' ? 'Pioneering Medical Research' : 'Investigación Médica de Vanguardia'}
+				</div>
+
+				<h1 class="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white animate-fade-in">
+					{lang === 'en' ? 'Trust in' : 'Confianza en'} <br/>
+					<span class="text-gradient leading-tight">{lang === 'en' ? 'Excellence.' : 'Excelencia.'}</span>
+				</h1>
+
+				<p class="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium animate-fade-in" style="animation-delay: 0.2s;">
+					{lang === 'en' 
+						? 'Decades of clinical expertise, bridging the gap between innovative breakthroughs and the community. Join the Registry today.' 
+						: 'Décadas de experiencia clínica, cerrando la brecha entre los avances médicos y la comunidad. Únase al Registro hoy mismo.'}
+				</p>
+
+				<div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-4 animate-fade-in" style="animation-delay: 0.4s;">
+					<a href="#trials" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-primary text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all text-center">
+						{lang === 'en' ? 'Explore Active Trials' : 'Explorar Ensayos Activos'}
+					</a>
+					<a href="#contact" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-black text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all text-center active:scale-95">
+						{lang === 'en' ? 'Join Registry' : 'Unirse al Registro'}
+					</a>
+				</div>
+
+				<!-- Trust Badges -->
+				<div class="pt-10 flex flex-wrap items-center justify-center lg:justify-start gap-x-12 gap-y-8 animate-fade-in" style="animation-delay: 0.6s;">
+					<div class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
+						<div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/50 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+            </div>
+						<span class="text-[10px] font-black uppercase tracking-[0.2em]">FDA Regulated</span>
+					</div>
+					<div class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
+						<div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/50 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+            </div>
+						<span class="text-[10px] font-black uppercase tracking-[0.2em]">IRB Compliant</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Visual Side -->
+			<div class="lg:col-span-5 relative hidden lg:block animate-fade-in" style="animation-delay: 0.4s;">
+				<div class="relative w-full aspect-square">
+					<div class="absolute inset-0 bg-primary/20 rounded-[5rem] rotate-12 blur-[100px] animate-pulse"></div>
+					<div class="relative h-full w-full glass rounded-[5rem] border-white/[0.08] flex items-center justify-center p-16 shadow-2xl">
+						<div class="relative w-full aspect-square bg-gradient-to-br from-[#4f46e5] to-[#06b6d4] rounded-[4rem] shadow-3xl overflow-hidden flex items-center justify-center group">
+							<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+							<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform duration-[2s] opacity-90"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+						</div>
+						
+						<!-- Floating Stats -->
+						<div class="absolute -top-12 -right-12 glass p-8 rounded-[2.5rem] border-white/20 shadow-3xl animate-float">
+							<div class="text-4xl font-black text-white leading-none mb-1">100%</div>
+							<div class="text-[9px] font-black uppercase tracking-widest text-primary">Safety Protocol</div>
+						</div>
+						
+						<div class="absolute -bottom-8 -left-12 glass p-8 rounded-[2.5rem] border-white/20 shadow-3xl animate-float" style="animation-delay: 2s;">
+							<div class="text-4xl font-black text-white leading-none mb-1">50+</div>
+							<div class="text-[9px] font-black uppercase tracking-widest text-accent">Active Partners</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
