@@ -70,7 +70,7 @@ export const CITY_SEARCH_TERMS: Record<string, string> = {
 // Check if a location matches one of our target cities
 export function isTargetCity(location: string): boolean {
   const normalized = location.toLowerCase().replace(/[^a-z]/g, '');
-  return TARGET_CITIES.some(city => 
+  return TARGET_CITIES.some(city =>
     normalized.includes(city.id) ||
     normalized.includes(city.name.toLowerCase().replace(/[^a-z]/g, '')) ||
     normalized.includes(city.state.toLowerCase())
@@ -80,7 +80,7 @@ export function isTargetCity(location: string): boolean {
 // Get city config by ID or name
 export function getCityConfig(identifier: string) {
   const normalized = identifier.toLowerCase().replace(/[^a-z]/g, '');
-  return TARGET_CITIES.find(city => 
+  return TARGET_CITIES.find(city =>
     city.id === normalized ||
     city.name.toLowerCase().replace(/[^a-z]/g, '') === normalized ||
     city.state.toLowerCase() === normalized
@@ -93,7 +93,7 @@ export const PLATFORM_CONFIG = {
   tagline: 'Elite Clinical Trial Recruitment',
   defaultCity: 'nyc',
   maxTrialsPerPage: 9,
-  enableRealApi: true, // Set to true when deploying to production
-  fallbackToMock: true, // Always use mock data with real cities
+  enableRealApi: true, // Always use real API
+  fallbackToMock: false, // Disable mock data fallbacks
   cities: TARGET_CITIES
 } as const;
