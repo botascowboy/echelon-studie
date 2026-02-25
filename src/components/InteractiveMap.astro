@@ -1,13 +1,5 @@
 ---
 const { lang = "en" } = Astro.props;
-
-const cities = [
-  { id: 'nyc', name: 'New York', short: 'NYC', state: 'NY', lat: 40.7128, lon: -74.006, trials: 42, icon: '🗽' },
-  { id: 'miami', name: 'Miami', short: 'Miami', state: 'FL', lat: 25.7617, lon: -80.1918, trials: 28, icon: '🌴' },
-  { id: 'houston', name: 'Houston', short: 'Houston', state: 'TX', lat: 29.7604, lon: -95.3698, trials: 35, icon: '🚀' },
-  { id: 'losangeles', name: 'Los Angeles', short: 'LA', state: 'CA', lat: 34.0522, lon: -118.2437, trials: 31, icon: '🌆' },
-  { id: 'sanfrancisco', name: 'San Francisco', short: 'SF', state: 'CA', lat: 37.7749, lon: -122.4194, trials: 24, icon: '🌉' },
-];
 ---
 
 <section id="map-section" class="py-16 md:py-24 bg-slate-50 overflow-hidden">
@@ -17,7 +9,7 @@ const cities = [
     <div class="text-center mb-12 max-w-2xl mx-auto">
       <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
         <span class="text-[11px] font-black uppercase tracking-[0.2em] text-accent">
-          {lang === 'en' ? '5 Major Cities' : '5 Ciudades Principales'}
+          {lang === 'en' ? 'Live Study Network' : 'Red de Estudios en Vivo'}
         </span>
       </div>
       <h2 class="text-3xl md:text-5xl font-extrabold mb-5 tracking-tight text-slate-900">
@@ -25,287 +17,224 @@ const cities = [
       </h2>
       <p class="text-slate-500 text-lg font-medium leading-relaxed">
         {lang === 'en'
-          ? 'We connect patients with weight-loss clinical trials across the United States. Click a city to explore available studies.'
-          : 'Conectamos pacientes con ensayos clínicos de pérdida de peso en todo Estados Unidos. Haz clic en una ciudad para explorar los estudios disponibles.'}
+          ? 'Explore all individual clinical trials across the United States. Clustered by city for easier navigation.'
+          : 'Explora cada uno de los ensayos clínicos individuales en todo Estados Unidos. Agrupados por ciudad para una navegación más sencilla.'}
       </p>
     </div>
 
     <!-- Map card -->
-    <div class="relative w-full max-w-5xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
+    <div class="relative w-full max-w-6xl mx-auto bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden" style="height: 700px;">
+      <div id="leaflet-map" class="w-full h-full z-10"></div>
       
-      <!-- Map container with fixed aspect ratio -->
-      <div id="map-container" class="relative w-full" style="height: 560px;">
-        <svg id="us-map" class="w-full h-full"></svg>
-
-        <!-- Tooltip -->
-        <div id="map-tooltip" class="absolute pointer-events-none opacity-0 transition-all duration-200 z-30 px-5 py-3 rounded-2xl shadow-2xl border border-slate-200 bg-white/95 backdrop-blur-md" style="transform: translate(-50%, -120%);">
-          <div class="flex items-center gap-3">
-            <span id="tooltip-icon" class="text-2xl">🗽</span>
-            <div>
-              <h4 class="font-extrabold text-sm text-slate-900" id="tooltip-city">New York</h4>
-              <p class="text-xs text-slate-500 font-semibold" id="tooltip-trials">42 Active Trials</p>
-            </div>
-          </div>
+      <!-- Overlay Loader -->
+      <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 font-bold text-slate-600 animate-pulse">
+                {lang === 'en' ? 'Loading all active trials...' : 'Cargando todos los ensayos...'}
+            </p>
         </div>
-      </div>
-
-      <!-- City legend cards (bottom) -->
-      <div class="grid grid-cols-2 sm:grid-cols-5 border-t border-slate-100">
-        {cities.map((city) => (
-          <a
-            href="#trials"
-            data-city-id={city.id}
-            data-city-val={`${city.name}, ${city.state}`}
-            class="city-legend-card group flex items-center gap-3 px-4 py-4 hover:bg-accent/5 transition-all cursor-pointer border-r border-slate-100 last:border-r-0"
-          >
-            <span class="text-xl">{city.icon}</span>
-            <div>
-              <div class="font-bold text-sm text-slate-800 group-hover:text-accent transition-colors">{city.short}</div>
-              <div class="text-[11px] text-slate-400 font-semibold">{city.trials} {lang === 'en' ? 'trials' : 'ensayos'}</div>
-            </div>
-          </a>
-        ))}
       </div>
     </div>
 
   </div>
 </section>
 
+<!-- Leaflet CSS & Essentials -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
 <script>
-  import * as d3 from 'd3';
-  import * as topojson from 'topojson-client';
+  import L from 'leaflet';
+  import 'leaflet.markercluster';
 
-  const CITIES = [
-    { id: 'nyc', name: 'New York', short: 'NYC', state: 'NY', lat: 40.7128, lon: -74.006, trials: 42, icon: '🗽' },
-    { id: 'miami', name: 'Miami', short: 'Miami', state: 'FL', lat: 25.7617, lon: -80.1918, trials: 28, icon: '🌴' },
-    { id: 'houston', name: 'Houston', short: 'Houston', state: 'TX', lat: 29.7604, lon: -95.3698, trials: 35, icon: '🚀' },
-    { id: 'losangeles', name: 'Los Angeles', short: 'LA', state: 'CA', lat: 34.0522, lon: -118.2437, trials: 31, icon: '🌆' },
-    { id: 'sanfrancisco', name: 'San Francisco', short: 'SF', state: 'CA', lat: 37.7749, lon: -122.4194, trials: 24, icon: '🌉' },
-  ];
+  async function initLeafletMap() {
+    const mapEl = document.getElementById('leaflet-map');
+    if (!mapEl || (mapEl as any)._leaflet_id) return;
 
-  async function initMap() {
-    const container = document.getElementById('map-container');
-    if (!container) return;
+    // Center of US
+    const map = L.map('leaflet-map', {
+        center: [39.8283, -98.5795],
+        zoom: 4,
+        zoomControl: false,
+        attributionControl: false
+    });
 
-    const svgEl = document.getElementById('us-map') as unknown as SVGSVGElement;
-    if (!svgEl) return;
+    // Add zoom control to bottom right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Clear any previous render
-    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+    // High-end clean tile provider
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
+    }).addTo(map);
 
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const markers = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: true,
+        maxClusterRadius: 40,
+        // Custom cluster icon to match Echelon branding
+        iconCreateFunction: function(cluster) {
+            const childCount = cluster.getChildCount();
+            let c = ' marker-cluster-';
+            if (childCount < 10) { c += 'small'; }
+            else if (childCount < 50) { c += 'medium'; }
+            else { c += 'large'; }
 
-    const svg = d3.select(svgEl)
-      .attr('viewBox', `0 0 ${width} ${height}`)
-      .attr('preserveAspectRatio', 'xMidYMid meet');
-
-    // Defs for gradients & filters
-    const defs = svg.append('defs');
-
-    // State fill gradient
-    const grad = defs.append('linearGradient')
-      .attr('id', 'state-fill')
-      .attr('x1', '0%').attr('y1', '0%')
-      .attr('x2', '100%').attr('y2', '100%');
-    grad.append('stop').attr('offset', '0%').attr('stop-color', '#e0f2fe');
-    grad.append('stop').attr('offset', '100%').attr('stop-color', '#e0e7ff');
-
-    // State hover gradient
-    const gradHover = defs.append('linearGradient')
-      .attr('id', 'state-hover')
-      .attr('x1', '0%').attr('y1', '0%')
-      .attr('x2', '100%').attr('y2', '100%');
-    gradHover.append('stop').attr('offset', '0%').attr('stop-color', '#bae6fd');
-    gradHover.append('stop').attr('offset', '100%').attr('stop-color', '#c7d2fe');
-
-    // Drop shadow for city markers
-    const shadow = defs.append('filter')
-      .attr('id', 'marker-shadow')
-      .attr('x', '-50%').attr('y', '-50%')
-      .attr('width', '200%').attr('height', '200%');
-    shadow.append('feDropShadow')
-      .attr('dx', '0').attr('dy', '2')
-      .attr('stdDeviation', '4')
-      .attr('flood-color', '#002147')
-      .attr('flood-opacity', '0.18');
-
-    // Pulse animation via CSS
-    const style = defs.append('style');
-    style.text(`
-      @keyframes mapPulse {
-        0%   { r: 18; opacity: 0.35; }
-        100% { r: 30; opacity: 0; }
-      }
-      .pulse-ring { animation: mapPulse 2s ease-out infinite; }
-    `);
-
-    const g = svg.append('g');
-
-    // Projection
-    const projection = d3.geoAlbersUsa()
-      .scale(width * 1.15)
-      .translate([width / 2, height / 2]);
-
-    const path = d3.geoPath().projection(projection);
-
-    const tooltip = document.getElementById('map-tooltip')!;
-    const tooltipIcon = document.getElementById('tooltip-icon')!;
-    const tooltipCity = document.getElementById('tooltip-city')!;
-    const tooltipTrials = document.getElementById('tooltip-trials')!;
+            return new L.DivIcon({ 
+                html: `<div class="echelon-cluster"><span>${childCount}</span></div>`, 
+                className: 'marker-cluster' + c, 
+                iconSize: new L.Point(40, 40) 
+            });
+        }
+    });
 
     try {
-      // Load US TopoJSON
-      const us = await d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json') as any;
-      const states = topojson.feature(us, us.objects.states) as any;
+      const res = await fetch('/api/trials?pageSize=100');
+      const data = await res.json();
+      const trials = data.trials || [];
+      const loader = document.getElementById('map-loader');
 
-      // Draw states
-      g.selectAll('.state')
-        .data(states.features)
-        .enter()
-        .append('path')
-        .attr('d', path as any)
-        .attr('fill', 'url(#state-fill)')
-        .attr('stroke', '#cbd5e1')
-        .attr('stroke-width', 0.6)
-        .attr('cursor', 'pointer')
-        .on('mouseover', function() {
-          d3.select(this)
-            .transition().duration(180)
-            .attr('fill', 'url(#state-hover)')
-            .attr('stroke', '#94a3b8')
-            .attr('stroke-width', 1);
-        })
-        .on('mouseout', function() {
-          d3.select(this)
-            .transition().duration(260)
-            .attr('fill', 'url(#state-fill)')
-            .attr('stroke', '#cbd5e1')
-            .attr('stroke-width', 0.6);
-        });
+      const CITY_COORDS = {
+        "new york": { lat: 40.7128, lng: -74.0060 },
+        "miami": { lat: 25.7617, lng: -80.1918 },
+        "houston": { lat: 29.7604, lng: -95.3698 },
+        "los angeles": { lat: 34.0522, lng: -118.2437 },
+        "san francisco": { lat: 37.7749, lng: -122.4194 }
+      };
 
-      // Draw state borders overlay
-      g.append('path')
-        .datum(topojson.mesh(us, us.objects.states, (a: any, b: any) => a !== b))
-        .attr('fill', 'none')
-        .attr('stroke', '#94a3b8')
-        .attr('stroke-width', 0.3)
-        .attr('d', path as any);
-
-      // City markers
-      CITIES.forEach((city) => {
-        const coords = projection([city.lon, city.lat]);
-        if (!coords) return;
-        const [cx, cy] = coords;
-
-        // Pulse ring
-        g.append('circle')
-          .attr('cx', cx).attr('cy', cy)
-          .attr('r', 18)
-          .attr('fill', '#00a381')
-          .attr('class', 'pulse-ring');
-
-        // Outer glow
-        g.append('circle')
-          .attr('cx', cx).attr('cy', cy)
-          .attr('r', 14)
-          .attr('fill', '#00a381')
-          .attr('opacity', 0.15)
-          .attr('filter', 'url(#marker-shadow)');
-
-        // Main marker
-        g.append('circle')
-          .attr('cx', cx).attr('cy', cy)
-          .attr('r', 8)
-          .attr('fill', '#00a381')
-          .attr('stroke', 'white')
-          .attr('stroke-width', 3)
-          .attr('cursor', 'pointer')
-          .attr('filter', 'url(#marker-shadow)')
-          .on('mouseover', function(event: MouseEvent) {
-            d3.select(this).transition().duration(200)
-              .attr('r', 12)
-              .attr('fill', '#002147');
-
-            tooltipIcon.textContent = city.icon;
-            tooltipCity.textContent = `${city.name}, ${city.state}`;
-            tooltipTrials.textContent = `${city.trials} Active Trials`;
-
-            tooltip.style.opacity = '1';
-            tooltip.style.left = cx + 'px';
-            tooltip.style.top = (cy - 10) + 'px';
-          })
-          .on('mouseout', function() {
-            d3.select(this).transition().duration(200)
-              .attr('r', 8)
-              .attr('fill', '#00a381');
-
-            tooltip.style.opacity = '0';
-          })
-          .on('click', function() {
-            // Navigate to trials filtered by this city
-            const el = document.getElementById('location-filter') as HTMLSelectElement;
-            if (el) {
-              el.value = `${city.name}, ${city.state}`;
-              el.dispatchEvent(new Event('change'));
-            }
-            document.getElementById('trials')?.scrollIntoView({ behavior: 'smooth' });
-          });
-
-        // Label
-        g.append('text')
-          .attr('x', cx)
-          .attr('y', cy + 24)
-          .attr('text-anchor', 'middle')
-          .attr('font-size', '11px')
-          .attr('font-weight', '800')
-          .attr('fill', '#002147')
-          .attr('paint-order', 'stroke')
-          .attr('stroke', 'white')
-          .attr('stroke-width', 3)
-          .attr('stroke-linejoin', 'round')
-          .text(city.short);
+      const emeraldIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div class="marker-pin"></div>`,
+        iconSize: [30, 42],
+        iconAnchor: [15, 42]
       });
 
-    } catch (error) {
-      console.error('Error loading map:', error);
-      // Fallback: show a simple message
-      const container = document.getElementById('map-container');
-      if (container) {
-        container.innerHTML = `
-          <div class="flex items-center justify-center h-full">
-            <p class="text-slate-400 font-semibold">Map could not be loaded</p>
-          </div>
-        `;
+      trials.forEach((trial) => {
+        const city = (trial.primary_location_city || '').toLowerCase();
+        let coords = null;
+        
+        // Try to match city bases
+        for (const [key, base] of Object.entries(CITY_COORDS)) {
+            if (city.includes(key)) {
+                // Apply slight random jitter within the city so markers don't overlap perfectly
+                const jitter = 0.05;
+                coords = {
+                    lat: base.lat + (Math.random() - 0.5) * jitter,
+                    lng: base.lng + (Math.random() - 0.5) * jitter
+                };
+                break;
+            }
+        }
+
+        if (coords) {
+            const popupContent = `
+                <div class="p-2 min-w-[200px] font-sans">
+                    <div class="text-[9px] font-black text-accent uppercase tracking-widest mb-1">${trial.nct_id}</div>
+                    <div class="text-sm font-bold text-slate-900 mb-2 leading-tight">${trial.title}</div>
+                    <div class="text-[11px] text-slate-500 font-bold mb-3 flex items-center gap-1">
+                        <span>📍</span> ${trial.primary_location_city}, ${trial.primary_location_state}
+                    </div>
+                    <a href="/trial/${trial.nct_id}" class="block w-full text-center py-2 bg-accent text-white rounded-lg text-xs font-bold hover:bg-accent-dark transition-colors no-underline">
+                        View Study Details
+                    </a>
+                </div>
+            `;
+
+            const marker = L.marker([coords.lat, coords.lng], { icon: emeraldIcon })
+                .bindPopup(popupContent, {
+                    className: 'custom-popup',
+                    maxWidth: 300
+                });
+            
+            markers.addLayer(marker);
+        }
+      });
+
+      map.addLayer(markers);
+
+      if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => loader.style.display = 'none', 500);
       }
+
+    } catch (e) {
+      console.error('[LeafletMap] Error:', e);
     }
   }
 
-  // Legend card clicks
-  document.querySelectorAll('.city-legend-card').forEach((card) => {
-    card.addEventListener('click', (e) => {
-      e.preventDefault();
-      const cityVal = (card as HTMLElement).dataset.cityVal;
-      if (cityVal) {
-        const el = document.getElementById('location-filter') as HTMLSelectElement;
-        if (el) {
-          el.value = cityVal;
-          el.dispatchEvent(new Event('change'));
-        }
-        document.getElementById('trials')?.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
-
-  // Init
-  initMap();
-
-  // Debounced resize
-  let resizeTimer: ReturnType<typeof setTimeout>;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      initMap();
-    }, 300);
-  });
+  // Initial load
+  document.addEventListener('DOMContentLoaded', initLeafletMap);
+  initLeafletMap();
 </script>
+
+<style is:global>
+  /* Premium Emerald Marker Styling */
+  .marker-pin {
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50% 50% 0;
+    background: #00a381;
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 50%;
+    margin: -15px 0 0 -10px;
+    border: 3px solid white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+  
+  .marker-pin::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    margin: 3px 0 0 3px;
+    background: white;
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  /* Custom Cluster Icon to match branding */
+  .echelon-cluster {
+      width: 40px;
+      height: 40px;
+      background: #00a381;
+      border: 3px solid white;
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 10px 15px -3px rgba(0, 163, 129, 0.3);
+      transition: all 0.2s ease;
+  }
+
+  .marker-cluster:hover .echelon-cluster {
+      transform: scale(1.1);
+      background: #008f71;
+  }
+
+  .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+      background-color: transparent !important;
+  }
+
+  /* Custom Popup Styling */
+  .custom-popup .leaflet-popup-content-wrapper {
+      border-radius: 1.25rem;
+      padding: 0;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      border: 1px solid #e2e8f0;
+  }
+  
+  .custom-popup .leaflet-popup-content {
+      margin: 0;
+      padding: 0;
+  }
+  
+  #leaflet-map {
+      background: #f8fafc;
+  }
+</style>
