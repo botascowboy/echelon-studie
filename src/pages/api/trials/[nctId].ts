@@ -1,9 +1,8 @@
 export const prerender = false;
 
 import type { APIContext } from 'astro';
-import { getMockTrialByNctId, getMockTrials } from '../../../lib/mockTrials';
 import { PLATFORM_CONFIG } from '../../../lib/config';
-import { getTrialByNctId as getApiTrialByNctId, transformTrialData } from '../../../lib/clinicalTrialsApi';
+import { TrialsInternalService } from '../../../lib/services/trials-internal.service';
 
 export async function GET({ params }: APIContext) {
   const { nctId } = params;
@@ -16,37 +15,13 @@ export async function GET({ params }: APIContext) {
   }
 
   try {
-    let trial: any = null;
-    let source = 'mock';
+    const result = await TrialsInternalService.getTrialDetails(nctId);
 
-    if (PLATFORM_CONFIG.enableRealApi) {
-      try {
-        console.log(`[API /trials/${nctId}] Fetching from ClinicalTrials.gov API...`);
-        const apiTrial = await getApiTrialByNctId(nctId);
-        if (apiTrial) {
-          trial = transformTrialData(apiTrial);
-          source = 'api';
-        }
-      } catch (apiError) {
-        console.warn(`[API /trials/${nctId}] API failed, falling back to mock:`, apiError);
-      }
-    }
-
-    if (!trial) {
-      trial = getMockTrialByNctId(nctId);
-      if (!trial) {
-        const baseId = nctId.split('-')[0];
-        const allTrials = getMockTrials();
-        trial = allTrials.find((t: any) => t.nct_id.startsWith(baseId)) || null;
-      }
-      if (trial) source = 'mock-fallback';
-    }
-
-    if (trial) {
+    if (result) {
       return new Response(
         JSON.stringify({
-          trial,
-          source,
+          trial: result.trial,
+          source: result.source,
           availableCities: PLATFORM_CONFIG.cities.map(c => c.name),
           url: `https://clinicaltrials.gov/study/${nctId.split('-')[0]}`,
         }),

@@ -1,0 +1,153 @@
+---
+import { TrialSchema, type Trial } from '../lib/services/trials.service';
+
+interface Props {
+  trial: Trial;
+  lang: 'en' | 'es';
+}
+
+const { trial, lang } = Astro.props;
+
+const isRecruiting = trial.overall_status === 'RECRUITING' || trial.status_label === 'Recruiting';
+const city = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || 'Multiple Locations';
+
+// Helper for phase colors
+const phaseMap: Record<string, string> = { 
+  PHASE3: 'emerald', 
+  PHASE2: 'blue', 
+  PHASE1: 'amber', 
+  PHASE4: 'teal', 
+  NA: 'slate' 
+};
+const phaseCol = phaseMap[trial.phase] || 'slate';
+const phaseLabel = trial.phase_label || trial.phase || 'Clinical Trial';
+
+// Data Sanitization for tags and eligibility
+const tags = Array.isArray(trial.ai_tags) ? trial.ai_tags.slice(0, 3) : [];
+const eligibility = Array.isArray(trial.eligibility_summary_must) ? trial.eligibility_summary_must.slice(0, 1) : [];
+---
+
+<article class="group relative bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-[0_32px_64px_-20px_rgba(0,163,129,0.15)] flex flex-col h-full">
+  <!-- Top accent stripe -->
+  <div class="h-1 w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+  <!-- Glow -->
+  <div class="absolute -top-20 -right-20 w-52 h-52 bg-accent/[0.05] rounded-full blur-[80px] group-hover:bg-accent/[0.12] transition-all duration-700 pointer-events-none"></div>
+
+  <div class="relative z-10 p-8 flex flex-col h-full gap-6">
+    <!-- Row 1: Status + Phase badges -->
+    <div class="flex items-center justify-between">
+      <span class={`text-[10px] font-black uppercase tracking-[0.18em] px-4 py-2 rounded-full ${isRecruiting ? 'bg-accent text-white' : 'bg-slate-100 text-slate-500'}`}>
+        {isRecruiting ? (lang === 'en' ? 'Recruiting' : 'Reclutando') : (trial.status_label || 'Active')}
+      </span>
+      <span class={`text-[10px] font-black uppercase tracking-[0.18em] text-${phaseCol}-600 bg-${phaseCol}-50 border border-${phaseCol}-100 px-3 py-1.5 rounded-full`}>
+        {phaseLabel}
+      </span>
+    </div>
+
+    <!-- Row 2: Medication Tags -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5">
+        {tags.map(tag => (
+          <span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-accent/5 text-accent border border-accent/10">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <!-- Row 3: Title + Summary -->
+    <div class="flex-1 space-y-3">
+      <h3 class="text-xl font-black text-primary group-hover:text-accent transition-colors leading-[1.25] tracking-tight line-clamp-2">
+        {trial.title}
+      </h3>
+      <p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
+        {trial.ai_summary || trial.brief_summary}
+      </p>
+    </div>
+
+    <!-- Row 4: Key Facts -->
+    <div class="space-y-2.5">
+      <!-- Eligibility -->
+      <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
+        <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">
+            {lang === 'en' ? 'Who qualifies' : 'Quién califica'}
+          </div>
+          <div class="text-sm font-bold text-slate-700 truncate">
+            {eligibility.length > 0 ? eligibility[0] : (lang === 'en' ? 'Adults 18+' : 'Adultos 18+')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
+        <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">
+            {lang === 'en' ? 'Location' : 'Ubicación'}
+          </div>
+          <div class="text-sm font-bold text-slate-700 truncate">{city}</div>
+        </div>
+      </div>
+
+      <!-- Compensation -->
+      {trial.has_compensation ? (
+        <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-200 transition-all duration-300">
+          <div class="w-9 h-9 rounded-xl bg-white border border-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[9px] font-black uppercase tracking-widest text-emerald-600">
+              {lang === 'en' ? 'You get paid' : 'Te pagan'}
+            </div>
+            <div class="text-sm font-black text-emerald-700 truncate">
+              {trial.compensation_amount || (lang === 'en' ? 'Ask for details' : 'Consultar')}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 transition-all duration-300">
+          <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">
+              {lang === 'en' ? 'Cost' : 'Costo'}
+            </div>
+            <div class="text-sm font-bold text-slate-600">
+              {lang === 'en' ? 'Free – no payment' : 'Gratis – sin pago'}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Row 5: CTA -->
+    <div class="flex items-center gap-3 pt-2 mt-auto">
+      <button
+        onclick={`openLeadModal('${trial.nct_id}', \`${trial.title?.replace(/`/g, "'")}\`)`}
+        class="flex-1 inline-flex items-center justify-center gap-2 py-4 rounded-2xl bg-accent text-white font-black text-xs uppercase tracking-[0.25em] hover:bg-primary transition-all duration-300 shadow-lg shadow-accent/20 hover:shadow-primary/20 active:scale-95">
+        {lang === 'en' ? '⚡ Apply Now' : '⚡ Aplicar Ahora'}
+      </button>
+      <a href={`/trial/${trial.nct_id}`} class="w-12 h-12 flex-shrink-0 inline-flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:border-accent hover:text-accent transition-all duration-300">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>

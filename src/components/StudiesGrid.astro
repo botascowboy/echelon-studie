@@ -1,4 +1,10 @@
 ---
+import TrialCard from './TrialCard.astro';
+
+interface Props {
+  lang?: 'en' | 'es';
+}
+
 const { lang = "en" } = Astro.props;
 ---
 
@@ -21,7 +27,7 @@ const { lang = "en" } = Astro.props;
       </p>
     </div>
 
-    <!-- Filters -->
+    <!-- Filter Bar -->
     <div class="max-w-5xl mx-auto mb-10">
       <div class="bg-white rounded-3xl p-5 shadow-lg shadow-slate-200/50 border border-slate-100">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -67,45 +73,48 @@ const { lang = "en" } = Astro.props;
       </div>
     </div>
 
-    <!-- Loading Skeletons -->
-    <div id="loading-state" class="hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {[1,2,3].map(() => (
-          <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 animate-pulse">
-            <div class="flex gap-2 mb-6"><div class="h-5 w-20 bg-slate-200 rounded-full"></div><div class="h-5 w-16 bg-slate-100 rounded-full"></div></div>
-            <div class="h-7 bg-slate-200 rounded-xl w-3/4 mb-3"></div>
-            <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
-            <div class="h-4 bg-slate-100 rounded w-5/6 mb-8"></div>
-            <div class="space-y-3">
-              <div class="h-12 bg-slate-100 rounded-2xl"></div>
-              <div class="h-12 bg-slate-100 rounded-2xl"></div>
+    <!-- Results Area -->
+    <div id="trials-container" class="min-h-[400px]">
+      <!-- Loading Skeletons -->
+      <div id="loading-state" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {[1,2,3].map(() => (
+            <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 animate-pulse">
+              <div class="flex gap-2 mb-6"><div class="h-5 w-20 bg-slate-200 rounded-full"></div><div class="h-5 w-16 bg-slate-100 rounded-full"></div></div>
+              <div class="h-7 bg-slate-200 rounded-xl w-3/4 mb-3"></div>
+              <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+              <div class="h-4 bg-slate-100 rounded w-5/6 mb-8"></div>
+              <div class="space-y-3 mt-auto">
+                <div class="h-12 bg-slate-100 rounded-2xl"></div>
+                <div class="h-12 bg-slate-100 rounded-2xl"></div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
 
-    <!-- Trials Grid -->
-    <div id="trials-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-8"></div>
+      <!-- Trials Grid -->
+      <div id="trials-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-8"></div>
 
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden text-center py-20">
-      <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
-        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-20">
+        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
+          <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-700 mb-2">{lang === 'en' ? 'No trials found' : 'No se encontraron ensayos'}</h3>
+        <p class="text-slate-500 text-sm">{lang === 'en' ? 'Try adjusting your filters' : 'Intenta ajustar los filtros'}</p>
       </div>
-      <h3 class="text-xl font-bold text-slate-700 mb-2">{lang === 'en' ? 'No trials found' : 'No se encontraron ensayos'}</h3>
-      <p class="text-slate-500 text-sm">{lang === 'en' ? 'Try adjusting your filters' : 'Intenta ajustar los filtros'}</p>
     </div>
 
     <!-- Pagination -->
     <div id="pagination" class="hidden mt-12 flex justify-center items-center gap-4">
-      <button id="prev-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm">
+      <button id="prev-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-all disabled:opacity-40 text-sm">
         ← {lang === 'en' ? 'Previous' : 'Anterior'}
       </button>
       <span id="page-info" class="text-slate-600 font-medium text-sm"></span>
-      <button id="next-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm">
+      <button id="next-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-all disabled:opacity-40 text-sm">
         {lang === 'en' ? 'Next' : 'Siguiente'} →
       </button>
     </div>
@@ -113,400 +122,166 @@ const { lang = "en" } = Astro.props;
   </div>
 </section>
 
-<script define:vars={{ lang }}>
-  let currentPage = 1;
-  let totalPages  = 1;
-  let currentFilters = {};
+<script>
+  import { TrialsService } from '../lib/services/trials.service';
 
-  const trialsGrid   = document.getElementById('trials-grid');
-  const loadingState = document.getElementById('loading-state');
-  const emptyState   = document.getElementById('empty-state');
-  const pagination   = document.getElementById('pagination');
-  const pageInfo     = document.getElementById('page-info');
-  const prevBtn      = document.getElementById('prev-page');
-  const nextBtn      = document.getElementById('next-page');
-  const statsBar     = document.getElementById('stats-bar');
-  const searchInput  = document.getElementById('search-input');
-  const locationFilter     = document.getElementById('location-filter');
-  const phaseFilter        = document.getElementById('phase-filter');
-  const compensationFilter = document.getElementById('compensation-filter');
+  class TrialsManager {
+    constructor(lang) {
+      this.lang = lang;
+      this.currentPage = 1;
+      this.currentFilters = {};
+      this.totalPages = 1;
+      
+      // DOM Elements
+      this.grid = document.getElementById('trials-grid');
+      this.loading = document.getElementById('loading-state');
+      this.empty = document.getElementById('empty-state');
+      this.pagination = document.getElementById('pagination');
+      this.pageInfo = document.getElementById('page-info');
+      this.stats = document.getElementById('stats-bar');
+      
+      this.initEvents();
+      this.load();
+    }
 
-  /* ── helpers ─────────────────────────────────────────────────────── */
-  function safeJSON(val, fallback = []) {
-    if (!val) return fallback;
-    if (typeof val !== 'string') return val;
-    try { return JSON.parse(val); } catch { return fallback; }
-  }
+    initEvents() {
+      const search = document.getElementById('search-input');
+      const location = document.getElementById('location-filter');
+      const phase = document.getElementById('phase-filter');
+      const compensation = document.getElementById('compensation-filter');
+      const prev = document.getElementById('prev-page');
+      const next = document.getElementById('next-page');
 
-  function phaseColor(phase) {
-    const map = { PHASE3:'emerald', PHASE2:'blue', PHASE1:'amber', PHASE4:'teal', NA:'slate' };
-    return map[phase] || 'slate';
-  }
+      const handler = () => {
+        this.currentFilters = {
+          q: search.value,
+          location: location.value,
+          phase: phase.value,
+          compensation: compensation.value || undefined
+        };
+        this.currentPage = 1;
+        this.load();
+      };
 
-  function phaseLabel(trial) {
-    return trial.phase_label || trial.phase || 'Clinical Trial';
-  }
+      const debounce = (fn, ms) => {
+        let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+      };
 
-  /* ── render one card ─────────────────────────────────────────────── */
-  function renderCard(trial) {
-    const tags        = safeJSON(trial.ai_tags).slice(0, 3);
-    const must        = safeJSON(trial.eligibility_summary_must).slice(0, 2);
-    const summary     = trial.ai_summary || trial.brief_summary || '';
-    const city        = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || 'Multiple Locations';
-    const isRecruiting = trial.overall_status === 'RECRUITING' || trial.status_label === 'Recruiting';
-    const phase       = phaseLabel(trial);
-    const phaseCol    = phaseColor(trial.phase);
-    const hasPay      = trial.has_compensation;
-    const payAmt      = trial.compensation_amount || '';
-    const duration    = trial.ai_estimated_duration || '';
-    const sponsor     = trial.lead_sponsor || '';
+      search?.addEventListener('input', debounce(handler, 300));
+      location?.addEventListener('change', handler);
+      phase?.addEventListener('change', handler);
+      compensation?.addEventListener('change', handler);
 
-    return `
-      <article class="group relative bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-[0_32px_64px_-20px_rgba(0,163,129,0.15)] flex flex-col">
+      prev?.addEventListener('click', () => { if (this.currentPage > 1) { this.currentPage--; this.load(); }});
+      next?.addEventListener('click', () => { if (this.currentPage < this.totalPages) { this.currentPage++; this.load(); }});
+    }
 
-        <!-- Top accent stripe -->
-        <div class="h-1 w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+    async load() {
+      this.setState('loading');
+      
+      try {
+        const data = await TrialsService.getTrials({
+          ...this.currentFilters,
+          page: this.currentPage
+        });
 
-        <!-- Glow -->
-        <div class="absolute -top-20 -right-20 w-52 h-52 bg-accent/[0.05] rounded-full blur-[80px] group-hover:bg-accent/[0.12] transition-all duration-700 pointer-events-none"></div>
-
-        <div class="relative z-10 p-8 flex flex-col h-full gap-6">
-
-          <!-- Row 1: Status + Phase badges -->
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-black uppercase tracking-[0.18em] px-4 py-2 rounded-full ${isRecruiting ? 'bg-accent text-white' : 'bg-slate-100 text-slate-500'}">
-              ${isRecruiting ? (lang === 'en' ? 'Recruiting' : 'Reclutando') : (trial.status_label || 'Active')}
-            </span>
-            <span class="text-[10px] font-black uppercase tracking-[0.18em] text-${phaseCol}-600 bg-${phaseCol}-50 border border-${phaseCol}-100 px-3 py-1.5 rounded-full">
-              ${phase}
-            </span>
-          </div>
-
-          <!-- Row 2: Drug tags -->
-          ${tags.length ? `
-          <div class="flex flex-wrap gap-1.5">
-            ${tags.map(t => `<span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-accent/5 text-accent border border-accent/10">${t}</span>`).join('')}
-          </div>` : ''}
-
-          <!-- Row 3: Title + Summary -->
-          <div class="flex-1 space-y-3">
-            <h3 class="text-xl font-black text-primary group-hover:text-accent transition-colors leading-[1.25] tracking-tight">
-              ${trial.title}
-            </h3>
-            <p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
-              ${summary}
-            </p>
-          </div>
-
-          <!-- Row 4: Key facts -->
-          <div class="space-y-2.5">
-            <!-- Eligibility -->
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
-              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Who qualifies' : 'Quién califica'}</div>
-                <div class="text-sm font-bold text-slate-700 truncate">${must.length ? must[0] : (trial.eligibility_age_range || 'Adults 18+')}</div>
-              </div>
-            </div>
-
-            <!-- Location -->
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
-              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Location' : 'Ubicación'}</div>
-                <div class="text-sm font-bold text-slate-700 truncate">${city}</div>
-              </div>
-            </div>
-
-            <!-- Compensation (highlighted if paid) -->
-            ${hasPay ? `
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-200 transition-all duration-300">
-              <div class="w-9 h-9 rounded-xl bg-white border border-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <div class="text-[9px] font-black uppercase tracking-widest text-emerald-600">${lang === 'en' ? 'You get paid' : 'Te pagan'}</div>
-                <div class="text-sm font-black text-emerald-700 truncate">${payAmt || (lang === 'en' ? 'Ask for details' : 'Consultar')}</div>
-              </div>
-            </div>` : `
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 transition-all duration-300">
-              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-              </div>
-              <div>
-                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Cost' : 'Costo'}</div>
-                <div class="text-sm font-bold text-slate-600">${lang === 'en' ? 'Free – no payment' : 'Gratis – sin pago'}</div>
-              </div>
-            </div>`}
-          </div>
-
-          <!-- Row 5: CTA -->
-          <div class="flex items-center gap-3 pt-2">
-            <button
-              onclick="openLeadModal('${trial.nct_id}', \`${trial.title?.replace(/`/g, "'")}\`)"
-              class="flex-1 inline-flex items-center justify-center gap-2 py-4 rounded-2xl bg-accent text-white font-black text-xs uppercase tracking-[0.25em] hover:bg-primary transition-all duration-300 shadow-lg shadow-accent/20 hover:shadow-primary/20 active:scale-95">
-              ${lang === 'en' ? '⚡ Apply Now' : '⚡ Aplicar Ahora'}
-            </button>
-            <a href="/trial/${trial.nct_id}" class="w-12 h-12 flex-shrink-0 inline-flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:border-accent hover:text-accent transition-all duration-300">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-              </svg>
-            </a>
-          </div>
-
-        </div>
-      </article>
-    `;
-  }
-
-  /* ── API + state ──────────────────────────────────────────────────── */
-  async function fetchTrials(page = 1, filters = {}) {
-    showLoading();
-    try {
-      const params = new URLSearchParams({ page, pageSize: '9' });
-      if (filters.q)          params.set('q', filters.q);
-      if (filters.location)   params.set('location', filters.location);
-      if (filters.phase)      params.set('phase', filters.phase);
-      if (filters.compensation !== undefined) params.set('compensation', filters.compensation);
-
-      const res  = await fetch(`/api/trials?${params}`);
-      const data = await res.json();
-
-      if (data.trials?.length) {
-        renderTrials(data.trials);
-        updateStats(data.trials.length, data.total);
-        currentPage = data.page;
-        totalPages  = data.totalPages || 1;
-        updatePagination();
-      } else {
-        showEmpty();
+        if (data.trials && data.trials.length > 0) {
+          this.totalPages = data.totalPages;
+          this.render(data);
+          this.setState('results');
+        } else {
+          this.setState('empty');
+        }
+      } catch (error) {
+        console.error('Error loading trials:', error);
+        this.setState('empty');
       }
-    } catch(e) {
-      console.error(e);
-      showEmpty();
+    }
+
+    setState(state) {
+      this.loading.classList.toggle('hidden', state !== 'loading');
+      this.grid.classList.toggle('hidden', state !== 'results');
+      this.empty.classList.toggle('hidden', state !== 'empty');
+      this.pagination.classList.toggle('hidden', state !== 'results' || this.totalPages <= 1);
+    }
+
+    render(data) {
+      this.grid.innerHTML = data.trials.map(trial => this.getCardTemplate(trial)).join('');
+      
+      this.pageInfo.textContent = `${this.lang === 'en' ? 'Page' : 'Página'} ${data.page} / ${data.totalPages}`;
+      document.getElementById('prev-page').disabled = data.page <= 1;
+      document.getElementById('next-page').disabled = data.page >= data.totalPages;
+
+      this.stats.innerHTML = `
+        <span class="text-xs font-medium text-slate-500">
+          ${this.lang === 'en'
+            ? `Showing <strong>${data.trials.length}</strong> of <strong>${data.total}</strong> active weight loss trials`
+            : `Mostrando <strong>${data.trials.length}</strong> de <strong>${data.total}</strong> ensayos activos`}
+        </span>
+      `;
+    }
+
+    getCardTemplate(trial) {
+      const isRecruiting = trial.overall_status === 'RECRUITING' || trial.status_label === 'Recruiting';
+      const city = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || 'Various Locations';
+      const phaseMap = { PHASE3:'emerald', PHASE2:'blue', PHASE1:'amber', PHASE4:'teal', NA:'slate' };
+      const phaseCol = phaseMap[trial.phase] || 'slate';
+      
+      return `
+        <article class="group relative bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-xl flex flex-col h-full">
+          <div class="h-1 w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="p-8 flex flex-col h-full gap-6">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full ${isRecruiting ? 'bg-accent text-white' : 'bg-slate-100 text-slate-500'}">
+                ${isRecruiting ? (this.lang === 'en' ? 'Recruiting' : 'Reclutando') : 'Active'}
+              </span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-${phaseCol}-600 bg-${phaseCol}-50 px-3 py-1.5 rounded-full border border-${phaseCol}-100">
+                ${trial.phase_label || trial.phase}
+              </span>
+            </div>
+            
+            <div class="flex-1 space-y-3">
+              <h3 class="text-xl font-black text-primary group-hover:text-accent transition-colors line-clamp-2">${trial.title}</h3>
+              <p class="text-slate-500 text-sm line-clamp-3">${trial.ai_summary || trial.brief_summary}</p>
+            </div>
+            
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="text-accent">📍</div>
+                <div class="text-[11px] font-black uppercase tracking-tighter text-slate-400 mr-auto">${this.lang === 'en' ? 'Location' : 'Ciudad'}</div>
+                <div class="text-xs font-bold text-slate-700">${city}</div>
+              </div>
+              ${trial.has_compensation ? `
+                <div class="flex items-center gap-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
+                  <div class="text-emerald-500">💰</div>
+                  <div class="text-[11px] font-black uppercase tracking-tighter text-emerald-600 mr-auto">${this.lang === 'en' ? 'Compensation' : 'Pago'}</div>
+                  <div class="text-xs font-black text-emerald-700">${trial.compensation_amount || (this.lang === 'en' ? '$500+' : '$500+')}</div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="flex gap-2 pt-2">
+              <button onclick="openLeadModal('${trial.nct_id}', \`${trial.title.replace(/'/g, "")}\`)" class="flex-1 py-4 rounded-2xl bg-accent text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-lg shadow-accent/20">
+                 ${this.lang === 'en' ? '⚡ Apply' : '⚡ Aplicar'}
+              </button>
+              <a href="/trial/${trial.nct_id}" class="w-12 h-12 flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:text-accent hover:border-accent transition-all">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                 </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
     }
   }
 
-  function showLoading() {
-    trialsGrid.classList.add('hidden');
-    emptyState.classList.add('hidden');
-    pagination.classList.add('hidden');
-    loadingState.classList.remove('hidden');
-  }
-
-  function showEmpty() {
-    loadingState.classList.add('hidden');
-    trialsGrid.classList.add('hidden');
-    pagination.classList.add('hidden');
-    emptyState.classList.remove('hidden');
-  }
-
-  function renderTrials(trials) {
-    loadingState.classList.add('hidden');
-    emptyState.classList.add('hidden');
-    trialsGrid.classList.remove('hidden');
-    pagination.classList.remove('hidden');
-    trialsGrid.innerHTML = trials.map(renderCard).join('');
-  }
-
-  function updateStats(visible, total) {
-    statsBar.innerHTML = `
-      <span class="text-xs font-medium text-slate-500">
-        ${lang === 'en'
-          ? `Showing <strong>${visible}</strong> of <strong>${total || '?'}</strong> active weight loss trials`
-          : `Mostrando <strong>${visible}</strong> de <strong>${total || '?'}</strong> ensayos activos`}
-      </span>
-      
-    `;
-  }
-
-  function updatePagination() {
-    pageInfo.textContent = `${lang === 'en' ? 'Page' : 'Página'} ${currentPage} / ${totalPages}`;
-    prevBtn.disabled = currentPage <= 1;
-    nextBtn.disabled = currentPage >= totalPages;
-    if (totalPages <= 1) pagination.classList.add('hidden');
-  }
-
-  function debounce(fn, ms) {
-    let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
-  }
-
-  function handleFilterChange() {
-    currentFilters = {
-      q: searchInput.value,
-      location: locationFilter.value,
-      phase: phaseFilter.value,
-      compensation: compensationFilter.value === '' ? undefined : compensationFilter.value
-    };
-    currentPage = 1;
-    fetchTrials(currentPage, currentFilters);
-  }
-
-  searchInput?.addEventListener('input', debounce(handleFilterChange, 300));
-  locationFilter?.addEventListener('change', handleFilterChange);
-  phaseFilter?.addEventListener('change', handleFilterChange);
-  compensationFilter?.addEventListener('change', handleFilterChange);
-  prevBtn?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; fetchTrials(currentPage, currentFilters); }});
-  nextBtn?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; fetchTrials(currentPage, currentFilters); }});
-
-  fetchTrials();
-</script>
-
-<!-- Quick-Apply Modal -->
-<div id="lead-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-  <!-- Backdrop -->
-  <div id="modal-backdrop" class="absolute inset-0 bg-primary/60 backdrop-blur-sm" onclick="closeLeadModal()"></div>
-  <!-- Card -->
-  <div class="relative bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl z-10">
-    <button onclick="closeLeadModal()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-
-    <!-- Header -->
-    <div id="modal-form-view">
-      <div class="mb-6">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest mb-3">
-          <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-          {lang === 'en' ? 'Free Pre-Screening' : 'Pre-Cribado Gratis'}
-        </div>
-        <h3 class="text-xl font-black text-primary mb-1">{lang === 'en' ? 'Check if you qualify' : '¿Calificas?'}</h3>
-        <p id="modal-trial-title" class="text-xs text-slate-400 line-clamp-2"></p>
-      </div>
-
-      <form id="modal-form" class="space-y-3">
-        <input type="hidden" id="modal-trial-id" name="trialId">
-        <input type="hidden" id="modal-trial-title-hidden" name="trialTitle">
-        <div class="grid grid-cols-2 gap-3">
-          <input type="text" name="firstName" placeholder={lang === 'en' ? 'First name *' : 'Nombre *'} required
-            class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent text-sm transition-all">
-          <input type="text" name="lastName" placeholder={lang === 'en' ? 'Last name' : 'Apellido'}
-            class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent text-sm transition-all">
-        </div>
-        <input type="tel" name="phone" placeholder={lang === 'en' ? 'Phone *' : 'Teléfono *'} required
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent text-sm transition-all">
-        <input type="email" name="email" placeholder={lang === 'en' ? 'Email *' : 'Correo *'} required
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent text-sm transition-all">
-        <select name="city"
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent text-sm transition-all appearance-none">
-          <option value="">{lang === 'en' ? 'Your city' : 'Tu ciudad'}</option>
-          <option value="New York, NY">🗽 New York, NY</option>
-          <option value="Miami, FL">🌴 Miami, FL</option>
-          <option value="Houston, TX">🚀 Houston, TX</option>
-          <option value="Los Angeles, CA">🌆 Los Angeles, CA</option>
-          <option value="San Francisco, CA">🌉 San Francisco, CA</option>
-        </select>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" name="consent" required class="mt-0.5 w-4 h-4 rounded border-slate-300 text-accent focus:ring-accent flex-shrink-0">
-          <span class="text-[11px] text-slate-500 leading-relaxed">
-            {lang === 'en'
-              ? 'I agree to be contacted about clinical trials. Not medical advice.'
-              : 'Acepto ser contactado sobre ensayos clínicos. No es consejo médico.'}
-          </span>
-        </label>
-        <button type="submit" id="modal-submit-btn"
-          class="w-full py-4 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-wider hover:bg-primary transition-all shadow-lg shadow-accent/20 disabled:opacity-40">
-          {lang === 'en' ? 'Submit & Check Eligibility' : 'Enviar y Verificar'}
-        </button>
-      </form>
-    </div>
-
-    <!-- Success state -->
-    <div id="modal-success-view" class="hidden text-center py-4">
-      <div class="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-primary mb-2">
-        {lang === 'en' ? "You're on the list!" : '¡Estás en la lista!'}
-      </h3>
-      <p class="text-slate-500 text-sm mb-6">
-        {lang === 'en'
-          ? 'Our team will call you within 24 hours to confirm your eligibility and schedule your free screening visit.'
-          : 'Nuestro equipo te llamará en 24 horas para confirmar tu elegibilidad y agendar tu visita de cribado gratuita.'}
-      </p>
-      <button onclick="closeLeadModal()"
-        class="px-6 py-3 rounded-xl bg-accent text-white font-black text-xs uppercase tracking-wider hover:bg-primary transition-all">
-        {lang === 'en' ? 'Done' : 'Listo'}
-      </button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Modal helpers — global so renderCard can call them
-  window.openLeadModal = function(trialId, trialTitle) {
-    document.getElementById('modal-trial-id').value = trialId;
-    document.getElementById('modal-trial-title-hidden').value = trialTitle;
-    document.getElementById('modal-trial-title').textContent = trialTitle;
-    document.getElementById('modal-form-view').classList.remove('hidden');
-    document.getElementById('modal-success-view').classList.add('hidden');
-    document.getElementById('modal-form').reset();
-    const modal = document.getElementById('lead-modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-  };
-
-  window.closeLeadModal = function() {
-    const modal = document.getElementById('lead-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = '';
-  };
-
-  document.getElementById('modal-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('modal-submit-btn');
-    btn.disabled = true;
-    btn.textContent = '…';
-
-    const fd = new FormData(e.target);
-    const payload = {
-      firstName: fd.get('firstName'),
-      lastName: fd.get('lastName') || '',
-      email: fd.get('email'),
-      phone: fd.get('phone'),
-      city: fd.get('city') || '',
-      trialId: fd.get('trialId') || '',
-      trialTitle: fd.get('trialTitle') || '',
-    };
-
-    try {
-      await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (_) {}
-
-    document.getElementById('modal-form-view').classList.add('hidden');
-    document.getElementById('modal-success-view').classList.remove('hidden');
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') window.closeLeadModal?.();
-  });
+  // Initialize
+  const lang = document.documentElement.lang || 'en';
+  new TrialsManager(lang);
 </script>
 
 <style>
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
