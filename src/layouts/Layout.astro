@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import ChatBot from '../components/ChatBot.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -44,5 +45,6 @@ const { title, description = "Echelon Studies - Clinical Trial Patient Recruitme
 	</head>
 	<body class="min-h-screen bg-background text-foreground selection:bg-primary/30 antialiased">
 		<slot />
+		<ChatBot lang={lang === 'es' ? 'es' : 'en'} />
 	</body>
 </html>

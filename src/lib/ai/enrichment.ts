@@ -6,10 +6,18 @@
 
 import OpenAI from "openai";
 
-// Inicializar cliente OpenAI (la API key se debe configurar en env vars)
+// Providers configuration
+const isGroq = !!(import.meta.env.GROQ_API_KEY || process.env.GROQ_API_KEY);
+
 const openai = new OpenAI({
-  apiKey: import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY
+  apiKey: isGroq
+    ? (import.meta.env.GROQ_API_KEY || process.env.GROQ_API_KEY)
+    : (import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY),
+  baseURL: isGroq ? "https://api.groq.com/openai/v1" : undefined
 });
+
+const DEFAULT_MODEL = isGroq ? "llama-3.3-70b-versatile" : "gpt-4o-mini";
+const CHAT_MODEL = isGroq ? "llama-3.3-70b-versatile" : "gpt-4o";
 
 export interface EnrichedTrialData {
   // Resumen en lenguaje simple
@@ -54,7 +62,7 @@ export async function enrichTrialWithAI(
   const protocol = trialData.protocolSection;
   const description = protocol.descriptionModule;
   const eligibility = protocol.eligibilityModule;
-  
+
   // Preparar el prompt con toda la información del estudio
   const studyInfo = `
 Title: ${protocol.identificationModule?.briefTitle || "N/A"}
@@ -83,7 +91,7 @@ Age: ${eligibility?.minimumAge || "N/A"} - ${eligibility?.maximumAge || "N/A"}
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Modelo rápido y económico
+      model: DEFAULT_MODEL, // Modelo rápido y económico
       messages: [
         {
           role: "system",
@@ -147,7 +155,7 @@ export async function generateEligibilitySummary(
 ): Promise<{ inclusion: string[]; exclusion: string[] }> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
@@ -192,14 +200,14 @@ export async function preScreenEligibility(
   recommendation: string;
 }> {
   const eligibilityText = trialData.protocolSection?.eligibilityModule?.eligibilityCriteria || "";
-  
+
   const userProfile = Object.entries(userAnswers)
     .map(([q, a]) => `${q}: ${a}`)
     .join("\n");
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
@@ -249,16 +257,16 @@ export async function generateExpertResponse(
   context?: { trials?: any[]; userLocation?: string }
 ): Promise<string> {
   let contextPrompt = "";
-  
+
   if (context?.trials && context.trials.length > 0) {
-    contextPrompt = `\n\nRELEVANT CLINICAL TRIALS IN DATABASE:\n${context.trials.slice(0, 5).map((t, i) => 
+    contextPrompt = `\n\nRELEVANT CLINICAL TRIALS IN DATABASE:\n${context.trials.slice(0, 5).map((t, i) =>
       `${i + 1}. ${t.protocolSection?.identificationModule?.briefTitle} (${t.protocolSection?.identificationModule?.nctId})`
     ).join("\n")}`;
   }
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: CHAT_MODEL,
       messages: [
         {
           role: "system",
@@ -283,7 +291,7 @@ Keep responses concise (2-4 paragraphs) and actionable.`.trim()
       max_tokens: 500
     });
 
-    return response.choices[0]?.message?.content || 
+    return response.choices[0]?.message?.content ||
       "I apologize, I couldn't generate a response. Please try rephrasing your question.";
   } catch (error) {
     return "I'm having trouble connecting right now. Please try again in a moment.";
@@ -295,7 +303,7 @@ Keep responses concise (2-4 paragraphs) and actionable.`.trim()
 function getFallbackEnrichment(trialData: any): EnrichedTrialData {
   const protocol = trialData.protocolSection;
   const eligibility = protocol?.eligibilityModule;
-  
+
   return {
     summary: protocol?.descriptionModule?.briefSummary || "No summary available",
     eligibilitySummary: {
@@ -324,9 +332,9 @@ function parseEligibilityManually(criteria: string): { inclusion: string[]; excl
   const lines = criteria.split(/\n/);
   const inclusion: string[] = [];
   const exclusion: string[] = [];
-  
+
   let currentSection: "inclusion" | "exclusion" | null = null;
-  
+
   for (const line of lines) {
     const lower = line.toLowerCase();
     if (lower.includes("inclusion")) {
@@ -340,6 +348,6 @@ function parseEligibilityManually(criteria: string): { inclusion: string[]; excl
       }
     }
   }
-  
+
   return { inclusion, exclusion };
 }
