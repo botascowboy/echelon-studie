@@ -94,18 +94,17 @@ const { lang = "en" } = Astro.props;
     <!-- City pills -->
     <div class="flex flex-wrap items-center justify-center gap-2 pb-14">
       {[
-        { name: 'New York', short: 'NYC', icon: '🗽', val: 'New York, NY' },
-        { name: 'Miami', short: 'Miami', icon: '🌴', val: 'Miami, FL' },
-        { name: 'Houston', short: 'Houston', icon: '🚀', val: 'Houston, TX' },
-        { name: 'Los Angeles', short: 'LA', icon: '🌆', val: 'Los Angeles, CA' },
-        { name: 'San Francisco', short: 'SF', icon: '🌉', val: 'San Francisco, CA' },
+        { name: 'New York', short: 'NYC', icon: '🗽', id: 'nyc' },
+        { name: 'Miami', short: 'Miami', icon: '🌴', id: 'miami' },
+        { name: 'Houston', short: 'Houston', icon: '🚀', id: 'houston' },
+        { name: 'Los Angeles', short: 'LA', icon: 'losangeles' },
+        { name: 'San Francisco', short: 'SF', icon: 'sanfrancisco' },
       ].map((city) => (
         <a
-          href="#trials"
-          onclick={`event.preventDefault();var el=document.getElementById('location-filter');if(el){el.value='${city.val}';el.dispatchEvent(new Event('change'));}document.getElementById('trials')?.scrollIntoView({behavior:'smooth'});`}
+          href={`/${lang}/city/${city.id}`}
           class="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-slate-200 bg-white hover:border-accent hover:bg-accent/5 transition-all text-sm font-semibold text-slate-600 hover:text-accent"
         >
-          <span>{city.icon}</span>
+          <span>{city.name === 'Los Angeles' ? '🌆' : city.name === 'San Francisco' ? '🌉' : city.icon}</span>
           <span>{city.short}</span>
         </a>
       ))}

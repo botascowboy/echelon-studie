@@ -1,7 +1,4 @@
-/**
- * Lead store — in-memory storage for captured leads.
- * In production, replace with a D1 database or external CRM.
- */
+import { db } from './db';
 
 export type LeadStatus =
   | 'new'
@@ -13,57 +10,80 @@ export type LeadStatus =
 
 export interface Lead {
   id: string;
-  createdAt: string; // ISO
-  // Contact
+  createdAt: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   city: string;
-  // Pre-screen answers
   age: string;
   bmi: string;
   conditions: string[];
   currentMeds: string;
-  // Trial context
   trialId?: string;
   trialTitle?: string;
-  // Pipeline
   status: LeadStatus;
   notes: string;
-  // Score
-  qualityScore: number; // 0–100
+  qualityScore: number;
 }
 
-// Module-level store — persists across requests in the same worker instance
-const leadsStore: Lead[] = [];
+export async function addLead(data: Omit<Lead, 'id' | 'createdAt' | 'status' | 'notes'>): Promise<Lead> {
+  const id = crypto.randomUUID();
+  const createdAt = new Date().toISOString();
+  const status = 'new';
+  const notes = '';
 
-export function addLead(data: Omit<Lead, 'id' | 'createdAt' | 'status' | 'notes'>): Lead {
-  const lead: Lead = {
-    ...data,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-    status: 'new',
-    notes: '',
-  };
-  leadsStore.unshift(lead); // newest first
-  return lead;
+  await db.execute({
+    sql: `INSERT INTO leads (
+      id, created_at, first_name, last_name, email, phone, city, 
+      age, bmi, conditions, current_meds, trial_id, trial_title, 
+      status, notes, quality_score
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [
+      id, createdAt, data.firstName, data.lastName, data.email, data.phone, data.city,
+      data.age, data.bmi, JSON.stringify(data.conditions), data.currentMeds, data.trialId || null, data.trialTitle || null,
+      status, notes, data.qualityScore
+    ]
+  });
+
+  return { ...data, id, createdAt, status, notes };
 }
 
-export function getLeads(): Lead[] {
-  return leadsStore;
+export async function getLeads(): Promise<Lead[]> {
+  const result = await db.execute('SELECT * FROM leads ORDER BY created_at DESC');
+  return result.rows.map(row => ({
+    id: row.id as string,
+    createdAt: row.created_at as string,
+    firstName: row.first_name as string,
+    lastName: row.last_name as string,
+    email: row.email as string,
+    phone: row.phone as string,
+    city: row.city as string,
+    age: row.age as string,
+    bmi: row.bmi as string,
+    conditions: JSON.parse(row.conditions as string || '[]'),
+    currentMeds: row.current_meds as string,
+    trialId: row.trial_id as string | undefined,
+    trialTitle: row.trial_title as string | undefined,
+    status: row.status as LeadStatus,
+    notes: row.notes as string,
+    qualityScore: Number(row.quality_score)
+  }));
 }
 
-export function getLead(id: string): Lead | undefined {
-  return leadsStore.find(l => l.id === id);
-}
-
-export function updateLeadStatus(id: string, status: LeadStatus, notes?: string): Lead | null {
-  const lead = leadsStore.find(l => l.id === id);
-  if (!lead) return null;
-  lead.status = status;
-  if (notes !== undefined) lead.notes = notes;
-  return lead;
+export async function updateLeadStatus(id: string, status: LeadStatus, notes?: string): Promise<boolean> {
+  if (notes !== undefined) {
+    await db.execute({
+      sql: 'UPDATE leads SET status = ?, notes = ? WHERE id = ?',
+      args: [status, notes, id]
+    });
+  } else {
+    await db.execute({
+      sql: 'UPDATE leads SET status = ? WHERE id = ?',
+      args: [status, id]
+    });
+  }
+  return true;
 }
 
 /** Simple quality score based on pre-screen answers */
@@ -74,17 +94,14 @@ export function scoreLead(answers: {
 }): number {
   let score = 50;
 
-  // BMI scoring
   if (answers.bmi === 'obese') score += 30;
   else if (answers.bmi === 'overweight') score += 15;
   else if (answers.bmi === 'normal') score -= 20;
 
-  // Disqualifying conditions
   const disqualifiers = ['type-1-diabetes', 'thyroid-cancer', 'eating-disorder', 'history-of-pancreatitis'];
   const hasDisqualifier = answers.conditions?.some(c => disqualifiers.includes(c));
   if (hasDisqualifier) score -= 30;
 
-  // Already on GLP-1 = usually excluded from GLP-1 trials
   if (answers.currentMeds === 'glp1') score -= 20;
   if (answers.currentMeds === 'none') score += 10;
 

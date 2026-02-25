@@ -16,7 +16,7 @@ export async function POST({ request }: APIContext) {
       );
     }
 
-    const lead = LeadService.create(result.data);
+    const lead = await LeadService.create(result.data);
 
     return new Response(
       JSON.stringify({ success: true, id: lead.id, qualityScore: lead.qualityScore }),
@@ -46,8 +46,8 @@ export async function GET({ request }: APIContext) {
   const maxScore = url.searchParams.get('maxScore') ? parseInt(url.searchParams.get('maxScore')!) : undefined;
   const city = url.searchParams.get('city') || undefined;
 
-  const leads = LeadService.getAll({ status, minScore, maxScore, city });
-  const stats = LeadService.getStats();
+  const leads = await LeadService.getAll({ status, minScore, maxScore, city });
+  const stats = await LeadService.getStats();
 
   return new Response(
     JSON.stringify({ leads, stats, total: leads.length }),
@@ -75,7 +75,7 @@ export async function PATCH({ request }: APIContext) {
   }
 
   const { id, status, notes } = result.data;
-  const updated = LeadService.updateStatus(id, status, notes);
+  const updated = await LeadService.updateStatus(id, status, notes);
 
   if (!updated) {
     return new Response(JSON.stringify({ error: 'Lead not found' }), { status: 404 });

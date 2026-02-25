@@ -9,8 +9,8 @@ export interface LeadFilters {
 }
 
 export class LeadService {
-    static getAll(filters: LeadFilters = {}) {
-        let leads = getLeads();
+    static async getAll(filters: LeadFilters = {}) {
+        let leads = await getLeads();
 
         if (filters.status && filters.status !== 'all') {
             leads = leads.filter(l => l.status === filters.status);
@@ -32,25 +32,25 @@ export class LeadService {
         return leads;
     }
 
-    static create(data: any) {
+    static async create(data: any) {
         const qualityScore = scoreLead({
             bmi: data.bmi || 'normal',
             conditions: data.conditions || [],
             currentMeds: data.currentMeds || 'none'
         });
 
-        return addLead({
+        return await addLead({
             ...data,
             qualityScore
         });
     }
 
-    static updateStatus(id: string, status: LeadStatus, notes?: string) {
-        return updateLeadStatus(id, status, notes);
+    static async updateStatus(id: string, status: LeadStatus, notes?: string) {
+        return await updateLeadStatus(id, status, notes);
     }
 
-    static getStats() {
-        const leads = getLeads();
+    static async getStats() {
+        const leads = await getLeads();
         const byStatus = (s: LeadStatus) => leads.filter(l => l.status === s).length;
 
         return {

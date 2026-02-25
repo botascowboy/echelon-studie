@@ -1,0 +1,110 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import InteractiveMap from '../../../components/InteractiveMap.astro';
+import StudiesGrid from '../../../components/StudiesGrid.astro';
+import Contact from '../../../components/Contact.astro';
+import { TARGET_CITIES, getCityConfig } from '../../../lib/config';
+
+export function getStaticPaths() {
+  const paths = [];
+  const langs = ['en', 'es'];
+  
+  for (const lang of langs) {
+    for (const city of TARGET_CITIES) {
+      paths.push({
+        params: { lang, id: city.id },
+        props: { city, lang }
+      });
+    }
+  }
+  return paths;
+}
+
+// Support both SSG props and SSR params
+const { lang: propLang, city: propCity } = Astro.props;
+const { lang: paramLang, id: cityId } = Astro.params;
+
+const lang = (propLang || paramLang || 'en') as 'en' | 'es';
+const city = propCity || getCityConfig(cityId || '');
+
+if (!city) {
+    return Astro.redirect(`/${lang}`);
+}
+
+const title = lang === 'en' 
+    ? `Clinical Trials in ${city.name}, ${city.state} | Echelon Studies`
+    : `Ensayos Clínicos en ${city.name}, ${city.state} | Echelon Studies`;
+
+const description = lang === 'en'
+    ? `Find and join active weight loss clinical trials in ${city.name}. Access next-gen medicine and get compensated for your time.`
+    : `Encuentra y únete a ensayos clínicos de pérdida de peso en ${city.name}. Accede a medicina de vanguardia y recibe compensación.`;
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <Header lang={lang} />
+  
+  <main class="pt-20">
+    <!-- Local Hero -->
+    <section class="relative bg-primary pt-20 pb-24 overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #00a381 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="container mx-auto px-4 relative z-10 text-center" transition:animate="fade">
+            <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/10 rounded-full border border-white/10">
+                <span class="text-accent text-sm">📍</span>
+                <span class="text-white/80 text-[10px] font-black uppercase tracking-widest">{city.name} Local Registry</span>
+            </div>
+            <h1 class="text-4xl md:text-7xl font-black text-white mb-6 leading-tight">
+                {lang === 'en' ? 'Clinical Trials in' : 'Ensayos Clínicos en'} <br/>
+                <span class="text-accent">{city.name}, {city.state}</span>
+            </h1>
+            <p class="text-white/60 text-xl max-w-2xl mx-auto mb-10">
+                {lang === 'en' 
+                    ? `Exclusive access to metabolic research and next-generation weight loss treatments in the ${city.displayName} area.`
+                    : `Acceso exclusivo a investigación metabólica y tratamientos de pérdida de peso de próxima generación en el área de ${city.displayName}.`}
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#trials" class="px-10 py-5 bg-accent text-white font-black rounded-2xl hover:bg-white hover:text-primary transition-all">
+                    {lang === 'en' ? 'View Local Studies' : 'Ver Estudios Locales'}
+                </a>
+                <a href="#contact" class="px-10 py-5 bg-white/10 text-white font-black rounded-2xl border border-white/20 hover:bg-white/20 transition-all">
+                    {lang === 'en' ? 'Join Local Registry' : 'Unirse al Registro Local'}
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Local Map Focus -->
+    <div transition:animate="slide">
+        <InteractiveMap lang={lang} cityId={city.id} />
+    </div>
+
+    <!-- Local Studies -->
+    <section id="trials" class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between mb-12" transition:animate="fade">
+                <div>
+                    <h2 class="text-3xl font-black text-primary">
+                        {lang === 'en' ? `Studies in ${city.name}` : `Estudios en ${city.name}`}
+                    </h2>
+                    <p class="text-slate-500 mt-2">
+                        {lang === 'en' ? 'Filter by phase, condition or drug type' : 'Filtra por fase, condición o tipo de fármaco'}
+                    </p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Live Updates</span>
+                    </div>
+                </div>
+            </div>
+            
+            <StudiesGrid lang={lang} initialLocation={city.name} />
+        </div>
+    </section>
+
+    <Contact lang={lang} />
+  </main>
+
+  <Footer lang={lang} />
+</Layout>

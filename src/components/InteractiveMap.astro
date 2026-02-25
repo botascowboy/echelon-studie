@@ -1,5 +1,9 @@
 ---
-const { lang = "en" } = Astro.props;
+const { lang = "en", cityId = null } = Astro.props;
+
+// Get city coords from config to share with script
+import { TARGET_CITIES } from '../lib/config';
+const currentCity = cityId ? TARGET_CITIES.find(c => c.id === cityId) : null;
 ---
 
 <section id="map-section" class="py-16 md:py-24 bg-slate-50 overflow-hidden">
@@ -7,31 +11,31 @@ const { lang = "en" } = Astro.props;
 
     <!-- Section heading -->
     <div class="text-center mb-12 max-w-2xl mx-auto">
-      <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5" data-city-focus={cityId}>
         <span class="text-[11px] font-black uppercase tracking-[0.2em] text-accent">
-          {lang === 'en' ? 'Live Study Network' : 'Red de Estudios en Vivo'}
+          {cityId ? `${currentCity?.name} Local Network` : (lang === 'en' ? 'Live Study Network' : 'Red de Estudios en Vivo')}
         </span>
       </div>
       <h2 class="text-3xl md:text-5xl font-extrabold mb-5 tracking-tight text-slate-900">
-        {lang === 'en' ? 'Nationwide' : 'Cobertura'} <span style="color:#00a381">{lang === 'en' ? 'Coverage' : 'Nacional'}</span>
+        {cityId ? currentCity?.name : (lang === 'en' ? 'Nationwide' : 'Cobertura')} <span style="color:#00a381">{cityId ? currentCity?.state : (lang === 'en' ? 'Coverage' : 'Nacional')}</span>
       </h2>
       <p class="text-slate-500 text-lg font-medium leading-relaxed">
         {lang === 'en'
-          ? 'Explore all individual clinical trials across the United States. Clustered by city for easier navigation.'
-          : 'Explora cada uno de los ensayos clínicos individuales en todo Estados Unidos. Agrupados por ciudad para una navegación más sencilla.'}
+          ? `Explore active clinical trials in ${cityId ? currentCity?.name : 'the United States'}. Real-time site mapping.`
+          : `Explora ensayos clínicos activos en ${cityId ? currentCity?.name : 'Estados Unidos'}. Mapeo en tiempo real.`}
       </p>
     </div>
 
     <!-- Map card -->
     <div class="relative w-full max-w-6xl mx-auto bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden" style="height: 700px;">
-      <div id="leaflet-map" class="w-full h-full z-10"></div>
+      <div id="leaflet-map" class="w-full h-full z-10" data-focus-lat={currentCity?.lat} data-focus-lng={currentCity?.lng} data-focus-zoom={cityId ? 11 : 4}></div>
       
       <!-- Overlay Loader -->
       <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-4 font-bold text-slate-600 animate-pulse">
-                {lang === 'en' ? 'Loading all active trials...' : 'Cargando todos los ensayos...'}
+                {lang === 'en' ? 'Loading local network...' : 'Cargando red local...'}
             </p>
         </div>
       </div>
@@ -49,22 +53,23 @@ const { lang = "en" } = Astro.props;
   import L from 'leaflet';
   import 'leaflet.markercluster';
 
-  async function initLeafletMap() {
+  function initLeafletMap() {
     const mapEl = document.getElementById('leaflet-map');
     if (!mapEl || (mapEl as any)._leaflet_id) return;
 
-    // Center of US
+    const lat = parseFloat(mapEl.getAttribute('data-focus-lat') || '39.8283');
+    const lng = parseFloat(mapEl.getAttribute('data-focus-lng') || '-98.5795');
+    const zoom = parseInt(mapEl.getAttribute('data-focus-zoom') || '4');
+
     const map = L.map('leaflet-map', {
-        center: [39.8283, -98.5795],
-        zoom: 4,
+        center: [lat, lng],
+        zoom: zoom,
         zoomControl: false,
         attributionControl: false
     });
 
-    // Add zoom control to bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // High-end clean tile provider
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19
     }).addTo(map);
@@ -74,25 +79,17 @@ const { lang = "en" } = Astro.props;
         zoomToBoundsOnClick: true,
         spiderfyOnMaxZoom: true,
         maxClusterRadius: 40,
-        // Custom cluster icon to match Echelon branding
         iconCreateFunction: function(cluster) {
             const childCount = cluster.getChildCount();
-            let c = ' marker-cluster-';
-            if (childCount < 10) { c += 'small'; }
-            else if (childCount < 50) { c += 'medium'; }
-            else { c += 'large'; }
-
             return new L.DivIcon({ 
                 html: `<div class="echelon-cluster"><span>${childCount}</span></div>`, 
-                className: 'marker-cluster' + c, 
+                className: 'marker-cluster', 
                 iconSize: new L.Point(40, 40) 
             });
         }
     });
 
-    try {
-      const res = await fetch('/api/trials?pageSize=100');
-      const data = await res.json();
+    fetch('/api/trials?pageSize=100').then(res => res.json()).then(data => {
       const trials = data.trials || [];
       const loader = document.getElementById('map-loader');
 
@@ -113,14 +110,12 @@ const { lang = "en" } = Astro.props;
 
       trials.forEach((trial) => {
         const city = (trial.primary_location_city || '').toLowerCase();
-        let coords = null;
+        let trialCoords = null;
         
-        // Try to match city bases
         for (const [key, base] of Object.entries(CITY_COORDS)) {
             if (city.includes(key)) {
-                // Apply slight random jitter within the city so markers don't overlap perfectly
                 const jitter = 0.05;
-                coords = {
+                trialCoords = {
                     lat: base.lat + (Math.random() - 0.5) * jitter,
                     lng: base.lng + (Math.random() - 0.5) * jitter
                 };
@@ -128,44 +123,33 @@ const { lang = "en" } = Astro.props;
             }
         }
 
-        if (coords) {
+        if (trialCoords) {
             const popupContent = `
                 <div class="p-2 min-w-[200px] font-sans">
                     <div class="text-[9px] font-black text-accent uppercase tracking-widest mb-1">${trial.nct_id}</div>
                     <div class="text-sm font-bold text-slate-900 mb-2 leading-tight">${trial.title}</div>
                     <div class="text-[11px] text-slate-500 font-bold mb-3 flex items-center gap-1">
-                        <span>📍</span> ${trial.primary_location_city}, ${trial.primary_location_state}
+                        <span>📍</span> ${trial.primary_location_city}
                     </div>
                     <a href="/trial/${trial.nct_id}" class="block w-full text-center py-2 bg-accent text-white rounded-lg text-xs font-bold hover:bg-accent-dark transition-colors no-underline">
                         View Study Details
                     </a>
                 </div>
             `;
-
-            const marker = L.marker([coords.lat, coords.lng], { icon: emeraldIcon })
-                .bindPopup(popupContent, {
-                    className: 'custom-popup',
-                    maxWidth: 300
-                });
-            
-            markers.addLayer(marker);
+            const m = L.marker([trialCoords.lat, trialCoords.lng], { icon: emeraldIcon }).bindPopup(popupContent);
+            markers.addLayer(m);
         }
       });
 
       map.addLayer(markers);
-
       if (loader) {
           loader.style.opacity = '0';
           setTimeout(() => loader.style.display = 'none', 500);
       }
-
-    } catch (e) {
-      console.error('[LeafletMap] Error:', e);
-    }
+    });
   }
 
-  // Initial load
-  document.addEventListener('DOMContentLoaded', initLeafletMap);
+  document.addEventListener('astro:page-load', initLeafletMap);
   initLeafletMap();
 </script>
 
@@ -195,7 +179,6 @@ const { lang = "en" } = Astro.props;
     border-radius: 50%;
   }
 
-  /* Custom Cluster Icon to match branding */
   .echelon-cluster {
       width: 40px;
       height: 40px;
@@ -207,34 +190,12 @@ const { lang = "en" } = Astro.props;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-family: 'Outfit', sans-serif;
-      box-shadow: 0 10px 15px -3px rgba(0, 163, 129, 0.3);
-      transition: all 0.2s ease;
-  }
-
-  .marker-cluster:hover .echelon-cluster {
-      transform: scale(1.1);
-      background: #008f71;
-  }
-
-  .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
-      background-color: transparent !important;
   }
 
   /* Custom Popup Styling */
-  .custom-popup .leaflet-popup-content-wrapper {
+  .leaflet-popup-content-wrapper {
       border-radius: 1.25rem;
       padding: 0;
       box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-      border: 1px solid #e2e8f0;
-  }
-  
-  .custom-popup .leaflet-popup-content {
-      margin: 0;
-      padding: 0;
-  }
-  
-  #leaflet-map {
-      background: #f8fafc;
   }
 </style>
