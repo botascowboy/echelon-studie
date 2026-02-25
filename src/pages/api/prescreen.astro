@@ -87,10 +87,10 @@ Be helpful and professional. If they likely qualify, be encouraging. If not, be 
     }
 
     const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
+    const assessment = JSON.parse(data.choices[0].message.content);
 
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify(assessment),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 

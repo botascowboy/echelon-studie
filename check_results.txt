@@ -1,0 +1,485 @@
+[2m23:18:22[22m [34m[@astrojs/cloudflare][39m Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+[2m23:18:22[22m [34m[@astrojs/cloudflare][39m If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+[33m[1m23:18:22[22m [WARN] [adapter][39m Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+[2m23:18:22[22m [34m[content][39m Syncing content
+[2m23:18:22[22m [34m[content][39m Synced content
+[2m23:18:22[22m [34m[types][39m Generated [2m69ms[22m
+[2m23:18:22[22m [34m[check][39m Getting diagnostics for Astro files in C:\Users\Jorge\Documents\javi...
+[96msrc/components/ChatBot.astro[0m:[93m111[0m:[93m9[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m111[0m <script define:vars={{ lang }}>
+[7m   [0m [93m        ~~~~~~~~~~~[0m
+
+[96msrc/components/Contact.astro[0m:[93m337[0m:[93m44[0m - [91merror[0m[90m ts(2339): [0mProperty 'placeholder' does not exist on type '{ label: string; name: string; type: string; required: boolean; options?: undefined; } | { label: string; name: string; type: string; options: string[]; required: boolean; } | { label: string; name: string; type: string; options: string[]; required: boolean; placeholder?: undefined; } | { ...; }'.
+  Property 'placeholder' does not exist on type '{ label: string; name: string; type: string; required: boolean; options?: undefined; }'.
+
+[7m337[0m                         placeholder={field.placeholder || ''}
+[7m   [0m [91m                                           ~~~~~~~~~~~[0m
+[96msrc/components/Contact.astro[0m:[93m334[0m:[93m25[0m - [91merror[0m[90m ts(2322): [0mType 'string' is not assignable to type 'HTMLInputTypeAttribute | null | undefined'.
+
+[7m334[0m                         type={field.type}
+[7m   [0m [91m                        ~~~~[0m
+
+[96msrc/components/FAQ.astro[0m:[93m157[0m:[93m33[0m - [93mwarning[0m[90m ts(6133): [0m'i' is declared but its value is never read.
+
+[7m157[0m         {content.faq.map((item, i) => (
+[7m   [0m [93m                                ~[0m
+
+[96msrc/components/Hero.astro[0m:[93m117[0m:[93m3[0m - [91merror[0m[90m ts(2552): [0mCannot find name 'section'. Did you mean 'Selection'?
+
+[7m117[0m </section>
+[7m   [0m [91m  ~~~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m116[0m:[93m69[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m116[0m   <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+[7m   [0m [91m                                                                    ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m116[0m:[93m4[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m116[0m   <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+[7m   [0m [91m   ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m113[0m:[93m5[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m113[0m   </div>
+[7m   [0m [91m    ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m39[0m:[93m8[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m39[0m       <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
+[7m  [0m [91m       ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m36[0m:[93m16[0m - [91merror[0m[90m ts(2365): [0mOperator '>' cannot be applied to types 'string' and '{}'.
+
+[7m36[0m     <div class="mx-auto max-w-3xl text-center pt-10 pb-12">
+[7m  [0m [91m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m37[0m 
+[7m  [0m [91m[0m
+[7m38[0m       <!-- Eyebrow badge -->
+[7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m36[0m:[93m6[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m36[0m     <div class="mx-auto max-w-3xl text-center pt-10 pb-12">
+[7m  [0m [91m     ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m33[0m:[93m14[0m - [91merror[0m[90m ts(2365): [0mOperator '>' cannot be applied to types 'string' and '{}'.
+
+[7m33[0m   <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8">
+[7m  [0m [91m             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m34[0m 
+[7m  [0m [91m[0m
+[7m35[0m     <!-- Hero text block -->
+[7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m33[0m:[93m4[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'div'.
+
+[7m33[0m   <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8">
+[7m  [0m [91m   ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m31[0m:[93m8[0m - [91merror[0m[90m ts(2783): [0m'class' is specified more than once, so this usage will be overwritten.
+
+[7m31[0m   <div class="pointer-events-none absolute inset-0 -z-10" style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); opacity:0.04; mix-blend-mode:multiply;"></div>
+[7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m31[0m:[93m8[0m - [91merror[0m[90m ts(2322): [0mType 'boolean' is not assignable to type 'string'.
+
+[7m31[0m   <div class="pointer-events-none absolute inset-0 -z-10" style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); opacity:0.04; mix-blend-mode:multiply;"></div>
+[7m  [0m [91m       ~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m117[0m:[93m1[0m - [91merror[0m[90m ts(1109): [0mExpression expected.
+
+[7m117[0m </section>
+[7m   [0m [91m~~[0m
+[96msrc/components/Hero.astro[0m:[93m116[0m:[93m67[0m - [91merror[0m[90m ts(1109): [0mExpression expected.
+
+[7m116[0m   <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+[7m   [0m [91m                                                                  ~~[0m
+[96msrc/components/Hero.astro[0m:[93m116[0m:[93m13[0m - [91merror[0m[90m ts(1005): [0m'{' expected.
+
+[7m116[0m   <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+[7m   [0m [91m            ~[0m
+[96msrc/components/Hero.astro[0m:[93m116[0m:[93m8[0m - [91merror[0m[90m ts(1005): [0m';' expected.
+
+[7m116[0m   <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+[7m   [0m [91m       ~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m113[0m:[93m3[0m - [91merror[0m[90m ts(1128): [0mDeclaration or statement expected.
+
+[7m113[0m   </div>
+[7m   [0m [91m  ~~[0m
+[96msrc/components/Hero.astro[0m:[93m92[0m:[93m7[0m - [91merror[0m[90m ts(17002): [0mExpected corresponding JSX closing tag for 'Fragment'.
+
+[7m92[0m     </div>
+[7m  [0m [91m      ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m47[0m:[93m9[0m - [91merror[0m[90m ts(17002): [0mExpected corresponding JSX closing tag for 'section'.
+
+[7m47[0m       </div>
+[7m  [0m [91m        ~~~[0m
+[96msrc/components/Hero.astro[0m:[93m47[0m:[93m7[0m - [91merror[0m[90m ts(1005): [0m',' expected.
+
+[7m47[0m       </div>
+[7m  [0m [91m      ~~[0m
+[96msrc/components/Hero.astro[0m:[93m40[0m:[93m9[0m - [91merror[0m[90m ts(2657): [0mJSX expressions must have one parent element.
+
+[7m 40[0m         <span class="relative flex h-2 w-2">
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 41[0m           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-60"></span>
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 45[0m           {lang === 'en' ? 'Weight Loss Trials — NYC · Miami · Houston · LA · SF' : 'Ensayos de Pérdida de Peso — 5 Ciudades'}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 46[0m         </span>
+[7m   [0m [91m~~~~~~~~~~~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m39[0m:[93m17[0m - [91merror[0m[90m ts(1005): [0m':' expected.
+
+[7m39[0m       <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
+[7m  [0m [91m                ~[0m
+[96msrc/components/Hero.astro[0m:[93m39[0m:[93m12[0m - [91merror[0m[90m ts(1005): [0m',' expected.
+
+[7m39[0m       <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
+[7m  [0m [91m           ~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m36[0m:[93m15[0m - [91merror[0m[90m ts(1005): [0m':' expected.
+
+[7m36[0m     <div class="mx-auto max-w-3xl text-center pt-10 pb-12">
+[7m  [0m [91m              ~[0m
+[96msrc/components/Hero.astro[0m:[93m36[0m:[93m10[0m - [91merror[0m[90m ts(1005): [0m',' expected.
+
+[7m36[0m     <div class="mx-auto max-w-3xl text-center pt-10 pb-12">
+[7m  [0m [91m         ~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m33[0m:[93m13[0m - [91merror[0m[90m ts(1005): [0m':' expected.
+
+[7m33[0m   <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8">
+[7m  [0m [91m            ~[0m
+[96msrc/components/Hero.astro[0m:[93m33[0m:[93m8[0m - [91merror[0m[90m ts(1005): [0m',' expected.
+
+[7m33[0m   <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8">
+[7m  [0m [91m       ~~~~~[0m
+[96msrc/components/Hero.astro[0m:[93m31[0m:[93m402[0m - [91merror[0m[90m ts(1002): [0mUnterminated string literal.
+
+[7m31[0m   <div class="pointer-events-none absolute inset-0 -z-10" style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); opacity:0.04; mix-blend-mode:multiply;"></div>
+[7m  [0m [91m                                                                                                                                                                                                                                                                                                                                                                                                                 [0m
+
+[96msrc/components/InteractiveMap.astro[0m:[93m111[0m:[93m23[0m - [91merror[0m[90m ts(7006): [0mParameter 'trial' implicitly has an 'any' type.
+
+[7m111[0m       trials.forEach((trial) => {
+[7m   [0m [91m                      ~~~~~[0m
+
+[96msrc/components/PreScreener.astro[0m:[93m256[0m:[93m9[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m256[0m <script define:vars={{ lang, trialNctId: trial?.nct_id, trialTitle: trial?.title }}>
+[7m   [0m [93m        ~~~~~~~~~~~[0m
+
+[96msrc/components/StudiesGrid.astro[0m:[93m2[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'TrialCard' is declared but its value is never read.
+
+[7m2[0m import TrialCard from './TrialCard.astro';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m277[0m:[93m25[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m277[0m                  ${this.lang === 'en' ? '⚡ Apply' : '⚡ Aplicar'}
+[7m   [0m [91m                        ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m270[0m:[93m105[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m270[0m                   <div class="text-xs font-black text-emerald-700">${trial.compensation_amount || (this.lang === 'en' ? '$500+' : '$500+')}</div>
+[7m   [0m [91m                                                                                                        ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m269[0m:[93m114[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m269[0m                   <div class="text-[11px] font-black uppercase tracking-tighter text-emerald-600 mr-auto">${this.lang === 'en' ? 'Compensation' : 'Pago'}</div>
+[7m   [0m [91m                                                                                                                 ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m263[0m:[93m110[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m263[0m                 <div class="text-[11px] font-black uppercase tracking-tighter text-slate-400 mr-auto">${this.lang === 'en' ? 'Location' : 'Ciudad'}</div>
+[7m   [0m [91m                                                                                                             ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m248[0m:[93m40[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m248[0m                 ${isRecruiting ? (this.lang === 'en' ? 'Recruiting' : 'Reclutando') : 'Active'}
+[7m   [0m [91m                                       ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m240[0m:[93m24[0m - [91merror[0m[90m ts(7053): [0mElement implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ PHASE3: string; PHASE2: string; PHASE1: string; PHASE4: string; NA: string; }'.
+
+[7m240[0m       const phaseCol = phaseMap[trial.phase] || 'slate';
+[7m   [0m [91m                       ~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m236[0m:[93m21[0m - [91merror[0m[90m ts(7006): [0mParameter 'trial' implicitly has an 'any' type.
+
+[7m236[0m     getCardTemplate(trial) {
+[7m   [0m [91m                    ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m229[0m:[93m18[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m229[0m           ${this.lang === 'en'
+[7m   [0m [91m                 ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m227[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'stats' does not exist on type 'TrialsManager'.
+
+[7m227[0m       this.stats.innerHTML = `
+[7m   [0m [91m           ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m225[0m:[93m44[0m - [91merror[0m[90m ts(2339): [0mProperty 'disabled' does not exist on type 'HTMLElement'.
+
+[7m225[0m       document.getElementById('next-page').disabled = data.page >= data.totalPages;
+[7m   [0m [91m                                           ~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m225[0m:[93m7[0m - [91merror[0m[90m ts(2531): [0mObject is possibly 'null'.
+
+[7m225[0m       document.getElementById('next-page').disabled = data.page >= data.totalPages;
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m224[0m:[93m44[0m - [91merror[0m[90m ts(2339): [0mProperty 'disabled' does not exist on type 'HTMLElement'.
+
+[7m224[0m       document.getElementById('prev-page').disabled = data.page <= 1;
+[7m   [0m [91m                                           ~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m224[0m:[93m7[0m - [91merror[0m[90m ts(2531): [0mObject is possibly 'null'.
+
+[7m224[0m       document.getElementById('prev-page').disabled = data.page <= 1;
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m223[0m:[93m43[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m223[0m       this.pageInfo.textContent = `${this.lang === 'en' ? 'Page' : 'Página'} ${data.page} / ${data.totalPages}`;
+[7m   [0m [91m                                          ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m223[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'pageInfo' does not exist on type 'TrialsManager'.
+
+[7m223[0m       this.pageInfo.textContent = `${this.lang === 'en' ? 'Page' : 'Página'} ${data.page} / ${data.totalPages}`;
+[7m   [0m [91m           ~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m221[0m:[93m45[0m - [91merror[0m[90m ts(7006): [0mParameter 'trial' implicitly has an 'any' type.
+
+[7m221[0m       this.grid.innerHTML = data.trials.map(trial => this.getCardTemplate(trial)).join('');
+[7m   [0m [91m                                            ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m221[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'grid' does not exist on type 'TrialsManager'.
+
+[7m221[0m       this.grid.innerHTML = data.trials.map(trial => this.getCardTemplate(trial)).join('');
+[7m   [0m [91m           ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m220[0m:[93m12[0m - [91merror[0m[90m ts(7006): [0mParameter 'data' implicitly has an 'any' type.
+
+[7m220[0m     render(data) {
+[7m   [0m [91m           ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m217[0m:[93m78[0m - [91merror[0m[90m ts(2339): [0mProperty 'totalPages' does not exist on type 'TrialsManager'.
+
+[7m217[0m       this.pagination.classList.toggle('hidden', state !== 'results' || this.totalPages <= 1);
+[7m   [0m [91m                                                                             ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m217[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'pagination' does not exist on type 'TrialsManager'.
+
+[7m217[0m       this.pagination.classList.toggle('hidden', state !== 'results' || this.totalPages <= 1);
+[7m   [0m [91m           ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m216[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'empty' does not exist on type 'TrialsManager'.
+
+[7m216[0m       this.empty.classList.toggle('hidden', state !== 'empty');
+[7m   [0m [91m           ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m215[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'grid' does not exist on type 'TrialsManager'.
+
+[7m215[0m       this.grid.classList.toggle('hidden', state !== 'results');
+[7m   [0m [91m           ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m214[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'loading' does not exist on type 'TrialsManager'.
+
+[7m214[0m       this.loading.classList.toggle('hidden', state !== 'loading');
+[7m   [0m [91m           ~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m213[0m:[93m14[0m - [91merror[0m[90m ts(7006): [0mParameter 'state' implicitly has an 'any' type.
+
+[7m213[0m     setState(state) {
+[7m   [0m [91m             ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m201[0m:[93m16[0m - [91merror[0m[90m ts(2339): [0mProperty 'totalPages' does not exist on type 'TrialsManager'.
+
+[7m201[0m           this.totalPages = data.totalPages;
+[7m   [0m [91m               ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m197[0m:[93m22[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m197[0m           page: this.currentPage
+[7m   [0m [91m                     ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m196[0m:[93m19[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentFilters' does not exist on type 'TrialsManager'.
+
+[7m196[0m           ...this.currentFilters,
+[7m   [0m [91m                  ~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m188[0m:[93m94[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m188[0m       next?.addEventListener('click', () => { if (this.currentPage < this.totalPages) { this.currentPage++; this.load(); }});
+[7m   [0m [91m                                                                                             ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m188[0m:[93m75[0m - [91merror[0m[90m ts(2339): [0mProperty 'totalPages' does not exist on type 'TrialsManager'.
+
+[7m188[0m       next?.addEventListener('click', () => { if (this.currentPage < this.totalPages) { this.currentPage++; this.load(); }});
+[7m   [0m [91m                                                                          ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m188[0m:[93m56[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m188[0m       next?.addEventListener('click', () => { if (this.currentPage < this.totalPages) { this.currentPage++; this.load(); }});
+[7m   [0m [91m                                                       ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m187[0m:[93m80[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m187[0m       prev?.addEventListener('click', () => { if (this.currentPage > 1) { this.currentPage--; this.load(); }});
+[7m   [0m [91m                                                                               ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m187[0m:[93m56[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m187[0m       prev?.addEventListener('click', () => { if (this.currentPage > 1) { this.currentPage--; this.load(); }});
+[7m   [0m [91m                                                       ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m179[0m:[93m48[0m - [91merror[0m[90m ts(7005): [0mVariable 't' implicitly has an 'any' type.
+
+[7m179[0m         let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+[7m   [0m [91m                                               ~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m179[0m:[93m24[0m - [91merror[0m[90m ts(7019): [0mRest parameter 'a' implicitly has an 'any[]' type.
+
+[7m179[0m         let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+[7m   [0m [91m                       ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m179[0m:[93m13[0m - [91merror[0m[90m ts(7034): [0mVariable 't' implicitly has type 'any' in some locations where its type cannot be determined.
+
+[7m179[0m         let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+[7m   [0m [91m            ~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m178[0m:[93m29[0m - [91merror[0m[90m ts(7006): [0mParameter 'ms' implicitly has an 'any' type.
+
+[7m178[0m       const debounce = (fn, ms) => {
+[7m   [0m [91m                            ~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m178[0m:[93m25[0m - [91merror[0m[90m ts(7006): [0mParameter 'fn' implicitly has an 'any' type.
+
+[7m178[0m       const debounce = (fn, ms) => {
+[7m   [0m [91m                        ~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m174[0m:[93m14[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m174[0m         this.currentPage = 1;
+[7m   [0m [91m             ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m172[0m:[93m38[0m - [91merror[0m[90m ts(2339): [0mProperty 'value' does not exist on type 'HTMLElement'.
+
+[7m172[0m           compensation: compensation.value || undefined
+[7m   [0m [91m                                     ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m172[0m:[93m25[0m - [91merror[0m[90m ts(18047): [0m'compensation' is possibly 'null'.
+
+[7m172[0m           compensation: compensation.value || undefined
+[7m   [0m [91m                        ~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m171[0m:[93m24[0m - [91merror[0m[90m ts(2339): [0mProperty 'value' does not exist on type 'HTMLElement'.
+
+[7m171[0m           phase: phase.value,
+[7m   [0m [91m                       ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m171[0m:[93m18[0m - [91merror[0m[90m ts(18047): [0m'phase' is possibly 'null'.
+
+[7m171[0m           phase: phase.value,
+[7m   [0m [91m                 ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m170[0m:[93m30[0m - [91merror[0m[90m ts(2339): [0mProperty 'value' does not exist on type 'HTMLElement'.
+
+[7m170[0m           location: location.value,
+[7m   [0m [91m                             ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m170[0m:[93m21[0m - [91merror[0m[90m ts(18047): [0m'location' is possibly 'null'.
+
+[7m170[0m           location: location.value,
+[7m   [0m [91m                    ~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m169[0m:[93m21[0m - [91merror[0m[90m ts(2339): [0mProperty 'value' does not exist on type 'HTMLElement'.
+
+[7m169[0m           q: search.value,
+[7m   [0m [91m                    ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m169[0m:[93m14[0m - [91merror[0m[90m ts(18047): [0m'search' is possibly 'null'.
+
+[7m169[0m           q: search.value,
+[7m   [0m [91m             ~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m168[0m:[93m14[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentFilters' does not exist on type 'TrialsManager'.
+
+[7m168[0m         this.currentFilters = {
+[7m   [0m [91m             ~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m153[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'stats' does not exist on type 'TrialsManager'.
+
+[7m153[0m       this.stats = document.getElementById('stats-bar');
+[7m   [0m [91m           ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m152[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'pageInfo' does not exist on type 'TrialsManager'.
+
+[7m152[0m       this.pageInfo = document.getElementById('page-info');
+[7m   [0m [91m           ~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m151[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'pagination' does not exist on type 'TrialsManager'.
+
+[7m151[0m       this.pagination = document.getElementById('pagination');
+[7m   [0m [91m           ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m150[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'empty' does not exist on type 'TrialsManager'.
+
+[7m150[0m       this.empty = document.getElementById('empty-state');
+[7m   [0m [91m           ~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m149[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'loading' does not exist on type 'TrialsManager'.
+
+[7m149[0m       this.loading = document.getElementById('loading-state');
+[7m   [0m [91m           ~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m148[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'grid' does not exist on type 'TrialsManager'.
+
+[7m148[0m       this.grid = document.getElementById('trials-grid');
+[7m   [0m [91m           ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m145[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'totalPages' does not exist on type 'TrialsManager'.
+
+[7m145[0m       this.totalPages = 1;
+[7m   [0m [91m           ~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m141[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentFilters' does not exist on type 'TrialsManager'.
+
+[7m141[0m       this.currentFilters = {
+[7m   [0m [91m           ~~~~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m132[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'currentPage' does not exist on type 'TrialsManager'.
+
+[7m132[0m       this.currentPage = 1;
+[7m   [0m [91m           ~~~~~~~~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m131[0m:[93m12[0m - [91merror[0m[90m ts(2339): [0mProperty 'lang' does not exist on type 'TrialsManager'.
+
+[7m131[0m       this.lang = lang;
+[7m   [0m [91m           ~~~~[0m
+[96msrc/components/StudiesGrid.astro[0m:[93m130[0m:[93m17[0m - [91merror[0m[90m ts(7006): [0mParameter 'lang' implicitly has an 'any' type.
+
+[7m130[0m     constructor(lang) {
+[7m   [0m [91m                ~~~~[0m
+
+[96msrc/components/TrialCard.astro[0m:[93m2[0m:[93m10[0m - [93mwarning[0m[90m ts(6133): [0m'TrialSchema' is declared but its value is never read.
+
+[7m2[0m import { TrialSchema, type Trial } from '../lib/services/trials.service';
+[7m [0m [93m         ~~~~~~~~~~~[0m
+
+[96msrc/lib/clinicalTrialsApi.ts[0m:[93m230[0m:[93m10[0m - [93mwarning[0m[90m ts(6133): [0m'TrialSchema' is declared but its value is never read.
+
+[7m230[0m import { TrialSchema, type Trial } from './services/trials.service';
+[7m   [0m [93m         ~~~~~~~~~~~[0m
+
+[96msrc/lib/mockTrials.ts[0m:[93m274[0m:[93m36[0m - [93mwarning[0m[90m ts(6133): [0m'index' is declared but its value is never read.
+
+[7m274[0m     baseTrials.forEach((baseTrial, index) => {
+[7m   [0m [93m                                   ~~~~~[0m
+
+[96msrc/lib/api/clinical-trials.ts[0m:[93m132[0m:[93m5[0m - [93mwarning[0m[90m ts(6133): [0m'distance' is declared but its value is never read.
+
+[7m132[0m     distance = 100,
+[7m   [0m [93m    ~~~~~~~~[0m
+
+[96msrc/lib/db/operations.ts[0m:[93m102[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'fullText' is declared but its value is never read.
+
+[7m102[0m   const fullText = `${descModule?.briefSummary || ""} ${descModule?.detailedDescription || ""} ${eligibilityModule?.eligibilityCriteria || ""}`;
+[7m   [0m [93m        ~~~~~~~~[0m
+
+[96msrc/lib/services/LeadService.ts[0m:[93m1[0m:[93m15[0m - [93mwarning[0m[90m ts(6196): [0m'Lead' is declared but never used.
+
+[7m1[0m import type { Lead, LeadStatus } from '../leads';
+[7m [0m [93m              ~~~~[0m
+
+[96msrc/pages/admin/index.astro[0m:[93m304[0m:[93m20[0m - [93mwarning[0m[90m ts(6133): [0m'updateStatus' is declared but its value is never read.
+
+[7m304[0m     async function updateStatus(id, status) {
+[7m   [0m [93m                   ~~~~~~~~~~~~[0m
+[96msrc/pages/admin/index.astro[0m:[93m199[0m:[93m9[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m199[0m <script define:vars={{ authed, ADMIN_TOKEN }}>
+[7m   [0m [93m        ~~~~~~~~~~~[0m
+
+[96msrc/pages/api/chat.ts[0m:[93m9[0m:[93m26[0m - [93mwarning[0m[90m ts(6133): [0m'context' is declared but its value is never read.
+
+[7m9[0m         const { message, context } = await request.json();
+[7m [0m [93m                         ~~~~~~~[0m
+
+[96msrc/pages/api/prescreen.astro[0m:[93m90[0m:[93m11[0m - [91merror[0m[90m ts(2451): [0mCannot redeclare block-scoped variable 'result'.
+
+[7m90[0m     const result = JSON.parse(data.choices[0].message.content);
+[7m  [0m [91m          ~~~~~~[0m
+[96msrc/pages/api/prescreen.astro[0m:[93m57[0m:[93m20[0m - [91merror[0m[90m ts(18048): [0m'answers.conditions.length' is possibly 'undefined'.
+
+[7m57[0m           reasons: answers.conditions?.length > 0
+[7m  [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/api/prescreen.astro[0m:[93m11[0m:[93m11[0m - [91merror[0m[90m ts(2451): [0mCannot redeclare block-scoped variable 'result'.
+
+[7m11[0m     const result = PrescreenSchema.safeParse(json);
+[7m  [0m [91m          ~~~~~~[0m
+[96msrc/pages/api/prescreen.astro[0m:[93m6[0m:[93m39[0m - [93mwarning[0m[90m ts(6133): [0m'locals' is declared but its value is never read.
+
+[7m6[0m export async function POST({ request, locals }: any) {
+[7m [0m [93m                                      ~~~~~~[0m
+
+[96msrc/pages/trial/[nctId].astro[0m:[93m26[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'benefits' is declared but its value is never read.
+
+[7m26[0m const benefits           = trial?.ai_potential_benefits || [];
+[7m  [0m [93m      ~~~~~~~~[0m
+[96msrc/pages/trial/[nctId].astro[0m:[93m25[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'risks' is declared but its value is never read.
+
+[7m25[0m const risks              = trial?.ai_potential_risks || [];
+[7m  [0m [93m      ~~~~~[0m
+
+Result (44 files): 
+- 91 errors
+- 0 warnings
+- 16 hints
+

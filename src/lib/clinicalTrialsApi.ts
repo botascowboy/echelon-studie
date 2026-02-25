@@ -227,10 +227,12 @@ export async function getTrialByNctId(nctId: string): Promise<ClinicalTrial | nu
   }
 }
 
+import { TrialSchema, type Trial } from './services/trials.service';
+
 /**
  * Transform ClinicalTrials.gov format to our app format
  */
-export function transformTrialData(apiTrial: ClinicalTrial): any {
+export function transformTrialData(apiTrial: ClinicalTrial): Trial {
   const protocol = apiTrial.protocolSection;
 
   // Extract age range
@@ -393,9 +395,6 @@ export function transformTrialData(apiTrial: ClinicalTrial): any {
 
     // Relevance
     weight_loss_relevance_score: calculateRelevanceScore(conditions, keywords),
-
-    // Raw data for reference
-    _raw: apiTrial,
   };
 }
 

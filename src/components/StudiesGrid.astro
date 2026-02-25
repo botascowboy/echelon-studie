@@ -127,7 +127,18 @@ const { lang = "en", initialLocation = "" } = Astro.props;
   import { TrialsService } from '../lib/services/trials.service';
 
   class TrialsManager {
-    constructor(lang) {
+    lang: string;
+    currentPage: number;
+    totalPages: number;
+    currentFilters: any;
+    grid: HTMLElement | null;
+    loading: HTMLElement | null;
+    empty: HTMLElement | null;
+    pagination: HTMLElement | null;
+    pageInfo: HTMLElement | null;
+    stats: HTMLElement | null;
+
+    constructor(lang: string) {
       this.lang = lang;
       this.currentPage = 1;
       
@@ -157,12 +168,12 @@ const { lang = "en", initialLocation = "" } = Astro.props;
     }
 
     initEvents() {
-      const search = document.getElementById('search-input');
-      const location = document.getElementById('location-filter');
-      const phase = document.getElementById('phase-filter');
-      const compensation = document.getElementById('compensation-filter');
-      const prev = document.getElementById('prev-page');
-      const next = document.getElementById('next-page');
+      const search = document.getElementById('search-input') as HTMLInputElement;
+      const location = document.getElementById('location-filter') as HTMLSelectElement;
+      const phase = document.getElementById('phase-filter') as HTMLSelectElement;
+      const compensation = document.getElementById('compensation-filter') as HTMLSelectElement;
+      const prev = document.getElementById('prev-page') as HTMLButtonElement;
+      const next = document.getElementById('next-page') as HTMLButtonElement;
 
       const handler = () => {
         this.currentFilters = {
@@ -220,11 +231,11 @@ const { lang = "en", initialLocation = "" } = Astro.props;
     render(data) {
       this.grid.innerHTML = data.trials.map(trial => this.getCardTemplate(trial)).join('');
       
-      this.pageInfo.textContent = `${this.lang === 'en' ? 'Page' : 'Página'} ${data.page} / ${data.totalPages}`;
-      document.getElementById('prev-page').disabled = data.page <= 1;
-      document.getElementById('next-page').disabled = data.page >= data.totalPages;
+      this.pageInfo!.textContent = `${this.lang === 'en' ? 'Page' : 'Página'} ${data.page} / ${data.totalPages}`;
+      (document.getElementById('prev-page') as HTMLButtonElement).disabled = data.page <= 1;
+      (document.getElementById('next-page') as HTMLButtonElement).disabled = data.page >= data.totalPages;
 
-      this.stats.innerHTML = `
+      this.stats!.innerHTML = `
         <span class="text-xs font-medium text-slate-500">
           ${this.lang === 'en'
             ? `Showing <strong>${data.trials.length}</strong> of <strong>${data.total}</strong> active weight loss trials`

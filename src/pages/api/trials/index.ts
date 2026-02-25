@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIContext } from 'astro';
-import { TrialService } from '../../../lib/services/TrialService';
+import { TrialsService } from '../../../lib/services/trials.service';
 
 export async function GET({ request }: APIContext) {
   try {
@@ -14,7 +14,7 @@ export async function GET({ request }: APIContext) {
     const phase = url.searchParams.get('phase') || undefined;
     const compensation = url.searchParams.get('compensation') || undefined;
 
-    const result = await TrialService.getTrials({
+    const result = await TrialsService.getTrials({
       page,
       pageSize,
       q,

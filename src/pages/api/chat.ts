@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIContext } from 'astro';
 import { generateExpertResponse } from '../../lib/ai/enrichment';
-import { TrialService } from '../../lib/services/TrialService';
+import { TrialsService } from '../../lib/services/trials.service';
 
 export async function POST({ request }: APIContext) {
     try {
@@ -13,7 +13,7 @@ export async function POST({ request }: APIContext) {
         }
 
         // Optional: Get some sample trials to give context to the AI
-        const trials = await TrialService.getTrials({ pageSize: 3 });
+        const trials = await TrialsService.getTrials({ pageSize: 3 });
 
         const response = await generateExpertResponse(message, {
             trials: trials.trials
