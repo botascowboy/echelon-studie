@@ -5,6 +5,7 @@ import { PLATFORM_CONFIG, CITY_SEARCH_TERMS, TARGET_CITIES } from '../../../lib/
 import { getMockTrials } from '../../../lib/mockTrials';
 import { searchWeightLossTrials } from '../../../lib/api/clinical-trials';
 import { transformTrialData } from '../../../lib/clinicalTrialsApi';
+import { cacheGet, cacheSet, cacheAge } from '../../../lib/cache';
 
 // The 5 target city search terms sent to the API
 const TARGET_CITY_QUERIES = [
@@ -31,50 +32,63 @@ export async function GET({ request }: APIContext) {
     let source = 'mock';
 
     if (PLATFORM_CONFIG.enableRealApi) {
-      try {
-        console.log('[API /trials] Fetching from ClinicalTrials.gov API for target cities...');
+      // Cache key includes location + phase so each filter combo is cached independently
+      const cacheKey = `trials:${locationParam || 'all'}:${phase || 'all'}`;
+      const cached = cacheGet(cacheKey);
 
-        // Determine which cities to query
-        const citiesToQuery = locationParam ? [locationParam] : TARGET_CITY_QUERIES;
+      if (cached) {
+        allTrials = cached;
+        source = 'api-cached';
+        const ageSeconds = cacheAge(cacheKey) ?? 0;
+        console.log(`[API /trials] Serving from cache (${Math.floor(ageSeconds / 60)}m ${ageSeconds % 60}s old)`);
+      } else {
+        try {
+          console.log('[API /trials] Cache miss — fetching from ClinicalTrials.gov API...');
 
-        // Fetch in parallel — one request per city
-        const cityResults = await Promise.allSettled(
-          citiesToQuery.map(city =>
-            searchWeightLossTrials({
-              pageSize: 30,
-              phase: phase || undefined,
-              location: city,
-            })
-          )
-        );
+          // Determine which cities to query
+          const citiesToQuery = locationParam ? [locationParam] : TARGET_CITY_QUERIES;
 
-        // Merge results and deduplicate by NCT ID
-        const seenIds = new Set<string>();
-        const mergedStudies: any[] = [];
+          // Fetch in parallel — one request per city
+          const cityResults = await Promise.allSettled(
+            citiesToQuery.map(city =>
+              searchWeightLossTrials({
+                pageSize: 30,
+                phase: phase || undefined,
+                location: city,
+              })
+            )
+          );
 
-        for (const result of cityResults) {
-          if (result.status === 'fulfilled' && result.value.studies?.length) {
-            for (const study of result.value.studies) {
-              const nctId = study.protocolSection?.identificationModule?.nctId;
-              if (nctId && !seenIds.has(nctId)) {
-                seenIds.add(nctId);
-                mergedStudies.push(study);
+          // Merge results and deduplicate by NCT ID
+          const seenIds = new Set<string>();
+          const mergedStudies: any[] = [];
+
+          for (const result of cityResults) {
+            if (result.status === 'fulfilled' && result.value.studies?.length) {
+              for (const study of result.value.studies) {
+                const nctId = study.protocolSection?.identificationModule?.nctId;
+                if (nctId && !seenIds.has(nctId)) {
+                  seenIds.add(nctId);
+                  mergedStudies.push(study);
+                }
               }
             }
           }
-        }
 
-        if (mergedStudies.length > 0) {
-          allTrials = mergedStudies.map(transformTrialData);
-          source = 'api';
-          console.log(`[API /trials] Got ${allTrials.length} unique trials from ${citiesToQuery.length} cities`);
-        } else {
-          throw new Error('No studies returned from API for any target city');
+          if (mergedStudies.length > 0) {
+            allTrials = mergedStudies.map(transformTrialData);
+            source = 'api';
+            // Store in cache for next requests
+            cacheSet(cacheKey, allTrials);
+            console.log(`[API /trials] Cached ${allTrials.length} trials (key: ${cacheKey})`);
+          } else {
+            throw new Error('No studies returned from API for any target city');
+          }
+        } catch (apiError) {
+          console.warn('[API /trials] Real API failed, falling back to mock:', apiError);
+          allTrials = getMockTrials();
+          source = 'mock-fallback';
         }
-      } catch (apiError) {
-        console.warn('[API /trials] Real API failed, falling back to mock:', apiError);
-        allTrials = getMockTrials();
-        source = 'mock-fallback';
       }
     } else {
       console.log('[API /trials] Using mock data (enableRealApi=false)');
@@ -147,7 +161,9 @@ export async function GET({ request }: APIContext) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=60',
+          // Browser can reuse this response for 60 s; server cache lasts 10 min
+          'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+          'X-Cache': source === 'api-cached' ? 'HIT' : 'MISS',
         },
       }
     );
