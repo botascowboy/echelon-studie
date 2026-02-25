@@ -263,7 +263,20 @@ export function transformTrialData(apiTrial: ClinicalTrial): any {
     ...(protocol.contactsLocationsModule?.locations || []),
     ...(protocol.contactsLocationsModule?.facilities || []),
   ];
-  // Prefer US locations so city/state fields are meaningful
+
+  // Extract all unique cities and states for robust filtering
+  const citiesSet = new Set<string>();
+  const statesSet = new Set<string>();
+
+  allLocations.forEach(loc => {
+    if (loc.city) citiesSet.add(loc.city.trim());
+    if (loc.state) statesSet.add(loc.state.trim());
+  });
+
+  const allCities = Array.from(citiesSet);
+  const allStates = Array.from(statesSet);
+
+  // Prefer US locations so city/state fields are meaningful for the "Primary" card view
   const usLocations = allLocations.filter(l => !l.country || l.country === 'United States');
   const primaryLocation = usLocations[0] || allLocations[0] || {};
 
@@ -278,14 +291,18 @@ export function transformTrialData(apiTrial: ClinicalTrial): any {
 
   // Extract compensation info (not always available in API, so we infer from keywords)
   const keywords = protocol.conditionsModule?.keywords || [];
-  const hasCompensation = keywords.some(k =>
-    k.toLowerCase().includes('compensat') ||
-    k.toLowerCase().includes('payment') ||
-    k.toLowerCase().includes('paid')
-  );
+  const detailedDesc = protocol.descriptionModule?.detailedDescription || '';
+  const eligibilityText = protocol.eligibilityModule?.eligibilityCriteria || '';
+
+  const searchText = (briefSummary + detailedDesc + eligibilityText + keywords.join(' ')).toLowerCase();
+
+  const paymentKeywords = [
+    'compensat', 'payment', 'paid', 'stipend', 'reimburse', 'remuneration', 'financial'
+  ];
+
+  const hasCompensation = paymentKeywords.some(k => searchText.includes(k));
 
   // Parse eligibility criteria
-  const eligibilityText = protocol.eligibilityModule?.eligibilityCriteria || '';
   const mustHave: string[] = [];
   const cannotHave: string[] = [];
 
@@ -348,6 +365,10 @@ export function transformTrialData(apiTrial: ClinicalTrial): any {
     locations_count: allLocations.length,
     us_locations_count: usLocations.length,
 
+    // NEW: Searchable locations
+    all_cities: allCities,
+    all_states: allStates,
+
     // Sponsor
     lead_sponsor: protocol.sponsorCollaboratorsModule?.leadSponsor?.name || 'Not Disclosed',
     sponsor_class: protocol.sponsorCollaboratorsModule?.leadSponsor?.class || '',
@@ -362,7 +383,7 @@ export function transformTrialData(apiTrial: ClinicalTrial): any {
     ai_potential_benefits: JSON.stringify(['Access to new treatments', 'Medical monitoring', 'Contributing to research']),
     ai_questions_to_ask: JSON.stringify(['What are the specific requirements?', 'How long is the commitment?', 'What compensation is provided?']),
 
-    // Compensation (often not explicitly stated, so we check)
+    // Compensation
     has_compensation: hasCompensation,
     compensation_amount: hasCompensation ? 'Contact site for details' : 'Not specified',
 

@@ -1,6 +1,7 @@
 import { searchWeightLossTrials } from '../api/clinical-trials';
 import { transformTrialData } from '../clinicalTrialsApi';
 import { cacheGet, cacheSet } from '../cache';
+import { TARGET_CITIES, getCityConfig } from '../config';
 
 export interface TrialFilters {
     q?: string;
@@ -12,20 +13,18 @@ export interface TrialFilters {
 }
 
 export class TrialService {
-    private static TARGET_CITY_QUERIES = [
-        'New York, NY',
-        'Miami, FL',
-        'Houston, TX',
-        'Los Angeles, CA',
-        'San Francisco, CA',
-    ];
+    private static getCityQueries() {
+        return TARGET_CITIES.map(city => `${city.name}, ${city.state}`);
+    }
 
     static async getTrials(filters: TrialFilters) {
         const { page = 1, pageSize = 9, q, location, phase, compensation } = filters;
         let allTrials: any[] = [];
         let source = 'api';
 
-        const cacheKey = `trials:${location || 'all'}:${phase || 'all'}`;
+        // Normalize location for cache key and search
+        const normalizedLoc = (location || 'all').toLowerCase().trim();
+        const cacheKey = `trials:${normalizedLoc}:${phase || 'all'}`;
         const cached = cacheGet(cacheKey);
 
         if (cached) {
@@ -33,7 +32,20 @@ export class TrialService {
             source = 'api-cached';
         } else {
             try {
-                const citiesToQuery = location ? [location] : this.TARGET_CITY_QUERIES;
+                let citiesToQuery: string[] = [];
+
+                if (location) {
+                    // Try to find if this is one of our target cities to use its best search term
+                    const cityConfig = getCityConfig(location);
+                    if (cityConfig) {
+                        citiesToQuery = [`${cityConfig.name}, ${cityConfig.state}`];
+                    } else {
+                        citiesToQuery = [location];
+                    }
+                } else {
+                    citiesToQuery = this.getCityQueries();
+                }
+
                 const cityResults = await Promise.allSettled(
                     citiesToQuery.map(city =>
                         searchWeightLossTrials({
@@ -71,14 +83,27 @@ export class TrialService {
             }
         }
 
-        // Apply Post-Filter logic
+        // Apply Post-Filter logic (Strict filtering after merging or broad searches)
         if (location) {
-            const loc = location.toLowerCase();
+            const loc = location.toLowerCase().trim();
+            const cityConfig = getCityConfig(location);
+
             allTrials = allTrials.filter(trial => {
+                // If it's one of our target cities, be a bit more generous if it's in the same state
+                if (cityConfig) {
+                    const stateMatch = (trial.all_states || []).some((s: string) => s.toLowerCase() === cityConfig.state.toLowerCase() || s.toLowerCase() === cityConfig.stateName.toLowerCase());
+                    const cityMatch = (trial.all_cities || []).some((c: string) => c.toLowerCase().includes(cityConfig.name.toLowerCase()) || cityConfig.name.toLowerCase().includes(c.toLowerCase()));
+                    if (cityMatch) return true;
+                    // If state matches and it's a known city area, we might want to include it, 
+                    // but let's stick to city match for "Studies in X" accuracy.
+                }
+
+                const matchesCity = (trial.all_cities || []).some((city: string) => city.toLowerCase().includes(loc) || loc.includes(city.toLowerCase()));
+                const matchesState = (trial.all_states || []).some((state: string) => state.toLowerCase().includes(loc) || loc.includes(state.toLowerCase()));
                 const trialCity = (trial.primary_location_city || '').toLowerCase();
                 const trialState = (trial.primary_location_state || '').toLowerCase();
-                const fullAddress = (trial.full_address || '').toLowerCase();
-                return loc.includes(trialCity) || trialCity.includes(loc) || loc.includes(trialState) || fullAddress.includes(loc);
+
+                return matchesCity || matchesState || trialCity.includes(loc) || loc.includes(trialCity) || trialState.includes(loc) || loc.includes(trialState);
             });
         }
 
@@ -87,12 +112,18 @@ export class TrialService {
             allTrials = allTrials.filter(trial => {
                 const title = (trial.title || '').toLowerCase();
                 const summary = (trial.ai_summary || trial.brief_summary || '').toLowerCase();
-                return title.includes(query) || summary.includes(query);
+                const officialTitle = (trial.official_title || '').toLowerCase();
+                const nctId = trial.nct_id.toLowerCase();
+                return title.includes(query) || summary.includes(query) || officialTitle.includes(query) || nctId.includes(query);
             });
         }
 
         if (phase) {
-            allTrials = allTrials.filter(trial => trial.phase === phase);
+            const normalizedPhase = phase.toUpperCase().replace(/\s/g, '');
+            allTrials = allTrials.filter(trial => {
+                const trialPhase = (trial.phase || '').toUpperCase().replace(/\s/g, '');
+                return trialPhase === normalizedPhase || (trial.phase_label || '').toUpperCase().includes(normalizedPhase);
+            });
         }
 
         if (compensation !== undefined && compensation !== '') {

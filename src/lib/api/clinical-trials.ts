@@ -97,6 +97,10 @@ export const WEIGHT_LOSS_KEYWORDS = [
   "semaglutide",
   "tirzepatide",
   "liraglutide",
+  "retatrutide",
+  "survodutide",
+  "cagrilintide",
+  "mazdutide",
   "wegovy",
   "ozempic",
   "mounjaro",
@@ -105,7 +109,10 @@ export const WEIGHT_LOSS_KEYWORDS = [
   "weight management",
   "fat loss",
   "satiety",
-  "metabolic rate"
+  "metabolic rate",
+  "metabolism",
+  "insulin resistance",
+  "diabetes type 2 weight"
 ];
 
 const API_BASE = "https://clinicaltrials.gov/api/v2";
@@ -129,7 +136,7 @@ export async function searchWeightLossTrials(params: {
 
   // Construir query de búsqueda con OR de todos los keywords
   const conditionsQuery = WEIGHT_LOSS_KEYWORDS.join(" OR ");
-  
+
   const searchParams = new URLSearchParams({
     "query.cond": conditionsQuery,
     "pageSize": pageSize.toString(),
@@ -158,7 +165,7 @@ export async function searchWeightLossTrials(params: {
   }
 
   const url = `${API_BASE}/studies?${searchParams.toString()}`;
-  
+
   console.log(`[ClinicalTrialsAPI] Fetching: ${url}`);
 
   const response = await fetch(url, {
@@ -172,7 +179,7 @@ export async function searchWeightLossTrials(params: {
   }
 
   const data = await response.json();
-  
+
   return {
     studies: data.studies || [],
     nextPageToken: data.nextPageToken,
@@ -182,7 +189,7 @@ export async function searchWeightLossTrials(params: {
 
 export async function getTrialByNctId(nctId: string): Promise<ClinicalTrial | null> {
   const url = `${API_BASE}/studies/${nctId}?fields=ProtocolSection,DerivedSection`;
-  
+
   const response = await fetch(url, {
     headers: {
       "Accept": "application/json"
@@ -207,7 +214,7 @@ export function extractCompensationInfo(text: string): {
   details?: string;
 } {
   const lowerText = text.toLowerCase();
-  
+
   // Palabras clave relacionadas con pago
   const paymentKeywords = [
     "compensation", "compensated", "payment", "paid", "stipend",
@@ -227,7 +234,7 @@ export function extractCompensationInfo(text: string): {
 
   // Buscar detalles en oraciones que mencionen pago
   const sentences = text.split(/[.!?]+/);
-  const paymentSentences = sentences.filter(s => 
+  const paymentSentences = sentences.filter(s =>
     paymentKeywords.some(kw => s.toLowerCase().includes(kw))
   );
 
@@ -255,7 +262,7 @@ export function translatePhase(phase?: string[]): {
   }
 
   const phaseStr = phase.join(", ");
-  
+
   if (phaseStr.includes("PHASE4") || phaseStr.includes("PHASE 4")) {
     return {
       code: "Phase 4",
@@ -264,7 +271,7 @@ export function translatePhase(phase?: string[]): {
       color: "green"
     };
   }
-  
+
   if (phaseStr.includes("PHASE3") || phaseStr.includes("PHASE 3")) {
     return {
       code: "Phase 3",
@@ -273,7 +280,7 @@ export function translatePhase(phase?: string[]): {
       color: "emerald"
     };
   }
-  
+
   if (phaseStr.includes("PHASE2") || phaseStr.includes("PHASE 2")) {
     return {
       code: "Phase 2",
@@ -282,7 +289,7 @@ export function translatePhase(phase?: string[]): {
       color: "blue"
     };
   }
-  
+
   if (phaseStr.includes("PHASE1") || phaseStr.includes("PHASE 1")) {
     return {
       code: "Phase 1",
@@ -327,7 +334,7 @@ export function translateStatus(status: string): {
   };
 
   const mapped = statusMap[status] || { label: status, color: "slate" };
-  
+
   return {
     code: status,
     label: mapped.label,
