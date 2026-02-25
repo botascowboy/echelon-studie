@@ -1,116 +1,371 @@
 ---
 const { lang = "en" } = Astro.props;
-
-const studies = [
-	{
-		title: lang === 'en' ? "Advanced Hypertension Study" : "Estudio Avanzado de Hipertensión",
-		type: "Phase III",
-		specialty: lang === 'en' ? "Cardiology" : "Cardiología",
-		eligibility: lang === 'en' ? "Adults 18-65" : "Adultos 18-65",
-		location: "New York City, NY",
-		compensation: "$500 - $1,200",
-		status: "Recruiting"
-	},
-	{
-		title: lang === 'en' ? "Type 2 Diabetes Research" : "Investigación sobre Diabetes Tipo 2",
-		type: "Phase II",
-		specialty: lang === 'en' ? "Endocrinology" : "Endocrinología",
-		eligibility: lang === 'en' ? "Adults 18+" : "Adultos 18+",
-		location: "Remote / Nationwide",
-		compensation: "$1,000",
-		status: "Recruiting"
-	},
-	{
-		title: lang === 'en' ? "Dermatology Innovation" : "Innovación en Dermatología",
-		type: "Phase IV",
-		specialty: lang === 'en' ? "Dermatology" : "Dermatología",
-		eligibility: lang === 'en' ? "Adults 21+" : "Adultos 21+",
-		location: "Manhattan, NY",
-		compensation: "$750",
-		status: "Waitlist"
-	}
-];
 ---
 
-<section id="trials" class="section-padding bg-slate-50/30">
-	<div class="container mx-auto px-4">
-		<div class="max-w-3xl mx-auto text-center mb-20 animate-fade-in">
+<section id="trials" class="section-padding bg-slate-50/40">
+  <div class="container mx-auto px-4">
+
+    <!-- Header -->
+    <div class="max-w-3xl mx-auto text-center mb-12 animate-fade-in">
       <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.2em] mb-6">
         <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-        {lang === 'en' ? 'Clinical Opportunities' : 'Oportunidades Clínicas'}
+        {lang === 'en' ? 'Now Recruiting' : 'Reclutando Ahora'}
       </div>
-			<h2 class="text-4xl md:text-7xl font-black mb-6 tracking-tighter text-primary">
-				{lang === 'en' ? 'Open' : 'Ensayos'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Studies.' : 'Abiertos.'}</span>
-			</h2>
-			<p class="text-slate-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto">
-				{lang === 'en' 
-					? 'Access cutting-edge medical research and contribute to the future of healthcare in New York.' 
-					: 'Acceda a investigaciones médicas de vanguardia y contribuya al futuro de la salud en Nueva York.'}
-			</p>
-		</div>
+      <h2 class="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-primary">
+        {lang === 'en' ? 'Weight Loss' : 'Ensayos de'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Trials.' : 'Pérdida de Peso.'}</span>
+      </h2>
+      <p class="text-slate-500 text-lg font-medium leading-relaxed max-w-2xl mx-auto">
+        {lang === 'en'
+          ? 'Every study below offers free access to cutting-edge treatments. Many pay up to $1,500. No insurance needed.'
+          : 'Cada estudio ofrece acceso gratuito a tratamientos de vanguardia. Muchos pagan hasta $1,500. Sin seguro médico.'}
+      </p>
+    </div>
 
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-			{studies.map(study => (
-				<div class="group relative bg-white border border-slate-100 rounded-[3rem] p-10 hover:border-accent/60 transition-all duration-700 hover:shadow-[0_40px_80px_-20px_rgba(0,163,129,0.12)] flex flex-col justify-between overflow-hidden">
-					<!-- Top Accent Line -->
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-          
-          <!-- Background Glow -->
-					<div class="absolute -top-24 -right-24 w-60 h-60 bg-accent/[0.05] rounded-full blur-[100px] group-hover:bg-accent/[0.12] transition-all duration-700"></div>
-          
-					<div class="relative z-10">
-            <div class="flex items-center justify-between mb-10">
-              <span class={`text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-full shadow-sm border ${study.status === 'Recruiting' ? 'bg-accent text-white border-accent' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
-                {study.status}
-              </span>
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-accent/30"></span>
-                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">{study.type}</span>
-              </div>
-            </div>
-            
-            <div class="space-y-4 mb-10">
-              <span class="text-accent text-[11px] font-black uppercase tracking-[0.4em] block">{study.specialty}</span>
-              <h3 class="text-3xl font-black text-primary group-hover:text-accent transition-colors leading-[1.1] tracking-tighter">
-                {study.title}
-              </h3>
-            </div>
-            
-            <div class="grid grid-cols-1 gap-5 mb-12">
-              <div class="flex items-center gap-5 p-4 rounded-2xl bg-slate-50 border border-slate-100/50 group-hover:bg-white group-hover:border-accent/10 transition-all duration-500">
-                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center border border-slate-100 text-accent shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                </div>
-                <div>
-                  <div class="text-[9px] font-black uppercase tracking-widest text-slate-300 mb-0.5">Eligibility</div>
-                  <div class="text-sm font-bold text-slate-600">{study.eligibility}</div>
-                </div>
-              </div>
-              
-              <div class="flex items-center gap-5 p-4 rounded-2xl bg-slate-50 border border-slate-100/50 group-hover:bg-white group-hover:border-accent/10 transition-all duration-500">
-                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center border border-slate-100 text-accent shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                </div>
-                <div>
-                  <div class="text-[9px] font-black uppercase tracking-widest text-slate-300 mb-0.5">Location</div>
-                  <div class="text-sm font-bold text-slate-600">{study.location}</div>
-                </div>
-              </div>
+    <!-- Filters -->
+    <div class="max-w-5xl mx-auto mb-10">
+      <div class="bg-white rounded-3xl p-5 shadow-lg shadow-slate-200/50 border border-slate-100">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <!-- Search -->
+          <div class="relative">
+            <input
+              type="text"
+              id="search-input"
+              placeholder={lang === 'en' ? 'Search (Ozempic, GLP-1…)' : 'Buscar (Ozempic, GLP-1…)'}
+              class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm"
+            />
+            <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <!-- Location -->
+          <select id="location-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
+            <option value="">{lang === 'en' ? 'All Cities' : 'Todas las Ciudades'}</option>
+            <option value="New York, NY">🗽 NYC</option>
+            <option value="Miami, FL">🌴 Miami</option>
+            <option value="Houston, TX">🚀 Houston</option>
+            <option value="Los Angeles, CA">🌆 Los Angeles</option>
+            <option value="San Francisco, CA">🌉 San Francisco</option>
+          </select>
+          <!-- Phase -->
+          <select id="phase-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
+            <option value="">{lang === 'en' ? 'All Phases' : 'Todas las Fases'}</option>
+            <option value="PHASE3">{lang === 'en' ? 'Phase 3 – Near Approval' : 'Fase 3 – Casi aprobado'}</option>
+            <option value="PHASE2">{lang === 'en' ? 'Phase 2 – Efficacy' : 'Fase 2 – Eficacia'}</option>
+            <option value="PHASE1">{lang === 'en' ? 'Phase 1 – Safety' : 'Fase 1 – Seguridad'}</option>
+          </select>
+          <!-- Compensation -->
+          <select id="compensation-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
+            <option value="">{lang === 'en' ? 'All Studies' : 'Todos'}</option>
+            <option value="true">{lang === 'en' ? '💰 Paid Studies Only' : '💰 Solo estudios pagados'}</option>
+            <option value="false">{lang === 'en' ? 'No Payment' : 'Sin pago'}</option>
+          </select>
+        </div>
+        <!-- Stats bar -->
+        <div class="flex flex-wrap gap-4 mt-4 pt-4 border-t border-slate-100" id="stats-bar">
+          <span class="text-xs text-slate-400 font-medium">{lang === 'en' ? 'Loading trials…' : 'Cargando ensayos…'}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Skeletons -->
+    <div id="loading-state" class="hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {[1,2,3].map(() => (
+          <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 animate-pulse">
+            <div class="flex gap-2 mb-6"><div class="h-5 w-20 bg-slate-200 rounded-full"></div><div class="h-5 w-16 bg-slate-100 rounded-full"></div></div>
+            <div class="h-7 bg-slate-200 rounded-xl w-3/4 mb-3"></div>
+            <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+            <div class="h-4 bg-slate-100 rounded w-5/6 mb-8"></div>
+            <div class="space-y-3">
+              <div class="h-12 bg-slate-100 rounded-2xl"></div>
+              <div class="h-12 bg-slate-100 rounded-2xl"></div>
             </div>
           </div>
-					
-					<a href="#contact" class="group/btn relative inline-flex items-center justify-center w-full py-6 rounded-2xl bg-accent text-white overflow-hidden transition-all duration-500 hover:bg-primary hover:shadow-[0_20px_40px_-10px_rgba(0,33,71,0.3)] active:scale-95 shadow-lg shadow-accent/20">
-            <span class="relative z-10 font-black text-xs uppercase tracking-[0.3em]">{lang === 'en' ? 'Check Eligibility' : 'Verificar Elegibilidad'}</span>
-					</a>
-				</div>
-			))}
-		</div>
-
-    <div class="mt-20 text-center">
-      <a href="#" class="inline-flex items-center gap-4 text-primary font-black text-sm uppercase tracking-[0.3em] hover:text-accent transition-colors group">
-        {lang === 'en' ? 'View all medical trials' : 'Ver todos los ensayos médicos'}
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-2 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-      </a>
+        ))}
+      </div>
     </div>
-	</div>
+
+    <!-- Trials Grid -->
+    <div id="trials-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-8"></div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
+        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-700 mb-2">{lang === 'en' ? 'No trials found' : 'No se encontraron ensayos'}</h3>
+      <p class="text-slate-500 text-sm">{lang === 'en' ? 'Try adjusting your filters' : 'Intenta ajustar los filtros'}</p>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="hidden mt-12 flex justify-center items-center gap-4">
+      <button id="prev-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm">
+        ← {lang === 'en' ? 'Previous' : 'Anterior'}
+      </button>
+      <span id="page-info" class="text-slate-600 font-medium text-sm"></span>
+      <button id="next-page" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm">
+        {lang === 'en' ? 'Next' : 'Siguiente'} →
+      </button>
+    </div>
+
+  </div>
 </section>
+
+<script define:vars={{ lang }}>
+  let currentPage = 1;
+  let totalPages  = 1;
+  let currentFilters = {};
+
+  const trialsGrid   = document.getElementById('trials-grid');
+  const loadingState = document.getElementById('loading-state');
+  const emptyState   = document.getElementById('empty-state');
+  const pagination   = document.getElementById('pagination');
+  const pageInfo     = document.getElementById('page-info');
+  const prevBtn      = document.getElementById('prev-page');
+  const nextBtn      = document.getElementById('next-page');
+  const statsBar     = document.getElementById('stats-bar');
+  const searchInput  = document.getElementById('search-input');
+  const locationFilter     = document.getElementById('location-filter');
+  const phaseFilter        = document.getElementById('phase-filter');
+  const compensationFilter = document.getElementById('compensation-filter');
+
+  /* ── helpers ─────────────────────────────────────────────────────── */
+  function safeJSON(val, fallback = []) {
+    if (!val) return fallback;
+    if (typeof val !== 'string') return val;
+    try { return JSON.parse(val); } catch { return fallback; }
+  }
+
+  function phaseColor(phase) {
+    const map = { PHASE3:'emerald', PHASE2:'blue', PHASE1:'amber', PHASE4:'teal', NA:'slate' };
+    return map[phase] || 'slate';
+  }
+
+  function phaseLabel(trial) {
+    return trial.phase_label || trial.phase || 'Clinical Trial';
+  }
+
+  /* ── render one card ─────────────────────────────────────────────── */
+  function renderCard(trial) {
+    const tags        = safeJSON(trial.ai_tags).slice(0, 3);
+    const must        = safeJSON(trial.eligibility_summary_must).slice(0, 2);
+    const summary     = trial.ai_summary || trial.brief_summary || '';
+    const city        = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || 'Multiple Locations';
+    const isRecruiting = trial.overall_status === 'RECRUITING' || trial.status_label === 'Recruiting';
+    const phase       = phaseLabel(trial);
+    const phaseCol    = phaseColor(trial.phase);
+    const hasPay      = trial.has_compensation;
+    const payAmt      = trial.compensation_amount || '';
+    const duration    = trial.ai_estimated_duration || '';
+    const sponsor     = trial.lead_sponsor || '';
+
+    return `
+      <article class="group relative bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-[0_32px_64px_-20px_rgba(0,163,129,0.15)] flex flex-col">
+
+        <!-- Top accent stripe -->
+        <div class="h-1 w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+        <!-- Glow -->
+        <div class="absolute -top-20 -right-20 w-52 h-52 bg-accent/[0.05] rounded-full blur-[80px] group-hover:bg-accent/[0.12] transition-all duration-700 pointer-events-none"></div>
+
+        <div class="relative z-10 p-8 flex flex-col h-full gap-6">
+
+          <!-- Row 1: Status + Phase badges -->
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase tracking-[0.18em] px-4 py-2 rounded-full ${isRecruiting ? 'bg-accent text-white' : 'bg-slate-100 text-slate-500'}">
+              ${isRecruiting ? (lang === 'en' ? 'Recruiting' : 'Reclutando') : (trial.status_label || 'Active')}
+            </span>
+            <span class="text-[10px] font-black uppercase tracking-[0.18em] text-${phaseCol}-600 bg-${phaseCol}-50 border border-${phaseCol}-100 px-3 py-1.5 rounded-full">
+              ${phase}
+            </span>
+          </div>
+
+          <!-- Row 2: Drug tags -->
+          ${tags.length ? `
+          <div class="flex flex-wrap gap-1.5">
+            ${tags.map(t => `<span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-accent/5 text-accent border border-accent/10">${t}</span>`).join('')}
+          </div>` : ''}
+
+          <!-- Row 3: Title + Summary -->
+          <div class="flex-1 space-y-3">
+            <h3 class="text-xl font-black text-primary group-hover:text-accent transition-colors leading-[1.25] tracking-tight">
+              ${trial.title}
+            </h3>
+            <p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
+              ${summary}
+            </p>
+          </div>
+
+          <!-- Row 4: Key facts -->
+          <div class="space-y-2.5">
+            <!-- Eligibility -->
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
+              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Who qualifies' : 'Quién califica'}</div>
+                <div class="text-sm font-bold text-slate-700 truncate">${must.length ? must[0] : (trial.eligibility_age_range || 'Adults 18+')}</div>
+              </div>
+            </div>
+
+            <!-- Location -->
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-accent/10 transition-all duration-300">
+              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-accent flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Location' : 'Ubicación'}</div>
+                <div class="text-sm font-bold text-slate-700 truncate">${city}</div>
+              </div>
+            </div>
+
+            <!-- Compensation (highlighted if paid) -->
+            ${hasPay ? `
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-200 transition-all duration-300">
+              <div class="w-9 h-9 rounded-xl bg-white border border-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <div class="text-[9px] font-black uppercase tracking-widest text-emerald-600">${lang === 'en' ? 'You get paid' : 'Te pagan'}</div>
+                <div class="text-sm font-black text-emerald-700 truncate">${payAmt || (lang === 'en' ? 'Ask for details' : 'Consultar')}</div>
+              </div>
+            </div>` : `
+            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 transition-all duration-300">
+              <div class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">${lang === 'en' ? 'Cost' : 'Costo'}</div>
+                <div class="text-sm font-bold text-slate-600">${lang === 'en' ? 'Free – no payment' : 'Gratis – sin pago'}</div>
+              </div>
+            </div>`}
+          </div>
+
+          <!-- Row 5: Duration pill + CTA -->
+          <div class="flex items-center gap-3 pt-2">
+            ${duration ? `<span class="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 flex-shrink-0">⏱ ${duration}</span>` : ''}
+            <a href="/trial/${trial.nct_id}" class="flex-1 inline-flex items-center justify-center gap-2 py-4 rounded-2xl bg-accent text-white font-black text-xs uppercase tracking-[0.25em] hover:bg-primary transition-all duration-300 shadow-lg shadow-accent/20 hover:shadow-primary/20 active:scale-95">
+              ${lang === 'en' ? 'View & Apply' : 'Ver y Aplicar'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </article>
+    `;
+  }
+
+  /* ── API + state ──────────────────────────────────────────────────── */
+  async function fetchTrials(page = 1, filters = {}) {
+    showLoading();
+    try {
+      const params = new URLSearchParams({ page, pageSize: '9' });
+      if (filters.q)          params.set('q', filters.q);
+      if (filters.location)   params.set('location', filters.location);
+      if (filters.phase)      params.set('phase', filters.phase);
+      if (filters.compensation !== undefined) params.set('compensation', filters.compensation);
+
+      const res  = await fetch(`/api/trials?${params}`);
+      const data = await res.json();
+
+      if (data.trials?.length) {
+        renderTrials(data.trials);
+        updateStats(data.trials.length, data.total);
+        currentPage = data.page;
+        totalPages  = data.totalPages || 1;
+        updatePagination();
+      } else {
+        showEmpty();
+      }
+    } catch(e) {
+      console.error(e);
+      showEmpty();
+    }
+  }
+
+  function showLoading() {
+    trialsGrid.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    pagination.classList.add('hidden');
+    loadingState.classList.remove('hidden');
+  }
+
+  function showEmpty() {
+    loadingState.classList.add('hidden');
+    trialsGrid.classList.add('hidden');
+    pagination.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+  }
+
+  function renderTrials(trials) {
+    loadingState.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    trialsGrid.classList.remove('hidden');
+    pagination.classList.remove('hidden');
+    trialsGrid.innerHTML = trials.map(renderCard).join('');
+  }
+
+  function updateStats(visible, total) {
+    statsBar.innerHTML = `
+      <span class="text-xs font-medium text-slate-500">
+        ${lang === 'en'
+          ? `Showing <strong>${visible}</strong> of <strong>${total || '?'}</strong> active weight loss trials`
+          : `Mostrando <strong>${visible}</strong> de <strong>${total || '?'}</strong> ensayos activos`}
+      </span>
+      
+    `;
+  }
+
+  function updatePagination() {
+    pageInfo.textContent = `${lang === 'en' ? 'Page' : 'Página'} ${currentPage} / ${totalPages}`;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    if (totalPages <= 1) pagination.classList.add('hidden');
+  }
+
+  function debounce(fn, ms) {
+    let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  }
+
+  function handleFilterChange() {
+    currentFilters = {
+      q: searchInput.value,
+      location: locationFilter.value,
+      phase: phaseFilter.value,
+      compensation: compensationFilter.value === '' ? undefined : compensationFilter.value
+    };
+    currentPage = 1;
+    fetchTrials(currentPage, currentFilters);
+  }
+
+  searchInput?.addEventListener('input', debounce(handleFilterChange, 300));
+  locationFilter?.addEventListener('change', handleFilterChange);
+  phaseFilter?.addEventListener('change', handleFilterChange);
+  compensationFilter?.addEventListener('change', handleFilterChange);
+  prevBtn?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; fetchTrials(currentPage, currentFilters); }});
+  nextBtn?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; fetchTrials(currentPage, currentFilters); }});
+
+  fetchTrials();
+</script>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

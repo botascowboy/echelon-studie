@@ -1,0 +1,432 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ChatBot from '../../components/ChatBot.astro';
+import PreScreener from '../../components/PreScreener.astro';
+
+const { nctId } = Astro.params;
+const lang = "en";
+
+let trial: any = null;
+let error: string | null = null;
+
+try {
+  const response = await fetch(`${Astro.url.origin}/api/trials/${nctId}`);
+  if (response.ok) {
+    const data = await response.json();
+    trial = data.trial;
+  } else {
+    error = "Trial not found";
+  }
+} catch (e) {
+  error = "Failed to load trial";
+}
+
+function safeJSON(val: any, fallback: any[] = []) {
+  if (!val) return fallback;
+  if (typeof val !== 'string') return val;
+  try { return JSON.parse(val); } catch { return fallback; }
+}
+
+const eligibilityMust    = safeJSON(trial?.eligibility_summary_must);
+const eligibilityCannot  = safeJSON(trial?.eligibility_summary_cannot);
+const whatToExpect       = safeJSON(trial?.ai_what_to_expect);
+const risks              = safeJSON(trial?.ai_potential_risks);
+const benefits           = safeJSON(trial?.ai_potential_benefits);
+const questions          = safeJSON(trial?.ai_questions_to_ask);
+const tags               = safeJSON(trial?.ai_tags);
+const conditions         = safeJSON(trial?.conditions);
+---
+
+<Layout
+  title={trial ? `${trial.title} | Weight Loss Trial` : "Trial Not Found"}
+  description={trial?.ai_summary || trial?.brief_summary || "Clinical trial details"}
+>
+  <Header lang={lang} />
+
+  <main class="pt-28 pb-24 bg-slate-50/30">
+    {error || !trial ? (
+      <!-- Error State -->
+      <div class="container mx-auto px-4 text-center py-24">
+        <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-slate-800 mb-3">Trial Not Found</h1>
+        <p class="text-slate-500 mb-8">This trial doesn't exist or has ended.</p>
+        <a href="/#trials" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-wider hover:bg-primary transition-colors">
+          ← Back to All Trials
+        </a>
+      </div>
+    ) : (
+      <div class="container mx-auto px-4 max-w-7xl">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-slate-400 mb-8">
+          <a href="/" class="hover:text-accent transition-colors">Home</a>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <a href="/#trials" class="hover:text-accent transition-colors">Weight Loss Trials</a>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="text-slate-700 font-medium truncate max-w-[200px] md:max-w-sm">{trial.title}</span>
+        </nav>
+
+        <!-- Hero band -->
+        <div class="relative bg-primary rounded-[3rem] overflow-hidden mb-8 p-10 md:p-14">
+          <div class="absolute inset-0 opacity-[0.06]" style="background-image:radial-gradient(circle,#00a381 1px,transparent 1px);background-size:32px 32px;"></div>
+          <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-[120px] pointer-events-none"></div>
+          <div class="relative z-10 max-w-3xl">
+            <!-- Badges row -->
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span class={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full ${trial.overall_status === 'RECRUITING' ? 'bg-accent text-white' : 'bg-white/10 text-white/70'}`}>
+                {trial.status_label || trial.overall_status}
+              </span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full bg-white/10 text-white/80">
+                {trial.phase_label || trial.phase}
+              </span>
+              {trial.has_compensation && (
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                  💰 Paid Study
+                </span>
+              )}
+            </div>
+            <h1 class="text-3xl md:text-5xl font-black text-white leading-[1.1] tracking-tight mb-4">
+              {trial.title}
+            </h1>
+            {trial.official_title && trial.official_title !== trial.title && (
+              <p class="text-white/50 text-sm italic">{trial.official_title}</p>
+            )}
+            <!-- Drug tags -->
+            {tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-5">
+                {tags.map((tag: string) => (
+                  <span class="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/10 text-white/70 border border-white/10">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Main grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- ─── LEFT: main content ──────────────────────────────── -->
+          <div class="lg:col-span-2 space-y-6">
+
+            <!-- 1. Plain-English Summary -->
+            <div class="bg-gradient-to-br from-accent/5 to-accent/[0.015] rounded-[2.5rem] p-8 md:p-10 border border-accent/10">
+              <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </div>
+                <span class="text-[11px] font-black uppercase tracking-[0.2em] text-accent">What is this study about?</span>
+              </div>
+              <p class="text-slate-700 text-lg leading-relaxed font-medium">
+                {trial.ai_summary || trial.brief_summary}
+              </p>
+              <!-- Quick stats row -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-7">
+                {trial.ai_estimated_duration && (
+                  <div class="bg-white rounded-2xl p-4 text-center border border-slate-100">
+                    <div class="text-xl font-black text-accent leading-tight">{trial.ai_estimated_duration}</div>
+                    <div class="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">Duration</div>
+                  </div>
+                )}
+                {trial.ai_visit_frequency && (
+                  <div class="bg-white rounded-2xl p-4 text-center border border-slate-100">
+                    <div class="text-xl font-black text-primary leading-tight">{trial.ai_visit_frequency}</div>
+                    <div class="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">Visits</div>
+                  </div>
+                )}
+                {trial.enrollment_count && (
+                  <div class="bg-white rounded-2xl p-4 text-center border border-slate-100">
+                    <div class="text-xl font-black text-primary leading-tight">{trial.enrollment_count}</div>
+                    <div class="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">Participants</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <!-- 2. Do I qualify? -->
+            <div class="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100">
+              <h2 class="text-2xl font-black text-primary mb-7 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>
+                  </svg>
+                </div>
+                Do I Qualify?
+              </h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Must have -->
+                <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
+                  <h3 class="text-xs font-black uppercase tracking-wider text-emerald-700 mb-4 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    You may qualify if:
+                  </h3>
+                  <ul class="space-y-2.5">
+                    {eligibilityMust.map((item: string) => (
+                      <li class="flex items-start gap-2.5 text-sm text-emerald-800">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-[6px] flex-shrink-0"></span>
+                        {item}
+                      </li>
+                    ))}
+                    {eligibilityMust.length === 0 && (
+                      <li class="text-sm text-emerald-700/70 italic">See full criteria below</li>
+                    )}
+                  </ul>
+                </div>
+                <!-- Cannot -->
+                <div class="bg-red-50 rounded-2xl p-5 border border-red-100">
+                  <h3 class="text-xs font-black uppercase tracking-wider text-red-700 mb-4 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    You cannot join if:
+                  </h3>
+                  <ul class="space-y-2.5">
+                    {eligibilityCannot.map((item: string) => (
+                      <li class="flex items-start gap-2.5 text-sm text-red-800">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-[6px] flex-shrink-0"></span>
+                        {item}
+                      </li>
+                    ))}
+                    {eligibilityCannot.length === 0 && (
+                      <li class="text-sm text-red-700/70 italic">No exclusions listed</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Age / BMI chips -->
+              <div class="flex flex-wrap gap-3 pt-5 border-t border-slate-100">
+                {trial.eligibility_age_range && (
+                  <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="text-xs font-bold text-slate-600">Age: <strong class="text-primary">{trial.eligibility_age_range}</strong></span>
+                  </div>
+                )}
+                {trial.eligibility_bmi_requirements && (
+                  <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                    <span class="text-xs font-bold text-slate-600">BMI: <strong class="text-primary">{trial.eligibility_bmi_requirements}</strong></span>
+                  </div>
+                )}
+                {trial.sex && trial.sex !== 'All' && (
+                  <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-xs font-bold text-slate-600">Sex: <strong class="text-primary">{trial.sex}</strong></span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <!-- 3. What will I do? -->
+            {whatToExpect.length > 0 && (
+              <div class="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100">
+                <h2 class="text-2xl font-black text-primary mb-7 flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                  </div>
+                  What Will I Do?
+                </h2>
+                <div class="space-y-3">
+                  {whatToExpect.map((item: string, i: number) => (
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/20 transition-colors">
+                      <div class="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center flex-shrink-0 font-black text-[11px]">
+                        {i + 1}
+                      </div>
+                      <span class="text-slate-700 text-sm leading-relaxed">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- 4. Risks & Benefits -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Risks -->
+              <div class="bg-red-50 rounded-[2rem] p-7 border border-red-100">
+                <h3 class="text-base font-black text-red-700 mb-5 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  Possible Risks
+                </h3>
+                <ul class="space-y-2.5">
+                  {risks.map((item: string) => (
+                    <li class="text-sm text-red-700/80 flex items-start gap-2">
+                      <span class="mt-1.5 w-1 h-1 rounded-full bg-red-400 flex-shrink-0"></span>
+                      {item}
+                    </li>
+                  ))}
+                  {risks.length === 0 && <li class="text-sm text-red-600/60 italic">Contact site for details</li>}
+                </ul>
+              </div>
+              <!-- Benefits -->
+              <div class="bg-emerald-50 rounded-[2rem] p-7 border border-emerald-100">
+                <h3 class="text-base font-black text-emerald-700 mb-5 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  Potential Benefits
+                </h3>
+                <ul class="space-y-2.5">
+                  {benefits.map((item: string) => (
+                    <li class="text-sm text-emerald-700/80 flex items-start gap-2">
+                      <span class="mt-1.5 w-1 h-1 rounded-full bg-emerald-400 flex-shrink-0"></span>
+                      {item}
+                    </li>
+                  ))}
+                  {benefits.length === 0 && <li class="text-sm text-emerald-600/60 italic">Contact site for details</li>}
+                </ul>
+              </div>
+            </div>
+
+            <!-- 5. Questions to ask -->
+            {questions.length > 0 && (
+              <div class="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100">
+                <h2 class="text-2xl font-black text-primary mb-3 flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                  </div>
+                  Questions to Ask the Study Team
+                </h2>
+                <p class="text-slate-500 text-sm mb-6">Use these when you contact the site:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {questions.map((item: string) => (
+                    <div class="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-accent/20 transition-colors">
+                      <span class="w-6 h-6 rounded-full bg-accent/10 text-accent font-black text-xs flex items-center justify-center flex-shrink-0">?</span>
+                      <span class="text-slate-700 text-sm">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- 6. NCT / External link -->
+            <div class="flex flex-wrap items-center gap-4 px-6 py-4 bg-white rounded-2xl border border-slate-100 text-sm">
+              <span class="text-slate-400">NCT ID:</span>
+              <code class="px-2.5 py-1 bg-slate-100 rounded-lg text-slate-700 font-mono text-xs">{trial.nct_id}</code>
+              <a
+                href={`https://clinicaltrials.gov/study/${trial.nct_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ml-auto flex items-center gap-1.5 text-accent font-bold hover:underline text-xs"
+              >
+                View on ClinicalTrials.gov
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- ─── RIGHT: Sticky sidebar ───────────────────────────── -->
+          <div class="lg:col-span-1">
+            <div class="sticky top-28 space-y-5">
+
+              <!-- CTA card -->
+              <div class="bg-primary rounded-[2.5rem] p-8 text-white overflow-hidden relative">
+                <div class="absolute -top-12 -right-12 w-40 h-40 bg-accent/20 rounded-full blur-[60px] pointer-events-none"></div>
+                <div class="relative z-10">
+                  <h3 class="text-xl font-black mb-2">Ready to apply?</h3>
+                  <p class="text-white/70 text-sm mb-6 leading-relaxed">
+                    Check your eligibility in 2 minutes. Free, no obligation.
+                  </p>
+                  <a
+                    href="#prescreen"
+                    class="block w-full py-4 rounded-2xl bg-accent text-white font-black text-center uppercase tracking-wider text-xs hover:bg-white hover:text-primary transition-all shadow-lg shadow-accent/30"
+                  >
+                    Check My Eligibility
+                  </a>
+                  <p class="text-white/40 text-[10px] text-center mt-3">No medical records needed</p>
+                </div>
+              </div>
+
+              <!-- Compensation highlight (if paid) -->
+              {trial.has_compensation && (
+                <div class="bg-emerald-50 rounded-[2.5rem] p-7 border border-emerald-100">
+                  <div class="flex items-center gap-2 mb-3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span class="text-xs font-black uppercase tracking-wider text-emerald-700">You Get Paid</span>
+                  </div>
+                  <div class="text-3xl font-black text-emerald-700 mb-1">{trial.compensation_amount || 'Ask for amount'}</div>
+                  {trial.compensation_details && (
+                    <p class="text-sm text-emerald-600/80">{trial.compensation_details}</p>
+                  )}
+                </div>
+              )}
+
+              <!-- Location -->
+              <div class="bg-white rounded-[2.5rem] p-7 border border-slate-100">
+                <h3 class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-4">Location</h3>
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <div>
+                    <p class="font-bold text-slate-800 text-sm">
+                      {trial.primary_location_city || 'Multiple Locations'}
+                      {trial.primary_location_state ? `, ${trial.primary_location_state}` : ''}
+                    </p>
+                    {trial.locations_count > 1 && (
+                      <p class="text-xs text-slate-500 mt-0.5">+{trial.locations_count - 1} more locations</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sponsor -->
+              <div class="bg-white rounded-[2.5rem] p-7 border border-slate-100">
+                <h3 class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-3">Sponsored by</h3>
+                <p class="font-bold text-slate-800 text-sm">{trial.lead_sponsor || 'Not disclosed'}</p>
+                {trial.sponsor_class && (
+                  <p class="text-xs text-slate-500 mt-0.5">{trial.sponsor_class}</p>
+                )}
+              </div>
+
+              <!-- Study size -->
+              <div class="bg-white rounded-[2.5rem] p-7 border border-slate-100">
+                <h3 class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-3">Study Size</h3>
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div>
+                    <p class="font-black text-primary text-lg">{trial.enrollment_count || '?'}</p>
+                    <p class="text-xs text-slate-500">participants needed</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- FDA badge -->
+              <div class="flex items-center gap-3 px-5 py-4 bg-accent/5 rounded-2xl border border-accent/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-wider text-accent">FDA Reviewed</p>
+                  <p class="text-xs text-slate-500">IRB approved & monitored</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Pre-Screener -->
+        <section id="prescreen" class="mt-14">
+          <PreScreener trial={trial} lang={lang} />
+        </section>
+
+      </div>
+    )}
+  </main>
+
+  <ChatBot lang={lang} />
+  <Footer lang={lang} />
+</Layout>

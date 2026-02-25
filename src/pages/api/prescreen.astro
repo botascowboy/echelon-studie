@@ -1,0 +1,107 @@
+---
+export const prerender = false;
+
+export async function POST({ request, locals }: any) {
+  const apiKey = import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+  
+  try {
+    const body = await request.json();
+    const { trialId, answers } = body;
+    
+    if (!trialId || !answers) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const prompt = `Analyze this clinical trial pre-screening:
+
+Trial: ${trialId}
+Age: ${answers.age || "Not provided"}
+BMI Category: ${answers.bmi || "Not provided"}
+Health Conditions: ${answers.conditions?.join(", ") || "None"}
+Current Medications: ${answers.current_meds || "None"}
+
+Return a JSON object with:
+- likelyEligible: true/false
+- confidence: "high"/"medium"/"low"
+- message: A brief, encouraging explanation of the result
+- recommendation: Clear next steps
+- reasons: Array of specific factors (if not eligible, explain why)
+
+Be helpful and professional. If they likely qualify, be encouraging. If not, be kind but clear about why.`;
+
+    if (!apiKey) {
+      // Fallback without AI
+      const likelyEligible = 
+        answers.bmi !== "normal" && 
+        !answers.conditions?.includes("type-1-diabetes") &&
+        !answers.conditions?.includes("thyroid-cancer") &&
+        answers.current_meds !== "glp1";
+      
+      return new Response(
+        JSON.stringify({
+          likelyEligible,
+          confidence: "medium",
+          message: likelyEligible 
+            ? "Based on your answers, you may qualify for this study! We recommend contacting the study team for a full screening."
+            : "Based on your answers, you may not meet the eligibility criteria for this specific study. However, we may have other studies that are a better fit.",
+          recommendation: likelyEligible
+            ? "Contact the study team to schedule a screening appointment."
+            : "Browse other available studies or contact us to discuss alternatives.",
+          reasons: answers.conditions?.length > 0 
+            ? ["Some health conditions may affect eligibility."]
+            : undefined
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { 
+            role: "system", 
+            content: "You are a clinical trial pre-screening assistant. Analyze answers and provide eligibility assessment in JSON format. Be professional, encouraging, and clear."
+          },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const result = JSON.parse(data.choices[0].message.content);
+
+    return new Response(
+      JSON.stringify(result),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+
+  } catch (error) {
+    console.error("[Pre-screen API] Error:", error);
+    
+    return new Response(
+      JSON.stringify({
+        likelyEligible: true,
+        confidence: "medium",
+        message: "We couldn't fully analyze your answers, but you may qualify. Please contact the study team for a complete screening.",
+        recommendation: "Contact the study team directly."
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+---

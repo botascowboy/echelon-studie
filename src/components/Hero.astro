@@ -2,109 +2,158 @@
 const { lang = "en" } = Astro.props;
 ---
 
-<section class="relative flex items-center pt-32 md:pt-48 pb-24 md:pb-32 overflow-hidden bg-white">
-	<!-- Luxury Ambient Background -->
-	<div class="absolute inset-0 -z-10 overflow-hidden">
-		<div class="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-accent/[0.08] rounded-full blur-[160px] animate-float"></div>
-		<div class="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-accent/[0.04] rounded-full blur-[140px] animate-float opacity-50" style="animation-delay: 2s;"></div>
-    <!-- Luxury Mesh Grid -->
-    <div class="absolute inset-0 opacity-[0.25]" style="background-image: radial-gradient(circle, #00a381 1px, transparent 1px); background-size: 40px 40px;"></div>
-	</div>
+<section class="relative flex items-center pt-28 md:pt-40 pb-20 md:pb-28 overflow-hidden bg-white">
+  <!-- Ambient Background -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-accent/[0.07] rounded-full blur-[180px] animate-float"></div>
+    <div class="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-accent/[0.04] rounded-full blur-[140px] animate-float opacity-50" style="animation-delay: 2s;"></div>
+    <div class="absolute inset-0 opacity-[0.18]" style="background-image: radial-gradient(circle, #00a381 1px, transparent 1px); background-size: 40px 40px;"></div>
+  </div>
 
-	<div class="container mx-auto px-4 z-10">
-		<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-			
-			<!-- Premium Narrative -->
-			<div class="lg:col-span-7 space-y-12 text-center lg:text-left">
-        <div class="space-y-8">
-          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.3em] animate-fade-in shadow-sm">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+  <div class="container mx-auto px-4 z-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
+
+      <!-- Left: Narrative -->
+      <div class="lg:col-span-7 space-y-10 text-center lg:text-left">
+
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.3em] animate-fade-in shadow-sm">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+          </span>
+          {lang === 'en' ? 'FDA-Reviewed Weight Loss Trials' : 'Ensayos de Pérdida de Peso Revisados por la FDA'}
+        </div>
+
+        <!-- Headline -->
+        <div class="space-y-4">
+          <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.88] text-primary animate-fade-in">
+            {lang === 'en' ? 'Lose Weight.' : 'Pierde Peso.'}<br/>
+            <span class="text-gradient leading-tight">
+              {lang === 'en' ? 'Get Paid.' : 'Cobra por ello.'}
             </span>
-            {lang === 'en' ? 'Excellence in Clinical Research' : 'Excelencia en Investigación Clínica'}
-          </div>
-
-          <h1 class="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-primary animate-fade-in">
-            {lang === 'en' ? 'The Future of' : 'El Futuro de'} <br/>
-            <span class="text-gradient leading-tight">{lang === 'en' ? 'Clinical Care.' : 'la Medicina.'}</span>
           </h1>
-
-          <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto lg:mx-0 leading-[1.4] font-medium animate-fade-in opacity-80" style="animation-delay: 0.2s;">
-            {lang === 'en' 
-              ? 'Dedicated to the highest standards of safety and transparency in patient recruitment for life-changing trials.' 
-              : 'Dedicados a los más altos estándares de seguridad y transparencia en el reclutamiento para ensayos médicos.'}
+          <p class="text-xl md:text-2xl text-slate-500 max-w-xl mx-auto lg:mx-0 leading-[1.4] font-medium animate-fade-in" style="animation-delay: 0.15s;">
+            {lang === 'en'
+              ? 'Join a weight loss clinical trial near you. Access breakthrough medications like Ozempic, Wegovy & Mounjaro — at no cost.'
+              : 'Únete a un ensayo clínico de pérdida de peso cerca de ti. Accede a medicamentos como Ozempic, Wegovy y Mounjaro — sin costo.'}
           </p>
         </div>
 
-				<div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 pt-6 animate-fade-in" style="animation-delay: 0.4s;">
-					<a href="#trials" class="w-full sm:w-auto px-14 py-7 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_40px_-10px_rgba(0,163,129,0.3)] hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-500 text-center">
-						{lang === 'en' ? 'Active Studies' : 'Estudios Activos'}
-					</a>
-					<a href="#contact" class="w-full sm:w-auto px-14 py-7 rounded-2xl bg-white border border-accent/20 text-accent font-black text-sm uppercase tracking-[0.2em] hover:bg-accent hover:text-white transition-all duration-500 text-center active:scale-95 shadow-sm">
-						{lang === 'en' ? 'Join Registry' : 'Unirse al Registro'}
-					</a>
-				</div>
+        <!-- Stats row -->
+        <div class="flex flex-wrap items-center gap-8 justify-center lg:justify-start animate-fade-in" style="animation-delay: 0.25s;">
+          <div class="text-center lg:text-left">
+            <div class="text-4xl font-black text-primary tracking-tighter">$1,500</div>
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">{lang === 'en' ? 'Max. Compensation' : 'Compensación Máx.'}</div>
+          </div>
+          <div class="w-px h-10 bg-slate-200 hidden sm:block"></div>
+          <div class="text-center lg:text-left">
+            <div class="text-4xl font-black text-accent tracking-tighter">100%</div>
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">{lang === 'en' ? 'Free. No Hidden Costs' : 'Gratis. Sin costos ocultos'}</div>
+          </div>
+          <div class="w-px h-10 bg-slate-200 hidden sm:block"></div>
+          <div class="text-center lg:text-left">
+            <div class="text-4xl font-black text-primary tracking-tighter">5</div>
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">{lang === 'en' ? 'Major US Cities' : 'Ciudades Principales'}</div>
+          </div>
+        </div>
 
-				<!-- Premium Trust Micro-Details -->
-				<div class="pt-12 flex flex-wrap items-center justify-center lg:justify-start gap-x-16 gap-y-10 animate-fade-in" style="animation-delay: 0.6s;">
-					<div class="flex items-center gap-4 group">
-						<div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-accent/40 group-hover:bg-accent/5 transition-all duration-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-accent"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-            </div>
-						<div class="flex flex-col">
-              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">FDA Regulated</span>
-              <span class="text-[9px] font-bold text-slate-400">Strict Compliance</span>
-            </div>
-					</div>
-					<div class="flex items-center gap-4 group">
-						<div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-accent/40 group-hover:bg-accent/5 transition-all duration-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-accent"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
-            </div>
-						<div class="flex flex-col">
-              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">IRB Approved</span>
-              <span class="text-[9px] font-bold text-slate-400">Ethical Standards</span>
-            </div>
-					</div>
-				</div>
-			</div>
+        <!-- CTAs -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in" style="animation-delay: 0.35s;">
+          <a href="#trials" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_40px_-10px_rgba(0,163,129,0.35)] hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-500 text-center">
+            {lang === 'en' ? 'See Open Trials' : 'Ver Ensayos Abiertos'}
+          </a>
+          <a href="#contact" class="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white border border-slate-200 text-primary font-black text-sm uppercase tracking-[0.2em] hover:border-accent hover:text-accent transition-all duration-500 text-center active:scale-95">
+            {lang === 'en' ? 'Check My Eligibility' : 'Verificar Elegibilidad'}
+          </a>
+        </div>
 
-			<!-- Luxury Medical Visual Block -->
-			<div class="lg:col-span-5 relative hidden lg:block animate-fade-in" style="animation-delay: 0.4s;">
-				<div class="relative w-full aspect-[4/5] perspective-1000">
-					<div class="absolute inset-0 bg-accent/[0.04] rounded-[5rem] rotate-6 blur-[120px]"></div>
-					<div class="relative h-full w-full bg-white border border-slate-100 rounded-[5rem] shadow-[0_60px_100px_-30px_rgba(0,33,71,0.08)] flex flex-col items-center justify-center p-12 group">
-						<div class="absolute inset-0 bg-gradient-to-br from-accent/[0.02] to-transparent pointer-events-none rounded-[5rem]"></div>
-            
-            <div class="relative w-full aspect-square bg-slate-50 rounded-[4rem] border border-slate-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-[3s] shadow-inner overflow-hidden">
-							<div class="absolute inset-0 opacity-20 bg-[radial-gradient(#00a381_1px,transparent_1px)] [background-size:20px_20px]"></div>
-              <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-30"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-32 h-32 rounded-full border-[10px] border-accent/10 border-t-accent animate-spin-slow"></div>
+        <!-- Cities -->
+        <div class="pt-4 animate-fade-in" style="animation-delay: 0.5s;">
+          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4 text-center lg:text-left">
+            {lang === 'en' ? 'Trials available in' : 'Ensayos disponibles en'}
+          </p>
+          <div class="flex flex-wrap items-center gap-3 justify-center lg:justify-start">
+            {[
+              { name: 'NYC', icon: '🗽', val: 'New York, NY' },
+              { name: 'Miami', icon: '🌴', val: 'Miami, FL' },
+              { name: 'Houston', icon: '🚀', val: 'Houston, TX' },
+              { name: 'Los Angeles', icon: '🌆', val: 'Los Angeles, CA' },
+              { name: 'San Francisco', icon: '🌉', val: 'San Francisco, CA' },
+            ].map((city) => (
+              <a
+                href="#trials"
+                class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 hover:border-accent/40 hover:bg-accent/5 transition-all duration-300 group"
+                onclick={`document.getElementById('location-filter').value='${city.val}';document.getElementById('location-filter').dispatchEvent(new Event('change'));`}
+              >
+                <span class="text-lg">{city.icon}</span>
+                <span class="text-sm font-bold text-slate-600 group-hover:text-accent transition-colors">{city.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visual Card -->
+      <div class="lg:col-span-5 relative hidden lg:flex flex-col gap-5 animate-fade-in" style="animation-delay: 0.4s;">
+
+        <!-- Main visual card -->
+        <div class="relative bg-white border border-slate-100 rounded-[4rem] shadow-[0_60px_100px_-30px_rgba(0,33,71,0.08)] p-10 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-accent/[0.03] to-transparent pointer-events-none rounded-[4rem]"></div>
+
+          <!-- Visual: weight scale icon big -->
+          <div class="relative w-full aspect-square bg-gradient-to-br from-slate-50 to-white rounded-[3rem] border border-slate-100 flex items-center justify-center mb-8 shadow-inner overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#00a381_1px,transparent_1px)] [background-size:20px_20px]"></div>
+            <!-- GLP-1 molecule / weight icon composition -->
+            <div class="relative flex flex-col items-center gap-3">
+              <div class="w-28 h-28 rounded-full bg-accent/10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Body/person with downward arrow = weight loss -->
+                  <path d="M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                  <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                  <path d="M12 14v4M10 16l2 2 2-2"/>
+                </svg>
               </div>
-						</div>
-						
-						<!-- Luxury Floating Data Nodes - Moved out of overflow-hidden parent -->
-						<div class="absolute top-16 -right-16 px-10 py-8 bg-white border border-slate-100 rounded-[3rem] shadow-2xl animate-float z-20">
-							<div class="text-5xl font-black text-primary tracking-tighter mb-1">100%</div>
-							<div class="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Security</div>
-						</div>
-						
-						<div class="absolute bottom-16 -left-16 px-10 py-8 bg-white border border-slate-100 rounded-[3rem] shadow-2xl animate-float z-20" style="animation-delay: 2s;">
-							<div class="text-5xl font-black text-accent tracking-tighter mb-1">50+</div>
-							<div class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Clinics</div>
-						</div>
-					</div>
-				</div>
-			</div>
+              <div class="flex items-center gap-2 bg-accent/10 px-5 py-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <span class="text-accent font-black text-sm">–15% Body Weight</span>
+              </div>
+            </div>
+            <!-- Spinner ring -->
+            <div class="absolute inset-4 rounded-full border-[6px] border-accent/5 border-t-accent/30 animate-spin-slow pointer-events-none"></div>
+          </div>
 
-		</div>
-	</div>
+          <!-- Drug tags -->
+          <div class="flex flex-wrap gap-2 justify-center">
+            {['Ozempic', 'Wegovy', 'Mounjaro', 'Zepbound', 'GLP-1'].map(drug => (
+              <span class="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-accent/5 text-accent border border-accent/10">{drug}</span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Floating stat nodes -->
+        <div class="absolute -top-6 -right-8 px-8 py-6 bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl animate-float z-20">
+          <div class="text-4xl font-black text-primary tracking-tighter mb-0.5">$0</div>
+          <div class="text-[9px] font-black uppercase tracking-[0.25em] text-accent">Cost to You</div>
+        </div>
+
+        <div class="absolute -bottom-4 -left-8 px-8 py-6 bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl animate-float z-20" style="animation-delay: 2s;">
+          <div class="text-4xl font-black text-accent tracking-tighter mb-0.5">FDA</div>
+          <div class="text-[9px] font-black uppercase tracking-[0.25em] text-primary">Reviewed</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
 </section>
 
 <style>
   .animate-spin-slow {
-    animation: spin 8s linear infinite;
+    animation: spin 10s linear infinite;
   }
   @keyframes spin {
     from { transform: rotate(0deg); }

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro build && wrangler pages dev dist",
     "astro": "astro"
   },
   "dependencies": {
@@ -15,7 +15,9 @@
     "@types/topojson-client": "^3.1.5",
     "astro": "^5.17.1",
     "d3": "^7.9.0",
+    "openai": "^6.25.0",
     "tailwindcss": "^4.1.18",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "zod": "^3.25.76"
   }
 }
