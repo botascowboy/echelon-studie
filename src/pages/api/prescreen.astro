@@ -1,19 +1,23 @@
 ---
 export const prerender = false;
 
+import { PrescreenSchema } from "../../lib/schemas";
+
 export async function POST({ request, locals }: any) {
   const apiKey = import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY;
   
   try {
-    const body = await request.json();
-    const { trialId, answers } = body;
+    const json = await request.json();
+    const result = PrescreenSchema.safeParse(json);
     
-    if (!trialId || !answers) {
+    if (!result.success) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
+        JSON.stringify({ error: "Validation failed", details: result.error.format() }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    const { trialId, answers } = result.data;
 
     const prompt = `Analyze this clinical trial pre-screening:
 

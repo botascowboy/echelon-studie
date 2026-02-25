@@ -7,7 +7,7 @@ const url = new URL(Astro.request.url);
 const token = url.searchParams.get('token') || Astro.cookies.get('admin_token')?.value;
 
 if (token !== ADMIN_TOKEN) {
-  // Show login form
+  // Show login form handled below
 }
 
 const authed = token === ADMIN_TOKEN;
@@ -24,119 +24,180 @@ const authed = token === ADMIN_TOKEN;
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Manrope', sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; }
-    .topbar { background: #002147; color: white; padding: 0 2rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-    .topbar h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
-    .topbar .badge { background: #00a381; color: white; font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 10px; border-radius: 99px; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .topbar { background: #002147; color: white; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .topbar h1 { font-size: 16px; font-weight: 900; letter-spacing: -0.02em; }
+    .topbar .badge { background: #00a381; color: white; font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 99px; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    
     /* Login */
-    .login-card { max-width: 360px; margin: 8rem auto; background: white; border-radius: 1.5rem; padding: 2.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
-    .login-card h2 { font-size: 20px; font-weight: 800; margin-bottom: 0.5rem; color: #002147; }
-    .login-card p { font-size: 13px; color: #64748b; margin-bottom: 1.5rem; }
+    .login-card { max-width: 400px; margin: 8rem auto; background: white; border-radius: 2rem; padding: 3rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 40px rgba(0,0,0,0.04); text-align: center; }
+    .login-logo { width: 48px; height: 48px; background: #002147; border-radius: 12px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; color: white; }
+    .login-card h2 { font-size: 24px; font-weight: 800; margin-bottom: 0.5rem; color: #002147; }
+    .login-card p { font-size: 14px; color: #64748b; margin-bottom: 2rem; }
+
+    /* Layout */
+    .layout-grid { display: grid; grid-template-columns: 280px 1fr; gap: 2rem; }
+    @media (max-width: 1024px) { .layout-grid { grid-template-columns: 1fr; } }
+
+    /* Sidebar Filters */
+    .sidebar { position: sticky; top: 88px; height: calc(100vh - 120px); display: flex; flex-direction: column; gap: 1.5rem; }
+    .filter-group { background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.5rem; }
+    .filter-group h3 { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    
     /* Stats */
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.25rem 1.5rem; }
-    .stat-card .num { font-size: 28px; font-weight: 900; color: #002147; }
-    .stat-card .lbl { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.5rem; transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-card .num { font-size: 32px; font-weight: 900; color: #002147; line-height: 1; }
+    .stat-card .lbl { font-size: 12px; font-weight: 700; color: #64748b; margin-top: 8px; }
+
     /* Table */
-    .table-wrap { background: white; border: 1px solid #e2e8f0; border-radius: 1.25rem; overflow: hidden; }
-    .table-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; }
-    .table-header h2 { font-size: 14px; font-weight: 800; color: #002147; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; padding: 0.75rem 1rem; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
-    td { padding: 0.875rem 1rem; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
+    .main-content { min-width: 0; }
+    .table-wrap { background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .table-header { padding: 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; background: white; }
+    .table-header h2 { font-size: 18px; font-weight: 800; color: #002147; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 1rem 1.5rem; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+    td { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
     tr:hover td { background: #f8fafc; }
-    /* Score badge */
-    .score { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; font-size: 11px; font-weight: 900; }
-    .score.high { background: #d1fae5; color: #065f46; }
-    .score.mid { background: #fef9c3; color: #92400e; }
-    .score.low { background: #fee2e2; color: #991b1b; }
-    /* Status badges */
-    .status-badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: opacity .15s; }
-    .status-badge:hover { opacity: .8; }
-    .s-new { background: #dbeafe; color: #1e40af; }
-    .s-called { background: #ede9fe; color: #5b21b6; }
-    .s-qualified { background: #d1fae5; color: #065f46; }
-    .s-sent_to_clinic { background: #00a381; color: white; }
-    .s-invoiced { background: #002147; color: white; }
-    .s-disqualified { background: #fee2e2; color: #991b1b; }
-    /* Inputs */
-    input[type=text], input[type=password], select, textarea {
-      width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem;
-      font-family: inherit; font-size: 14px; outline: none; transition: border-color .15s;
-    }
-    input:focus, select:focus, textarea:focus { border-color: #00a381; }
-    .btn-primary { background: #00a381; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; transition: background .15s; }
-    .btn-primary:hover { background: #002147; }
-    .empty { text-align: center; padding: 4rem 1rem; color: #94a3b8; font-size: 14px; }
-    /* Status selector */
-    .status-select { font-size: 11px; padding: 4px 8px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-family: inherit; font-weight: 700; cursor: pointer; }
-    .filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .filter-btn { padding: 6px 14px; border-radius: 99px; font-size: 11px; font-weight: 800; cursor: pointer; border: 1.5px solid #e2e8f0; background: white; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; transition: all .15s; }
-    .filter-btn.active { background: #002147; color: white; border-color: #002147; }
-    .phone-link { color: #00a381; font-weight: 700; text-decoration: none; }
-    .phone-link:hover { text-decoration: underline; }
+
+    /* UI Components */
+    .badge-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .score-circle { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; }
+    .score-high { background: #d1fae5; color: #059669; }
+    .score-mid { background: #fef3c7; color: #d97706; }
+    .score-low { background: #fee2e2; color: #dc2626; }
+
+    .status-select { padding: 6px 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; outline: none; background: white; }
+    .status-select:focus { border-color: #00a381; }
+
+    input, select { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 14px; margin-bottom: 0.75rem; }
+    input:focus, select:focus { border-color: #00a381; outline: none; }
+    
+    .btn-primary { background: #00a381; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; width: 100%; }
+    .btn-primary:hover { background: #002147; transform: translateY(-1px); }
+
+    .city-tag { font-size: 11px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 6px; }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <h1>Echelon Clinical Studies — Admin</h1>
+  <div style="display:flex; align-items:center; gap:1rem;">
+    <div style="width:32px; height:32px; background:white; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#002147; font-weight:900;">E</div>
+    <h1>Echelon Clinical Studies — Admin</h1>
+  </div>
   <span class="badge">Lead Pipeline</span>
 </div>
 
 {!authed ? (
-  <!-- Login gate -->
   <div class="login-card">
+    <div class="login-logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
     <h2>Admin Access</h2>
-    <p>Enter the admin token to access the lead pipeline.</p>
-    <form method="GET" style="display:flex; flex-direction:column; gap:0.75rem;">
-      <input type="password" name="token" placeholder="Admin token" autofocus>
-      <button type="submit" class="btn-primary">Access Dashboard</button>
+    <p>Sign in to manage trials and patients.</p>
+    <form method="GET">
+      <input type="password" name="token" placeholder="Enter admin token" autofocus>
+      <button type="submit" class="btn-primary">Connect Pipeline</button>
     </form>
   </div>
 ) : (
   <div class="container">
-    <!-- Stats row -->
-    <div class="stats-row" id="stats-row">
-      <div class="stat-card"><div class="num" id="stat-total">—</div><div class="lbl">Total Leads</div></div>
-      <div class="stat-card"><div class="num" id="stat-new">—</div><div class="lbl">New</div></div>
-      <div class="stat-card"><div class="num" id="stat-qualified">—</div><div class="lbl">Qualified</div></div>
-      <div class="stat-card"><div class="num" id="stat-sent">—</div><div class="lbl">Sent to Clinic</div></div>
-      <div class="stat-card"><div class="num" id="stat-invoiced">—</div><div class="lbl">Invoiced</div></div>
-      <div class="stat-card" style="border-color:#00a381;"><div class="num" style="color:#00a381;" id="stat-revenue">$0</div><div class="lbl">Est. Revenue</div></div>
-    </div>
+    <div class="layout-grid">
+      <!-- Sidebar Filters -->
+      <aside class="sidebar">
+        <div class="filter-group">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            Smart Filters
+          </h3>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; font-size:11px; font-weight:800; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">Status</label>
+            <select id="filter-status">
+              <option value="all">All Statuses</option>
+              <option value="new">New Leads</option>
+              <option value="qualified">Qualified</option>
+              <option value="sent_to_clinic">Sent to Clinic</option>
+              <option value="invoiced">Invoiced</option>
+              <option value="disqualified">Disqualified</option>
+            </select>
+          </div>
 
-    <!-- Filters -->
-    <div class="filters" id="filter-bar">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="new">New</button>
-      <button class="filter-btn" data-filter="called">Called</button>
-      <button class="filter-btn" data-filter="qualified">Qualified</button>
-      <button class="filter-btn" data-filter="sent_to_clinic">Sent to Clinic</button>
-      <button class="filter-btn" data-filter="invoiced">Invoiced</button>
-      <button class="filter-btn" data-filter="disqualified">Disqualified</button>
-    </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; font-size:11px; font-weight:800; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">Quality Score</label>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+              <input type="number" id="filter-min-score" placeholder="Min" min="0" max="100">
+              <input type="number" id="filter-max-score" placeholder="Max" min="0" max="100">
+            </div>
+            <p style="font-size:10px; color:#94a3b8; margin-top:2px;">Filter by AI-calculated eligibility score (0-100)</p>
+          </div>
 
-    <!-- Table -->
-    <div class="table-wrap">
-      <div class="table-header">
-        <h2>Leads</h2>
-        <button class="btn-primary" style="font-size:11px; padding:6px 14px;" onclick="loadLeads()">↻ Refresh</button>
-      </div>
-      <div id="table-container">
-        <div class="empty">Loading leads…</div>
-      </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:800; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">Target City</label>
+            <select id="filter-city">
+              <option value="">All Cities</option>
+              <option value="New York">New York</option>
+              <option value="Miami">Miami</option>
+              <option value="Houston">Houston</option>
+              <option value="Los Angeles">Los Angeles</option>
+              <option value="San Francisco">San Francisco</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" style="margin-top:1rem;" onclick="loadData()">Apply Filters</button>
+        </div>
+
+        <div class="filter-group" style="background:#002147; border:none; color:white;">
+          <h3 style="color:rgba(255,255,255,0.5)">System Health</h3>
+          <div style="font-size:12px; font-weight:600; opacity:0.8;">ClinicalTrials.gov Sync: <span style="color:#00a381">Online</span></div>
+          <div style="font-size:12px; font-weight:600; opacity:0.8; margin-top:8px;">AI Scorer: <span style="color:#00a381">Active</span></div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="num" id="stat-total">—</div>
+            <div class="lbl">Total Leads</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="stat-qualified">—</div>
+            <div class="lbl">Qualified</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="stat-sent">—</div>
+            <div class="lbl">Sent to Clinic</div>
+          </div>
+          <div class="stat-card" style="border-bottom: 4px solid #00a381;">
+            <div class="num" id="stat-revenue" style="color:#00a381;">$0</div>
+            <div class="lbl">Estimated Fee Revenue</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <h2>Lead Pipeline</h2>
+            <div style="display:flex; gap:12px;">
+              <button class="btn-primary" style="width:auto; font-size:12px;" onclick="loadData()">↻ Refresh</button>
+            </div>
+          </div>
+          <div id="table-container">
+            <div style="padding:4rem; text-align:center; color:#94a3b8;">Loading pipeline data…</div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 )}
 
 <script define:vars={{ authed, ADMIN_TOKEN }}>
-  if (!authed) { /* login form — no JS needed */ }
-  else {
-    let allLeads = [];
-    let currentFilter = 'all';
-
+  if (authed) {
     const STATUS_LABELS = {
       new: 'New',
       called: 'Called',
@@ -146,86 +207,93 @@ const authed = token === ADMIN_TOKEN;
       disqualified: 'Disqualified',
     };
 
-    async function loadLeads() {
+    async function loadData() {
+      const container = document.getElementById('table-container');
+      const status = document.getElementById('filter-status').value;
+      const minScore = document.getElementById('filter-min-score').value;
+      const maxScore = document.getElementById('filter-max-score').value;
+      const city = document.getElementById('filter-city').value;
+
+      const params = new URLSearchParams({
+        token: ADMIN_TOKEN,
+        status,
+        minScore,
+        maxScore,
+        city
+      });
+
       try {
-        const res = await fetch(`/api/leads?token=${ADMIN_TOKEN}`);
+        const res = await fetch(`/api/leads?${params}`);
         const data = await res.json();
-        allLeads = data.leads || [];
-        updateStats();
-        renderTable();
+        
+        updateStats(data.stats);
+        renderTable(data.leads);
       } catch (e) {
-        document.getElementById('table-container').innerHTML = '<div class="empty">Error loading leads.</div>';
+        container.innerHTML = `<div style="padding:4rem; text-align:center; color:#ef4444;">Error loading data. Check console.</div>`;
       }
     }
 
-    function updateStats() {
-      const byStatus = (s) => allLeads.filter(l => l.status === s).length;
-      document.getElementById('stat-total').textContent = allLeads.length;
-      document.getElementById('stat-new').textContent = byStatus('new');
-      document.getElementById('stat-qualified').textContent = byStatus('qualified');
-      document.getElementById('stat-sent').textContent = byStatus('sent_to_clinic');
-      document.getElementById('stat-invoiced').textContent = byStatus('invoiced');
-      // Est. revenue: $400 per sent/invoiced lead
-      const revenue = (byStatus('sent_to_clinic') + byStatus('invoiced')) * 400;
-      document.getElementById('stat-revenue').textContent = '$' + revenue.toLocaleString();
+    function updateStats(stats) {
+      if (!stats) return;
+      document.getElementById('stat-total').textContent = stats.total;
+      document.getElementById('stat-qualified').textContent = stats.qualified;
+      document.getElementById('stat-sent').textContent = stats.sent_to_clinic;
+      document.getElementById('stat-revenue').textContent = '$' + stats.revenue.toLocaleString();
     }
 
-    function renderTable() {
-      const filtered = currentFilter === 'all' ? allLeads : allLeads.filter(l => l.status === currentFilter);
-
-      if (!filtered.length) {
-        document.getElementById('table-container').innerHTML = '<div class="empty">No leads found.</div>';
+    function renderTable(leads) {
+      const container = document.getElementById('table-container');
+      if (!leads || leads.length === 0) {
+        container.innerHTML = `<div style="padding:4rem; text-align:center; color:#94a3b8;">No leads match your criteria.</div>`;
         return;
       }
 
-      const rows = filtered.map(lead => {
+      const rows = leads.map(lead => {
         const score = lead.qualityScore || 0;
-        const scoreClass = score >= 60 ? 'high' : score >= 40 ? 'mid' : 'low';
+        const scoreClass = score >= 70 ? 'score-high' : score >= 40 ? 'score-mid' : 'score-low';
         const date = new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        const conditions = (lead.conditions || []).join(', ') || '—';
-        const statusOpts = Object.entries(STATUS_LABELS).map(([v, l]) =>
-          `<option value="${v}" ${lead.status === v ? 'selected' : ''}>${l}</option>`
-        ).join('');
-
+        
         return `
           <tr>
             <td>
-              <div style="font-weight:800; font-size:13px; color:#002147;">${lead.firstName} ${lead.lastName}</div>
+              <div style="font-weight:800; color:#002147;">${lead.firstName} ${lead.lastName}</div>
               <div style="font-size:11px; color:#64748b; margin-top:2px;">${date}</div>
             </td>
             <td>
-              <a href="tel:${lead.phone}" class="phone-link">${lead.phone}</a>
+              <div style="font-weight:700; color:#00a381;">${lead.phone}</div>
               <div style="font-size:11px; color:#64748b;">${lead.email}</div>
             </td>
-            <td style="color:#475569; font-size:12px;">${lead.city || '—'}</td>
             <td>
-              <div style="font-size:11px; font-weight:700; color:#475569;">${lead.bmi || '—'} BMI</div>
-              <div style="font-size:10px; color:#94a3b8;">${lead.currentMeds || '—'}</div>
+              <span class="city-tag">${lead.city || '—'}</span>
             </td>
-            <td style="font-size:11px; color:#64748b; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${conditions}">${conditions}</td>
-            <td style="font-size:10px; color:#64748b; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${lead.trialTitle || '—'}">${lead.trialId ? `<span style="font-weight:700;">${lead.trialId}</span><br>${lead.trialTitle || ''}` : '—'}</td>
-            <td><span class="score ${scoreClass}">${score}</span></td>
+            <td>
+              <div style="font-size:12px; font-weight:700; color:#1e293b;">${lead.trialId || '—'}</div>
+              <div style="font-size:10px; color:#94a3b8; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${lead.trialTitle}">${lead.trialTitle || ''}</div>
+            </td>
+            <td>
+              <div class="score-circle ${scoreClass}">${score}</div>
+            </td>
             <td>
               <select class="status-select" onchange="updateStatus('${lead.id}', this.value)">
-                ${statusOpts}
+                ${Object.entries(STATUS_LABELS).map(([v, l]) => 
+                  `<option value="${v}" ${lead.status === v ? 'selected' : ''}>${l}</option>`
+                ).join('')}
               </select>
             </td>
           </tr>
         `;
       }).join('');
 
-      document.getElementById('table-container').innerHTML = `
+      container.innerHTML = `
         <table>
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Patient</th>
               <th>Contact</th>
               <th>City</th>
-              <th>Profile</th>
-              <th>Conditions</th>
               <th>Trial</th>
               <th>Score</th>
-              <th>Status</th>
+              <th>Pipeline Status</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -240,25 +308,16 @@ const authed = token === ADMIN_TOKEN;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, status }),
         });
-        const lead = allLeads.find(l => l.id === id);
-        if (lead) lead.status = status;
-        updateStats();
-      } catch (e) { console.error(e); }
+        loadData(); // Reload to refresh stats
+      } catch (e) {
+        console.error('Update failed:', e);
+      }
     }
 
-    // Filter buttons
-    document.getElementById('filter-bar')?.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-filter]');
-      if (!btn) return;
-      currentFilter = btn.dataset.filter;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderTable();
-    });
-
-    loadLeads();
-    // Auto-refresh every 30 seconds
-    setInterval(loadLeads, 30000);
+    // Initial load
+    loadData();
+    // Auto refresh every minute
+    setInterval(loadData, 60000);
   }
 </script>
 

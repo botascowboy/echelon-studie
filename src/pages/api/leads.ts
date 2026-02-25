@@ -1,42 +1,25 @@
 export const prerender = false;
 
 import type { APIContext } from 'astro';
-import { addLead, getLeads, updateLeadStatus, scoreLead } from '../../lib/leads';
+import { LeadService } from '../../lib/services/LeadService';
+import { LeadCreateSchema, LeadUpdateSchema } from '../../lib/schemas';
 
 export async function POST({ request }: APIContext) {
   try {
-    const body = await request.json();
-    const { firstName, lastName, email, phone, city, age, bmi, conditions, currentMeds, trialId, trialTitle } = body;
+    const json = await request.json();
+    const result = LeadCreateSchema.safeParse(json);
 
-    if (!firstName || !email || !phone) {
+    if (!result.success) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: firstName, email, phone' }),
+        JSON.stringify({ error: 'Validation failed', details: result.error.format() }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const qualityScore = scoreLead({ bmi, conditions: conditions || [], currentMeds });
-    const likelyEligible = qualityScore >= 40;
-
-    const lead = addLead({
-      firstName,
-      lastName: lastName || '',
-      email,
-      phone,
-      city: city || '',
-      age: age || '',
-      bmi: bmi || '',
-      conditions: conditions || [],
-      currentMeds: currentMeds || '',
-      trialId: trialId || '',
-      trialTitle: trialTitle || '',
-      qualityScore,
-    });
-
-    console.log(`[Leads] New lead captured: ${lead.id} | ${firstName} ${lastName} | score=${qualityScore}`);
+    const lead = LeadService.create(result.data);
 
     return new Response(
-      JSON.stringify({ success: true, id: lead.id, likelyEligible, qualityScore }),
+      JSON.stringify({ success: true, id: lead.id, qualityScore: lead.qualityScore }),
       { status: 201, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err) {
@@ -49,21 +32,25 @@ export async function POST({ request }: APIContext) {
 }
 
 export async function GET({ request }: APIContext) {
-  // Simple token-based auth — set ADMIN_TOKEN env var
   const url = new URL(request.url);
   const token = url.searchParams.get('token') || request.headers.get('x-admin-token');
   const adminToken = import.meta.env.ADMIN_TOKEN || 'echelon-admin-2024';
 
   if (token !== adminToken) {
-    return new Response(
-      JSON.stringify({ error: 'Unauthorized' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  const leads = getLeads();
+  // Parse filters from query params
+  const status = url.searchParams.get('status') as any;
+  const minScore = url.searchParams.get('minScore') ? parseInt(url.searchParams.get('minScore')!) : undefined;
+  const maxScore = url.searchParams.get('maxScore') ? parseInt(url.searchParams.get('maxScore')!) : undefined;
+  const city = url.searchParams.get('city') || undefined;
+
+  const leads = LeadService.getAll({ status, minScore, maxScore, city });
+  const stats = LeadService.getStats();
+
   return new Response(
-    JSON.stringify({ leads, total: leads.length }),
+    JSON.stringify({ leads, stats, total: leads.length }),
     { status: 200, headers: { 'Content-Type': 'application/json' } }
   );
 }
@@ -77,8 +64,18 @@ export async function PATCH({ request }: APIContext) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  const { id, status, notes } = await request.json();
-  const updated = updateLeadStatus(id, status, notes);
+  const json = await request.json();
+  const result = LeadUpdateSchema.safeParse(json);
+
+  if (!result.success) {
+    return new Response(
+      JSON.stringify({ error: 'Validation failed', details: result.error.format() }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const { id, status, notes } = result.data;
+  const updated = LeadService.updateStatus(id, status, notes);
 
   if (!updated) {
     return new Response(JSON.stringify({ error: 'Lead not found' }), { status: 404 });
