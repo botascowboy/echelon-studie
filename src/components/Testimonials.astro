@@ -1,0 +1,141 @@
+---
+const { lang = "en" } = Astro.props;
+
+const testimonials = [
+  {
+    quote: lang === 'en'
+      ? "I lost 22 lbs in 4 months and received $1,200 in compensation. The doctors were incredible and it didn't cost me a dime."
+      : "Perdí 22 libras en 4 meses y recibí $1,200 de compensación. Los doctores fueron increíbles y no me costó nada.",
+    name: "Maria R.",
+    detail: lang === 'en' ? "BMI 34 · Miami, FL" : "IMC 34 · Miami, FL",
+    emoji: "🌴",
+  },
+  {
+    quote: lang === 'en'
+      ? "After years of struggling with my weight, this trial gave me access to Mounjaro before it was available to the public. Life-changing."
+      : "Después de años luchando con mi peso, este ensayo me dio acceso a Mounjaro antes de que estuviera disponible al público.",
+    name: "James T.",
+    detail: lang === 'en' ? "BMI 38 · Houston, TX" : "IMC 38 · Houston, TX",
+    emoji: "🚀",
+  },
+  {
+    quote: lang === 'en'
+      ? "The team called me within hours of submitting my application. The process was seamless and I felt supported the entire time."
+      : "El equipo me llamó a pocas horas de enviar mi solicitud. El proceso fue impecable y me sentí apoyada en todo momento.",
+    name: "Sofia L.",
+    detail: lang === 'en' ? "BMI 31 · New York, NY" : "IMC 31 · Nueva York, NY",
+    emoji: "🗽",
+  },
+  {
+    quote: lang === 'en'
+      ? "No insurance, no cost, and they paid me $800. I was skeptical but the clinical team was completely professional."
+      : "Sin seguro, sin costo y me pagaron $800. Era escéptica pero el equipo clínico fue completamente profesional.",
+    name: "Angela M.",
+    detail: lang === 'en' ? "BMI 33 · Los Angeles, CA" : "IMC 33 · Los Ángeles, CA",
+    emoji: "🌆",
+  },
+  {
+    quote: lang === 'en'
+      ? "I dropped 3 dress sizes. The weekly check-ins kept me accountable. I would do it again in a heartbeat."
+      : "Bajé 3 tallas. Los chequeos semanales me mantuvieron comprometida. Lo haría de nuevo sin pensarlo dos veces.",
+    name: "Keisha W.",
+    detail: lang === 'en' ? "BMI 36 · San Francisco, CA" : "IMC 36 · San Francisco, CA",
+    emoji: "🌉",
+  },
+  {
+    quote: lang === 'en'
+      ? "As a nurse I was initially hesitant, but the FDA oversight and IRB approval gave me confidence. Best decision I made this year."
+      : "Como enfermera era reacia al principio, pero la supervisión de la FDA y la aprobación del IRB me dieron confianza.",
+    name: "Dr. Priya K.",
+    detail: lang === 'en' ? "BMI 29 · Miami, FL" : "IMC 29 · Miami, FL",
+    emoji: "🌴",
+  },
+  {
+    quote: lang === 'en'
+      ? "My A1C went from 7.8 to 5.9. The researchers monitored me closely throughout. I feel like a completely different person."
+      : "Mi HbA1c bajó de 7.8 a 5.9. Los investigadores me monitorearon de cerca. Me siento una persona completamente diferente.",
+    name: "Carlos E.",
+    detail: lang === 'en' ? "BMI 35 · Houston, TX" : "IMC 35 · Houston, TX",
+    emoji: "🚀",
+  },
+  {
+    quote: lang === 'en'
+      ? "They scheduled my appointment the same day I called. I went from skeptic to advocate after seeing my results."
+      : "Agendaron mi cita el mismo día que llamé. Pasé de escéptico a defensor al ver mis resultados.",
+    name: "Robert N.",
+    detail: lang === 'en' ? "BMI 40 · New York, NY" : "IMC 40 · Nueva York, NY",
+    emoji: "🗽",
+  },
+];
+
+// Duplicate for seamless loop
+const row1 = [...testimonials.slice(0, 4), ...testimonials.slice(0, 4)];
+const row2 = [...testimonials.slice(4), ...testimonials.slice(4)];
+---
+
+<section class="py-20 overflow-hidden bg-white">
+  <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8 mb-12">
+    <h2 class="text-center text-[2rem] md:text-[2.5rem] font-extrabold tracking-tight text-slate-900 mb-3">
+      {lang === 'en' ? 'Why patients join our trials' : '¿Por qué los pacientes se unen?'}
+    </h2>
+    <p class="text-center text-slate-500 font-semibold text-lg">
+      {lang === 'en' ? 'Real stories from real participants across the US.' : 'Historias reales de participantes en todo EEUU.'}
+    </p>
+  </div>
+
+  <!-- Row 1 — scroll left -->
+  <div class="relative mb-4">
+    <div class="flex gap-4 w-max animate-marquee-left">
+      {row1.map((t) => (
+        <div class="w-[320px] md:w-[380px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <p class="text-sm font-medium leading-relaxed text-slate-700 mb-5 line-clamp-4">"{t.quote}"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center text-base flex-shrink-0">{t.emoji}</div>
+            <div>
+              <div class="text-sm font-bold text-slate-800">{t.name}</div>
+              <div class="text-xs text-slate-400 font-medium">{t.detail}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <!-- fade edges -->
+    <div class="pointer-events-none absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white to-transparent z-10"></div>
+    <div class="pointer-events-none absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white to-transparent z-10"></div>
+  </div>
+
+  <!-- Row 2 — scroll right (slower) -->
+  <div class="relative">
+    <div class="flex gap-4 w-max animate-marquee-right">
+      {row2.map((t) => (
+        <div class="w-[320px] md:w-[380px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <p class="text-sm font-medium leading-relaxed text-slate-700 mb-5 line-clamp-4">"{t.quote}"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center text-base flex-shrink-0">{t.emoji}</div>
+            <div>
+              <div class="text-sm font-bold text-slate-800">{t.name}</div>
+              <div class="text-xs text-slate-400 font-medium">{t.detail}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="pointer-events-none absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white to-transparent z-10"></div>
+    <div class="pointer-events-none absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white to-transparent z-10"></div>
+  </div>
+</section>
+
+<style>
+  @keyframes marquee-left {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes marquee-right {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+  .animate-marquee-left  { animation: marquee-left  40s linear infinite; }
+  .animate-marquee-right { animation: marquee-right 55s linear infinite; }
+  .animate-marquee-left:hover,
+  .animate-marquee-right:hover { animation-play-state: paused; }
+</style>
