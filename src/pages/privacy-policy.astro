@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const { lang = 'en' } = Astro.params;
+
+const content = {
+  en: {
+    title: "Privacy Policy & HIPAA Notice",
+    lastUpdated: "Last updated: February 26, 2024",
+    sections: [
+      {
+        title: "1. Introduction",
+        content: "Echelon Studies is committed to protecting your privacy and ensuring the security of your health information. This policy describes how we collect, use, and protect your data."
+      },
+      {
+        title: "2. HIPAA Notice of Privacy Practices",
+        content: "As a health-related service, we comply with the Health Insurance Portability and Accountability Act (HIPAA). We protect your Protected Health Information (PHI) through technical, administrative, and physical safeguards.",
+        details: [
+          "We only share your PHI with your explicit authorization.",
+          "You have the right to access, amend, and request a copy of your health records.",
+          "We use 256-bit encryption for all data at rest and in transit.",
+          "We maintain Business Associate Agreements (BAAs) with all our infrastructure providers."
+        ]
+      },
+      {
+        title: "3. Information We Collect",
+        content: "We collect information you provide directly to us, including your name, contact information, and health-related answers in our pre-screening tool."
+      },
+      {
+        title: "4. Use of Information",
+        content: "We use your information solely to match you with clinical trials and to communicate with you about your eligibility."
+      }
+    ]
+  },
+  es: {
+    title: "Política de Privacidad y Aviso HIPAA",
+    lastUpdated: "Última actualización: 26 de febrero de 2024",
+    sections: [
+      {
+        title: "1. Introducción",
+        content: "Echelon Studies se compromete a proteger su privacidad y garantizar la seguridad de su información de salud. Esta política describe cómo recopilamos, utilizamos y protegemos sus datos."
+      },
+      {
+        title: "2. Aviso de Prácticas de Privacidad HIPAA",
+        content: "Como servicio relacionado con la salud, cumplimos con la Ley de Portabilidad y Responsabilidad de Seguros de Salud (HIPAA). Protegemos su Información de Salud Protegida (PHI) mediante salvaguardas técnicas, administrativas y físicas.",
+        details: [
+          "Solo compartimos su PHI con su autorización explícita.",
+          "Tiene derecho a acceder, corregir y solicitar una copia de sus registros de salud.",
+          "Utilizamos encriptación de 256 bits para todos los datos en reposo y en tránsito.",
+          "Mantenemos Acuerdos de Asociados Comerciales (BAA) con todos nuestros proveedores de infraestructura."
+        ]
+      },
+      {
+        title: "3. Información que Recopilamos",
+        content: "Recopilamos la información que nos proporciona directamente, incluyendo su nombre, información de contacto y respuestas relacionadas con la salud en nuestra herramienta de pre-cribado."
+      },
+      {
+        title: "4. Uso de la Información",
+        content: "Utilizamos su información únicamente para emparejarlo con ensayos clínicos y para comunicarnos con usted sobre su elegibilidad."
+      }
+    ]
+  }
+};
+
+const t = content[lang] || content.en;
+---
+
+<Layout title={t.title}>
+  <Header />
+  <main class="pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-black text-primary mb-4">{t.title}</h1>
+      <p class="text-slate-500 mb-12">{t.lastUpdated}</p>
+
+      <div class="space-y-12">
+        {t.sections.map((section) => (
+          <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">{section.title}</h2>
+            <p class="text-slate-600 leading-relaxed mb-4">{section.content}</p>
+            {section.details && (
+              <ul class="space-y-3 list-disc pl-5">
+                {section.details.map((detail) => (
+                  <li class="text-slate-600 text-sm leading-relaxed">{detail}</li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+      </div>
+
+      <div class="mt-20 p-8 rounded-[2rem] bg-accent/5 border border-accent/10">
+        <h3 class="text-xl font-bold text-accent mb-4">Contact Our Privacy Officer</h3>
+        <p class="text-sm text-slate-600 mb-4">
+          If you have any questions about this Privacy Policy or our treatment of your health information, please contact us at:
+        </p>
+        <p class="font-bold text-primary">privacy@echelonstudies.com</p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

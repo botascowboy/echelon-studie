@@ -1,0 +1,133 @@
+---
+const { lang = "en" } = Astro.props;
+
+const content = {
+  en: {
+    title: "HIPAA Authorization",
+    description: "Please review how your health information will be protected and used.",
+    authorizationText: "I authorize Echelon Studies to collect, store, and share my health information (including my pre-screening answers) with clinical trial sites and researchers for the purpose of assessing my eligibility for medical studies.",
+    rights: [
+      "I understand I have the right to revoke this authorization at any time.",
+      "My information will be encrypted and stored securely.",
+      "Access to my health data is restricted to authorized personnel only.",
+      "This authorization expires in one year unless revoked earlier."
+    ],
+    nppLink: "View Notice of Privacy Practices",
+    accept: "I Authorize and Agree",
+    cancel: "Cancel"
+  },
+  es: {
+    title: "Autorización HIPAA",
+    description: "Por favor revise cómo se protegerá y utilizará su información de salud.",
+    authorizationText: "Autorizo a Echelon Studies a recopilar, almacenar y compartir mi información de salud (incluyendo mis respuestas de pre-cribado) con sitios de ensayos clínicos e investigadores con el fin de evaluar mi elegibilidad para estudios médicos.",
+    rights: [
+      "Entiendo que tengo el derecho de revocar esta autorización en cualquier momento.",
+      "Mi información será encriptada y almacenada de forma segura.",
+      "El acceso a mis datos de salud está restringido solo a personal autorizado.",
+      "Esta autorización expira en un año a menos que se revoque antes."
+    ],
+    nppLink: "Ver Aviso de Prácticas de Privacidad",
+    accept: "Autorizo y Acepto",
+    cancel: "Cancelar"
+  }
+};
+
+const t = content[lang] || content.en;
+---
+
+<div id="hipaa-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+  <div class="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div class="p-8 md:p-10">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-2xl font-black text-primary leading-tight">{t.title}</h3>
+          <p class="text-sm text-slate-500 font-medium">{t.description}</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100 max-h-[30vh] overflow-y-auto custom-scrollbar">
+        <p class="text-sm text-slate-600 leading-relaxed mb-6 font-medium italic">
+          "{t.authorizationText}"
+        </p>
+        <ul class="space-y-4">
+          {t.rights.map((right) => (
+            <li class="flex items-start gap-3">
+              <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></div>
+              <p class="text-xs text-slate-500 leading-relaxed">{right}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center gap-2 mb-6">
+          <a href="/privacy-policy" target="_blank" class="text-xs font-bold text-accent hover:text-primary transition-colors flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            {t.nppLink}
+          </a>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-3">
+          <button id="hipaa-cancel" class="flex-1 px-8 py-4 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all">
+            {t.cancel}
+          </button>
+          <button id="hipaa-authorize" class="flex-[2] px-8 py-4 rounded-2xl bg-accent text-white font-black uppercase tracking-wider text-sm hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5 transition-all">
+            {t.accept}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+  }
+</style>
+
+<script>
+  let onAuthorizeCallback = null;
+
+  window.showHIPAAAuthorization = (callback) => {
+    onAuthorizeCallback = callback;
+    const modal = document.getElementById('hipaa-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  };
+
+  document.getElementById('hipaa-cancel')?.addEventListener('click', () => {
+    const modal = document.getElementById('hipaa-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  });
+
+  document.getElementById('hipaa-authorize')?.addEventListener('click', () => {
+    const modal = document.getElementById('hipaa-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+    if (onAuthorizeCallback) onAuthorizeCallback();
+  });
+</script>

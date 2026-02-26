@@ -16,7 +16,14 @@ export async function POST({ request }: APIContext) {
       );
     }
 
-    const lead = await LeadService.create(result.data);
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('cf-connecting-ip') || 'unknown';
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+
+    const lead = await LeadService.create({
+      ...result.data,
+      ipAddress: ip,
+      userAgent: userAgent
+    });
 
     return new Response(
       JSON.stringify({ success: true, id: lead.id, qualityScore: lead.qualityScore }),

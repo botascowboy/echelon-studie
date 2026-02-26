@@ -21,6 +21,10 @@ export const LeadCreateSchema = z.object({
     currentMeds: z.string().optional().default('none'),
     trialId: z.string().optional().default(''),
     trialTitle: z.string().optional().default(''),
+    hipaaAuthorized: z.boolean().default(false),
+    authorizedAt: z.string().optional(),
+    ipAddress: z.string().optional(),
+    userAgent: z.string().optional(),
 });
 
 export const PrescreenSchema = z.object({

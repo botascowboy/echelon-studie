@@ -1,5 +1,6 @@
 ---
 const { trial, lang = "en" } = Astro.props;
+import HIPAAAuthorization from './HIPAAAuthorization.astro';
 ---
 
 <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-lg shadow-slate-200/30">
@@ -251,6 +252,7 @@ const { trial, lang = "en" } = Astro.props;
       </div>
     </div>
   </div>
+  <HIPAAAuthorization lang={lang} />
 </div>
 
 <script define:vars={{ lang, trialNctId: trial?.nct_id, trialTitle: trial?.title }}>
@@ -312,34 +314,42 @@ const { trial, lang = "en" } = Astro.props;
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    submitBtn.disabled = true;
-    submitBtn.textContent = lang === 'en' ? 'Submitting…' : 'Enviando…';
+    
+    // Trigger HIPAA Authorization before proceeding
+    if (typeof window.showHIPAAAuthorization === 'function') {
+      window.showHIPAAAuthorization(async () => {
+        submitBtn.disabled = true;
+        submitBtn.textContent = lang === 'en' ? 'Submitting…' : 'Enviando…';
 
-    const fd = new FormData(form);
-    const payload = {
-      firstName: fd.get('firstName'),
-      lastName: fd.get('lastName') || '',
-      email: fd.get('email'),
-      phone: fd.get('phone'),
-      city: fd.get('city') || '',
-      age: fd.get('age') || '',
-      bmi: fd.get('bmi') || '',
-      conditions: fd.getAll('conditions'),
-      currentMeds: fd.get('current_meds') || '',
-      trialId: trialNctId || '',
-      trialTitle: trialTitle || '',
-    };
+        const fd = new FormData(form);
+        const payload = {
+          firstName: fd.get('firstName'),
+          lastName: fd.get('lastName') || '',
+          email: fd.get('email'),
+          phone: fd.get('phone'),
+          city: fd.get('city') || '',
+          age: fd.get('age') || '',
+          bmi: fd.get('bmi') || '',
+          conditions: fd.getAll('conditions'),
+          currentMeds: fd.get('current_meds') || '',
+          trialId: trialNctId || '',
+          trialTitle: trialTitle || '',
+          hipaaAuthorized: true,
+          authorizedAt: new Date().toISOString()
+        };
 
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        try {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          showResult(data.likelyEligible !== false);
+        } catch {
+          showResult(true); // default to eligible on error
+        }
       });
-      const data = await res.json();
-      showResult(data.likelyEligible !== false);
-    } catch {
-      showResult(true); // default to eligible on error
     }
   });
 

@@ -25,6 +25,10 @@ export interface Lead {
   status: LeadStatus;
   notes: string;
   qualityScore: number;
+  hipaaAuthorized: boolean;
+  authorizedAt?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export async function addLead(data: Omit<Lead, 'id' | 'createdAt' | 'status' | 'notes'>): Promise<Lead> {
@@ -37,12 +41,14 @@ export async function addLead(data: Omit<Lead, 'id' | 'createdAt' | 'status' | '
     sql: `INSERT INTO leads (
       id, created_at, first_name, last_name, email, phone, city, 
       age, bmi, conditions, current_meds, trial_id, trial_title, 
-      status, notes, quality_score
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      status, notes, quality_score, hipaa_authorized, authorized_at,
+      ip_address, user_agent
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       id, createdAt, data.firstName, data.lastName, data.email, data.phone, data.city,
       data.age, data.bmi, JSON.stringify(data.conditions), data.currentMeds, data.trialId || null, data.trialTitle || null,
-      status, notes, data.qualityScore
+      status, notes, data.qualityScore, data.hipaaAuthorized ? 1 : 0, data.authorizedAt || null,
+      data.ipAddress || null, data.userAgent || null
     ]
   });
 
@@ -67,7 +73,11 @@ export async function getLeads(): Promise<Lead[]> {
     trialTitle: row.trial_title as string | undefined,
     status: row.status as LeadStatus,
     notes: row.notes as string,
-    qualityScore: Number(row.quality_score)
+    qualityScore: Number(row.quality_score),
+    hipaaAuthorized: Boolean(row.hipaa_authorized),
+    authorizedAt: row.authorized_at as string | undefined,
+    ipAddress: row.ip_address as string | undefined,
+    userAgent: row.user_agent as string | undefined
   }));
 }
 

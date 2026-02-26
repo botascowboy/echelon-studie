@@ -1,5 +1,6 @@
 ---
 const { lang = "en" } = Astro.props;
+import HIPAAAuthorization from './HIPAAAuthorization.astro';
 
 const content = lang === "en" ? {
   title: "Thanks for joining the registry.",
@@ -379,6 +380,7 @@ const content = lang === "en" ? {
         </div>
       </form>
     </div>
+  <HIPAAAuthorization lang={lang} />
 </section>
 
 <script>
@@ -549,45 +551,66 @@ const content = lang === "en" ? {
     if (!validateStep()) return;
 
     const lang = document.documentElement.lang || 'en';
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${lang === 'en' ? 'Sending...' : 'Enviando...'}</span>`;
 
-    try {
-      const formData = new FormData(form);
-      const res = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData as any).toString(),
-      });
+    // Trigger HIPAA Authorization before proceeding
+    if (typeof (window as any).showHIPAAAuthorization === 'function') {
+      (window as any).showHIPAAAuthorization(async () => {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${lang === 'en' ? 'Sending...' : 'Enviando...'}</span>`;
 
-      if (res.ok) {
-        if (formContainer) {
-          formContainer.innerHTML = `
-            <div class="text-center py-20 space-y-8 animate-fade-in">
-              <div class="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-accent/20">
-                <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <h3 class="text-4xl font-black text-primary tracking-tighter">Application Received!</h3>
-              <p class="text-slate-500 text-lg max-w-md mx-auto font-medium">
-                Thank you for joining our registry. Our medical team will review your information and contact you shortly.
-              </p>
-              <button onclick="window.location.reload()" class="mt-10 px-10 py-4 rounded-full bg-slate-100 text-primary hover:bg-slate-200 transition-all font-black text-sm uppercase tracking-widest">
-                Done
-              </button>
-            </div>
-          `;
+        try {
+          const formData = new FormData(form);
+          
+          // Map contact form fields to lead schema
+          const payload = {
+            firstName: formData.get('first_name'),
+            lastName: formData.get('last_name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            city: formData.get('zipcode'), // Using zip as city/location for now
+            age: formData.get('dob'),
+            conditions: formData.getAll('interests'),
+            currentMeds: formData.get('medications'),
+            hipaaAuthorized: true,
+            authorizedAt: new Date().toISOString()
+          };
+
+          const res = await fetch("/api/leads", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (res.ok) {
+            if (formContainer) {
+              formContainer.innerHTML = `
+                <div class="text-center py-20 space-y-8 animate-fade-in">
+                  <div class="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-accent/20">
+                    <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <h3 class="text-4xl font-black text-primary tracking-tighter">Application Received!</h3>
+                  <p class="text-slate-500 text-lg max-w-md mx-auto font-medium">
+                    Thank you for joining our registry. Our medical team will review your information and contact you shortly.
+                  </p>
+                  <button onclick="window.location.reload()" class="mt-10 px-10 py-4 rounded-full bg-slate-100 text-primary hover:bg-slate-200 transition-all font-black text-sm uppercase tracking-widest">
+                    Done
+                  </button>
+                </div>
+              `;
+            }
+          } else {
+            throw new Error('Form submission failed');
+          }
+        } catch (err) {
+          console.error(err);
+          const errorMsg = lang === 'en' ? 'There was an error submitting the form. Please try again.' : 'Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.';
+          alert(errorMsg);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = lang === 'en' ? 'Submit' : 'Enviar';
         }
-      } else {
-        throw new Error('Form submission failed');
-      }
-    } catch (err) {
-      console.error(err);
-      const errorMsg = lang === 'en' ? 'There was an error submitting the form. Please try again.' : 'Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.';
-      alert(errorMsg);
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = lang === 'en' ? 'Submit' : 'Enviar';
+      });
     }
   });
 

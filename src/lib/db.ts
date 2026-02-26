@@ -4,15 +4,15 @@ const url = import.meta.env.TURSO_DATABASE_URL || 'file:local.db';
 const authToken = import.meta.env.TURSO_AUTH_TOKEN;
 
 export const db = createClient({
-    url,
-    authToken,
+  url,
+  authToken,
 });
 
 /**
  * Initialize database schema
  */
 export async function initDb() {
-    await db.execute(`
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS leads (
       id TEXT PRIMARY KEY,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -29,11 +29,15 @@ export async function initDb() {
       trial_title TEXT,
       status TEXT DEFAULT 'new',
       notes TEXT DEFAULT '',
-      quality_score INTEGER DEFAULT 0
+      quality_score INTEGER DEFAULT 0,
+      hipaa_authorized INTEGER DEFAULT 0,
+      authorized_at TEXT,
+      ip_address TEXT,
+      user_agent TEXT
     )
   `);
 
-    await db.execute(`
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS trials_cache (
       nct_id TEXT PRIMARY KEY,
       data TEXT, -- Full JSON study data
@@ -41,5 +45,5 @@ export async function initDb() {
     )
   `);
 
-    console.log('[DB] Persistence layer initialized');
+  console.log('[DB] Persistence layer initialized');
 }
