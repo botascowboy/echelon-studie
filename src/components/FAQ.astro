@@ -181,48 +181,62 @@ const content = lang === "en" ? {
     const faqItems = document.querySelectorAll('.faq-item');
     
     faqItems.forEach(item => {
+      // Remove existing listeners to avoid duplicates
       const btn = item.querySelector('[data-faq-btn]');
-      const answer = item.querySelector('.faq-answer') as HTMLElement;
+      const answer = item.querySelector('.faq-answer');
       
-      btn?.addEventListener('click', () => {
+      if (!btn || !answer) return;
+      
+      // Clone and replace to remove old listeners
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         const isActive = item.classList.contains('active');
         
         // Close all others
         faqItems.forEach(otherItem => {
-           if (otherItem !== item) {
-             otherItem.classList.remove('active');
-             otherItem.querySelector('[data-faq-btn]')?.setAttribute('aria-expanded', 'false');
-             const otherAnswer = otherItem.querySelector('.faq-answer') as HTMLElement;
-             if (otherAnswer) {
-               otherAnswer.style.maxHeight = '0';
-               otherAnswer.style.opacity = '0';
-             }
-           }
+          if (otherItem !== item) {
+            otherItem.classList.remove('active');
+            const otherBtn = otherItem.querySelector('[data-faq-btn]');
+            const otherAnswer = otherItem.querySelector('.faq-answer');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+            if (otherAnswer) {
+              otherAnswer.style.maxHeight = '0px';
+              otherAnswer.style.opacity = '0';
+            }
+          }
         });
         
         // Toggle current
         if (isActive) {
           item.classList.remove('active');
-          btn.setAttribute('aria-expanded', 'false');
-          if (answer) {
-            answer.style.maxHeight = '0';
-            answer.style.opacity = '0';
-          }
+          newBtn.setAttribute('aria-expanded', 'false');
+          answer.style.maxHeight = '0px';
+          answer.style.opacity = '0';
         } else {
           item.classList.add('active');
-          btn.setAttribute('aria-expanded', 'true');
-          if (answer) {
-            answer.style.maxHeight = answer.scrollHeight + 'px';
-            answer.style.opacity = '1';
-          }
+          newBtn.setAttribute('aria-expanded', 'true');
+          // Use scrollHeight for proper expansion
+          const height = answer.scrollHeight;
+          answer.style.maxHeight = height + 'px';
+          answer.style.opacity = '1';
         }
       });
     });
   }
 
-  // Run on initial load
-  initFAQ();
+  // Run when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFAQ);
+  } else {
+    initFAQ();
+  }
   
   // Run on View Transitions (Astro)
   document.addEventListener('astro:page-load', initFAQ);
+  document.addEventListener('astro:after-swap', initFAQ);
 </script>
