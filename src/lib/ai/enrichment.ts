@@ -1,23 +1,26 @@
 /**
  * AI Enrichment Service for Clinical Trials
- * Uses OpenAI to summarize eligibility criteria, extract key insights,
- * and make medical content accessible to patients.
+ * Uses OpenRouter to access free AI models for summarizing eligibility criteria,
+ * extracting key insights, and making medical content accessible to patients.
  */
 
 import OpenAI from "openai";
 
-// Providers configuration
-const isGroq = !!(import.meta.env.GROQ_API_KEY || process.env.GROQ_API_KEY);
+// OpenRouter configuration with user's API key
+const OPENROUTER_API_KEY = "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";
 
 const openai = new OpenAI({
-  apiKey: isGroq
-    ? (import.meta.env.GROQ_API_KEY || process.env.GROQ_API_KEY)
-    : (import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY),
-  baseURL: isGroq ? "https://api.groq.com/openai/v1" : undefined
+  apiKey: OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  defaultHeaders: {
+    "HTTP-Referer": "http://localhost:4321",
+    "X-Title": "TrialGuide Chat"
+  }
 });
 
-const DEFAULT_MODEL = isGroq ? "llama-3.3-70b-versatile" : "gpt-4o-mini";
-const CHAT_MODEL = isGroq ? "llama-3.3-70b-versatile" : "gpt-4o";
+// Free models from OpenRouter (verified working free models)
+const DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free";
+const CHAT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free";
 
 export interface EnrichedTrialData {
   // Resumen en lenguaje simple
@@ -49,12 +52,12 @@ export interface EnrichedTrialData {
   questionsToAsk: string[];
   // Puntuación de relevancia para pérdida de peso (0-100)
   weightLossRelevanceScore: number;
-  // Tags generados por IA
+  // Tags generados
   aiTags: string[];
 }
 
 /**
- * Enriquece un ensayo clínico con IA
+ * Enriquece un ensayo clínico
  */
 export async function enrichTrialWithAI(
   trialData: any
@@ -91,7 +94,7 @@ Age: ${eligibility?.minimumAge || "N/A"} - ${eligibility?.maximumAge || "N/A"}
 
   try {
     const response = await openai.chat.completions.create({
-      model: DEFAULT_MODEL, // Modelo rápido y económico
+      model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
@@ -128,16 +131,20 @@ Respond in JSON format with this exact structure:
           content: `Please analyze this clinical trial and provide a patient-friendly summary:\n\n${studyInfo}`
         }
       ],
-      response_format: { type: "json_object" },
-      temperature: 0.3 // Respuestas consistentes
+      temperature: 0.3
     });
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      throw new Error("No response from OpenAI");
+      throw new Error("No response from OpenRouter");
     }
 
-    const enriched = JSON.parse(content) as EnrichedTrialData;
+    // Parse JSON from response (handle potential markdown code blocks)
+    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                      content.match(/```\n?([\s\S]*?)\n?```/) ||
+                      [null, content];
+    const jsonStr = jsonMatch[1]?.trim() || content;
+    const enriched = JSON.parse(jsonStr) as EnrichedTrialData;
     return enriched;
 
   } catch (error) {
@@ -171,7 +178,6 @@ Keep each point under 10 words. Be clear and direct.`
           content: eligibilityCriteria
         }
       ],
-      response_format: { type: "json_object" },
       temperature: 0.2
     });
 
@@ -180,7 +186,12 @@ Keep each point under 10 words. Be clear and direct.`
       return parseEligibilityManually(eligibilityCriteria);
     }
 
-    return JSON.parse(content);
+    // Parse JSON from response
+    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                      content.match(/```\n?([\s\S]*?)\n?```/) ||
+                      [null, content];
+    const jsonStr = jsonMatch[1]?.trim() || content;
+    return JSON.parse(jsonStr);
   } catch (error) {
     return parseEligibilityManually(eligibilityCriteria);
   }
@@ -228,7 +239,6 @@ Return JSON:
           content: `ELIGIBILITY CRITERIA:\n${eligibilityText}\n\nPATIENT PROFILE:\n${userProfile}\n\nBased on this information, would this patient likely qualify for the study?`
         }
       ],
-      response_format: { type: "json_object" },
       temperature: 0.2
     });
 
@@ -237,7 +247,12 @@ Return JSON:
       throw new Error("No response");
     }
 
-    return JSON.parse(content);
+    // Parse JSON from response
+    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                      content.match(/```\n?([\s\S]*?)\n?```/) ||
+                      [null, content];
+    const jsonStr = jsonMatch[1]?.trim() || content;
+    return JSON.parse(jsonStr);
   } catch (error) {
     return {
       likelyEligible: false,
@@ -265,20 +280,22 @@ export async function generateExpertResponse(
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
     const response = await openai.chat.completions.create({
       model: CHAT_MODEL,
       messages: [
         {
           role: "system",
-          content: `You are "TrialGuide", an expert AI assistant specialized in clinical trials, 
+          content: `You are "TrialGuide", an expert assistant specialized in clinical trials, 
 particularly for weight loss and metabolic health. You help patients understand:
 - How clinical trials work
 - What to expect as a participant
 - How to find suitable trials
 - General questions about obesity treatments, GLP-1 medications, etc.
 
-Be helpful, accurate, and encouraging. Always remind users that you're an AI and 
-they should consult with healthcare providers for medical advice.
+Be helpful, accurate, and encouraging. Always remind users that they should consult with healthcare providers for medical advice.
 
 Keep responses concise (2-4 paragraphs) and actionable.`.trim()
         },
@@ -289,11 +306,17 @@ Keep responses concise (2-4 paragraphs) and actionable.`.trim()
       ],
       temperature: 0.7,
       max_tokens: 500
-    });
+    }, { signal: controller.signal });
+
+    clearTimeout(timeoutId);
 
     return response.choices[0]?.message?.content ||
       "I apologize, I couldn't generate a response. Please try rephrasing your question.";
-  } catch (error) {
+  } catch (error: any) {
+    console.error("[Chat] OpenRouter error:", error?.message || error);
+    if (error?.name === 'AbortError') {
+      return "The request timed out. Please try again.";
+    }
     return "I'm having trouble connecting right now. Please try again in a moment.";
   }
 }

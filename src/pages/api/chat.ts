@@ -2,22 +2,17 @@ export const prerender = false;
 
 import type { APIContext } from 'astro';
 import { generateExpertResponse } from '../../lib/ai/enrichment';
-import { TrialsService } from '../../lib/services/trials.service';
 
 export async function POST({ request }: APIContext) {
     try {
-        const { message, context } = await request.json();
+        const { message } = await request.json();
 
         if (!message) {
             return new Response(JSON.stringify({ error: 'Message is required' }), { status: 400 });
         }
 
-        // Optional: Get some sample trials to give context to the AI
-        const trials = await TrialsService.getTrials({ pageSize: 3 });
-
-        const response = await generateExpertResponse(message, {
-            trials: trials.trials
-        });
+        // Get response from OpenRouter
+        const response = await generateExpertResponse(message);
 
         return new Response(
             JSON.stringify({ response }),

@@ -11,7 +11,7 @@ const { lang = "en" } = Astro.props;
   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-12 transition-transform">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
   </svg>
-  <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold flex items-center justify-center animate-pulse">AI</span>
+  <span class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full text-[10px] font-bold flex items-center justify-center animate-pulse"></span>
 </button>
 
 <!-- Chat Window -->
@@ -30,7 +30,7 @@ const { lang = "en" } = Astro.props;
         </svg>
       </div>
       <div>
-        <h3 class="font-bold text-slate-800">TrialGuide AI</h3>
+        <h3 class="font-bold text-slate-800">TrialGuide</h3>
         <p class="text-xs text-slate-400">Clinical trials expert</p>
       </div>
     </div>
@@ -101,8 +101,8 @@ const { lang = "en" } = Astro.props;
     </form>
     <p class="text-[10px] text-slate-400 text-center mt-2">
       {lang === 'en' 
-        ? "AI-generated responses. Not medical advice."
-        : "Respuestas generadas por IA. No es consejo médico."
+        ? "Not medical advice. Consult your doctor."
+        : "No es consejo médico. Consulta a tu médico."
       }
     </p>
   </div>
