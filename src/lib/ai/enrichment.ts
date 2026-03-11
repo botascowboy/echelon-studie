@@ -4,263 +4,83 @@
  * extracting key insights, and making medical content accessible to patients.
  */
 
-import OpenAI from "openai";
-
 // OpenRouter configuration with user's API key
 const OPENROUTER_API_KEY = "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";
+const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
-const openai = new OpenAI({
-  apiKey: OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-  defaultHeaders: {
-    "HTTP-Referer": "http://localhost:4321",
-    "X-Title": "TrialGuide Chat"
-  }
-});
-
-// Free models from OpenRouter (verified working free models)
-const DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free";
-const CHAT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free";
+// Free models from OpenRouter
+const CHAT_MODEL = "google/gemma-2-9b-it:free";
 
 export interface EnrichedTrialData {
-  // Resumen en lenguaje simple
   summary: string;
-  // Eligibilidad simplificada
   eligibilitySummary: {
     mustHave: string[];
     cannotHave: string[];
     ageRange: string;
     bmiRequirements?: string;
   };
-  // Información de compensación extraída
   compensation: {
     hasCompensation: boolean;
     estimatedAmount?: string;
     details?: string;
   };
-  // Qué esperar como participante
   whatToExpect: string[];
-  // Duración estimada
   estimatedDuration: string;
-  // Visitas requeridas
   visitFrequency: string;
-  // Riesgos potenciales (simplificados)
   potentialRisks: string[];
-  // Beneficios potenciales
   potentialBenefits: string[];
-  // Preguntas para hacer al investigador
   questionsToAsk: string[];
-  // Puntuación de relevancia para pérdida de peso (0-100)
   weightLossRelevanceScore: number;
-  // Tags generados
   aiTags: string[];
 }
 
 /**
- * Enriquece un ensayo clínico
+ * Generic fetch to OpenRouter API
  */
-export async function enrichTrialWithAI(
-  trialData: any
-): Promise<EnrichedTrialData> {
-  const protocol = trialData.protocolSection;
-  const description = protocol.descriptionModule;
-  const eligibility = protocol.eligibilityModule;
-
-  // Preparar el prompt con toda la información del estudio
-  const studyInfo = `
-Title: ${protocol.identificationModule?.briefTitle || "N/A"}
-Official Title: ${protocol.identificationModule?.officialTitle || "N/A"}
-Phase: ${protocol.designModule?.phases?.join(", ") || "N/A"}
-Type: ${protocol.designModule?.studyType || "N/A"}
-
-Summary:
-${description?.briefSummary || "N/A"}
-
-Detailed Description:
-${description?.detailedDescription || "N/A"}
-
-Eligibility Criteria:
-${eligibility?.eligibilityCriteria || "N/A"}
-
-Conditions:
-${protocol.conditionsModule?.conditions?.join(", ") || "N/A"}
-Keywords:
-${protocol.conditionsModule?.keywords?.join(", ") || "N/A"}
-
-Enrollment: ${protocol.designModule?.enrollmentInfo?.count || "N/A"} participants
-Sex: ${eligibility?.sex || "N/A"}
-Age: ${eligibility?.minimumAge || "N/A"} - ${eligibility?.maximumAge || "N/A"}
-  `.trim();
-
+async function callOpenRouter(
+  model: string,
+  messages: Array<{ role: string; content: string }>,
+  maxTokens: number = 500,
+  temperature: number = 0.7
+): Promise<string | null> {
   try {
-    const response = await openai.chat.completions.create({
-      model: DEFAULT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `You are an expert clinical trial assistant specialized in weight loss and obesity studies. 
-Your job is to translate complex medical information into clear, patient-friendly language.
-Be accurate but avoid medical jargon. Focus on what matters to potential participants.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-Respond in JSON format with this exact structure:
-{
-  "summary": "2-3 sentence plain language summary",
-  "eligibilitySummary": {
-    "mustHave": ["list of inclusion criteria in simple terms"],
-    "cannotHave": ["list of exclusion criteria in simple terms"],
-    "ageRange": "simplified age requirement",
-    "bmiRequirements": "BMI requirements if mentioned"
-  },
-  "compensation": {
-    "hasCompensation": boolean,
-    "estimatedAmount": "estimated compensation range or null",
-    "details": "details about compensation if mentioned"
-  },
-  "whatToExpect": ["bullet points of what participation involves"],
-  "estimatedDuration": "estimated study duration",
-  "visitFrequency": "how often visits are required",
-  "potentialRisks": ["simplified list of potential risks"],
-  "potentialBenefits": ["potential benefits for participant and science"],
-  "questionsToAsk": ["important questions to ask the study team"],
-  "weightLossRelevanceScore": number 0-100,
-  "aiTags": ["relevant tags like 'GLP-1', 'Diet', 'Exercise', 'Medication'"]
-}`
-        },
-        {
-          role: "user",
-          content: `Please analyze this clinical trial and provide a patient-friendly summary:\n\n${studyInfo}`
-        }
-      ],
-      temperature: 0.3
+    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://echelon-studie.pages.dev',
+        'X-Title': 'TrialGuide Chat'
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        max_tokens: maxTokens,
+        temperature
+      }),
+      signal: controller.signal
     });
 
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error("No response from OpenRouter");
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[OpenRouter] HTTP error:', response.status, errorText);
+      return null;
     }
 
-    // Parse JSON from response (handle potential markdown code blocks)
-    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
-                      content.match(/```\n?([\s\S]*?)\n?```/) ||
-                      [null, content];
-    const jsonStr = jsonMatch[1]?.trim() || content;
-    const enriched = JSON.parse(jsonStr) as EnrichedTrialData;
-    return enriched;
-
-  } catch (error) {
-    console.error("[AI Enrichment] Error:", error);
-    // Retornar datos fallback
-    return getFallbackEnrichment(trialData);
-  }
-}
-
-/**
- * Genera un resumen rápido de elegibilidad (más económico)
- */
-export async function generateEligibilitySummary(
-  eligibilityCriteria: string
-): Promise<{ inclusion: string[]; exclusion: string[] }> {
-  try {
-    const response = await openai.chat.completions.create({
-      model: DEFAULT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `Extract and simplify eligibility criteria. Return JSON:
-{
-  "inclusion": ["simple bullet points of who CAN participate"],
-  "exclusion": ["simple bullet points of who CANNOT participate"]
-}
-Keep each point under 10 words. Be clear and direct.`
-        },
-        {
-          role: "user",
-          content: eligibilityCriteria
-        }
-      ],
-      temperature: 0.2
-    });
-
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      return parseEligibilityManually(eligibilityCriteria);
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || null;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error('[OpenRouter] Request timeout');
+    } else {
+      console.error('[OpenRouter] Error:', error);
     }
-
-    // Parse JSON from response
-    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
-                      content.match(/```\n?([\s\S]*?)\n?```/) ||
-                      [null, content];
-    const jsonStr = jsonMatch[1]?.trim() || content;
-    return JSON.parse(jsonStr);
-  } catch (error) {
-    return parseEligibilityManually(eligibilityCriteria);
-  }
-}
-
-/**
- * Verifica si un paciente podría ser elegible basado en sus respuestas
- */
-export async function preScreenEligibility(
-  trialData: any,
-  userAnswers: Record<string, string>
-): Promise<{
-  likelyEligible: boolean;
-  confidence: "high" | "medium" | "low";
-  reasons: string[];
-  concerns: string[];
-  recommendation: string;
-}> {
-  const eligibilityText = trialData.protocolSection?.eligibilityModule?.eligibilityCriteria || "";
-
-  const userProfile = Object.entries(userAnswers)
-    .map(([q, a]) => `${q}: ${a}`)
-    .join("\n");
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: DEFAULT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `You are a clinical trial pre-screening assistant. Analyze if a potential participant 
-matches the eligibility criteria. Be conservative - if unsure, indicate potential issues.
-
-Return JSON:
-{
-  "likelyEligible": boolean,
-  "confidence": "high|medium|low",
-  "reasons": ["why they might be eligible"],
-  "concerns": ["potential disqualifying factors or things to verify"],
-  "recommendation": "clear next step recommendation"
-}`
-        },
-        {
-          role: "user",
-          content: `ELIGIBILITY CRITERIA:\n${eligibilityText}\n\nPATIENT PROFILE:\n${userProfile}\n\nBased on this information, would this patient likely qualify for the study?`
-        }
-      ],
-      temperature: 0.2
-    });
-
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error("No response");
-    }
-
-    // Parse JSON from response
-    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
-                      content.match(/```\n?([\s\S]*?)\n?```/) ||
-                      [null, content];
-    const jsonStr = jsonMatch[1]?.trim() || content;
-    return JSON.parse(jsonStr);
-  } catch (error) {
-    return {
-      likelyEligible: false,
-      confidence: "low",
-      reasons: [],
-      concerns: ["Unable to analyze - please contact the study directly"],
-      recommendation: "Contact the study team to verify eligibility."
-    };
+    return null;
   }
 }
 
@@ -274,51 +94,200 @@ export async function generateExpertResponse(
   let contextPrompt = "";
 
   if (context?.trials && context.trials.length > 0) {
-    contextPrompt = `\n\nRELEVANT CLINICAL TRIALS IN DATABASE:\n${context.trials.slice(0, 5).map((t, i) =>
-      `${i + 1}. ${t.protocolSection?.identificationModule?.briefTitle} (${t.protocolSection?.identificationModule?.nctId})`
+    contextPrompt = `\n\nRELEVANT CLINICAL TRIALS IN DATABASE:\n${context.trials.slice(0, 3).map((t, i) =>
+      `${i + 1}. ${t.protocolSection?.identificationModule?.briefTitle || 'Unknown'}`
     ).join("\n")}`;
   }
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
-
-    const response = await openai.chat.completions.create({
-      model: CHAT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `You are "TrialGuide", an expert assistant specialized in clinical trials, 
-particularly for weight loss and metabolic health. You help patients understand:
+  const messages = [
+    {
+      role: "system",
+      content: `You are "TrialGuide", an expert assistant specialized in clinical trials, particularly for weight loss and metabolic health. You help patients understand:
 - How clinical trials work
-- What to expect as a participant
+- What to expect as a participant  
 - How to find suitable trials
 - General questions about obesity treatments, GLP-1 medications, etc.
 
-Be helpful, accurate, and encouraging. Always remind users that they should consult with healthcare providers for medical advice.
-
-Keep responses concise (2-4 paragraphs) and actionable.`.trim()
-        },
-        {
-          role: "user",
-          content: question + contextPrompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 500
-    }, { signal: controller.signal });
-
-    clearTimeout(timeoutId);
-
-    return response.choices[0]?.message?.content ||
-      "I apologize, I couldn't generate a response. Please try rephrasing your question.";
-  } catch (error: any) {
-    console.error("[Chat] OpenRouter error:", error?.message || error);
-    if (error?.name === 'AbortError') {
-      return "The request timed out. Please try again.";
+Be helpful, accurate, and encouraging. Keep responses concise (2-3 short paragraphs) and actionable. Always remind users to consult healthcare providers for medical advice.`
+    },
+    {
+      role: "user",
+      content: question + contextPrompt
     }
-    return "I'm having trouble connecting right now. Please try again in a moment.";
+  ];
+
+  const content = await callOpenRouter(CHAT_MODEL, messages, 400, 0.7);
+  
+  if (content) {
+    return content;
   }
+
+  // Fallback responses if API fails
+  const lowerQ = question.toLowerCase();
+  if (lowerQ.includes('hola') || lowerQ.includes('hello') || lowerQ.includes('hi')) {
+    return "Hello! I'm TrialGuide, your clinical trials assistant. I can help you understand weight loss trials, explain treatments like GLP-1 medications, or answer questions about participation. What would you like to know?";
+  }
+  if (lowerQ.includes('glp') || lowerQ.includes('wegovy') || lowerQ.includes('ozempic')) {
+    return "GLP-1 medications like Ozempic, Wegovy, and Mounjaro are injectable drugs that help regulate appetite and blood sugar. Many clinical trials are studying new GLP-1 treatments or comparing them to existing options. Would you like to find trials near you?";
+  }
+  if (lowerQ.includes('safe') || lowerQ.includes('seguro')) {
+    return "Clinical trials follow strict safety protocols monitored by the FDA and ethics committees. Before joining, you'll receive detailed information about potential risks and benefits. You can withdraw at any time. Would you like to know more about the safety process?";
+  }
+  if (lowerQ.includes('pay') || lowerQ.includes('compensation') || lowerQ.includes('paga') || lowerQ.includes('dinero')) {
+    return "Many clinical trials offer compensation for your time and travel, typically ranging from $50 to $500+ per visit depending on the study. The exact amount varies by trial and will be disclosed before you enroll.";
+  }
+  
+  return "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again in a moment, or contact us directly for assistance.";
+}
+
+/**
+ * Enriquece un ensayo clínico
+ */
+export async function enrichTrialWithAI(
+  trialData: any
+): Promise<EnrichedTrialData> {
+  const protocol = trialData.protocolSection;
+  const description = protocol?.descriptionModule;
+  const eligibility = protocol?.eligibilityModule;
+
+  const studyInfo = `
+Title: ${protocol?.identificationModule?.briefTitle || "N/A"}
+Phase: ${protocol?.designModule?.phases?.join(", ") || "N/A"}
+Summary: ${description?.briefSummary || "N/A"}
+Eligibility: ${eligibility?.eligibilityCriteria || "N/A"}
+Conditions: ${protocol?.conditionsModule?.conditions?.join(", ") || "N/A"}
+  `.trim();
+
+  const messages = [
+    {
+      role: "system",
+      content: `You are a clinical trial assistant. Translate complex medical info into patient-friendly language. Respond in JSON format:
+{
+  "summary": "2-3 sentence summary",
+  "eligibilitySummary": {
+    "mustHave": ["inclusion criteria"],
+    "cannotHave": ["exclusion criteria"],
+    "ageRange": "age requirement",
+    "bmiRequirements": "BMI if mentioned"
+  },
+  "compensation": { "hasCompensation": boolean, "estimatedAmount": "amount or null", "details": "details" },
+  "whatToExpect": ["participation steps"],
+  "estimatedDuration": "duration",
+  "visitFrequency": "visit schedule",
+  "potentialRisks": ["risks"],
+  "potentialBenefits": ["benefits"],
+  "questionsToAsk": ["questions"],
+  "weightLossRelevanceScore": number,
+  "aiTags": ["tags"]
+}`
+    },
+    {
+      role: "user",
+      content: `Analyze this trial:\n\n${studyInfo}`
+    }
+  ];
+
+  const content = await callOpenRouter(CHAT_MODEL, messages, 800, 0.3);
+
+  if (content) {
+    try {
+      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                        content.match(/```\n?([\s\S]*?)\n?```/) ||
+                        [null, content];
+      const jsonStr = jsonMatch[1]?.trim() || content;
+      return JSON.parse(jsonStr) as EnrichedTrialData;
+    } catch (e) {
+      console.error('[AI Enrichment] JSON parse error:', e);
+    }
+  }
+
+  return getFallbackEnrichment(trialData);
+}
+
+/**
+ * Genera un resumen rápido de elegibilidad
+ */
+export async function generateEligibilitySummary(
+  eligibilityCriteria: string
+): Promise<{ inclusion: string[]; exclusion: string[] }> {
+  const messages = [
+    {
+      role: "system",
+      content: `Extract and simplify eligibility criteria. Return JSON: {"inclusion": ["who CAN join"], "exclusion": ["who CANNOT join"]}. Keep points under 10 words.`
+    },
+    {
+      role: "user",
+      content: eligibilityCriteria
+    }
+  ];
+
+  const content = await callOpenRouter(CHAT_MODEL, messages, 300, 0.2);
+
+  if (content) {
+    try {
+      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                        content.match(/```\n?([\s\S]*?)\n?```/) ||
+                        [null, content];
+      const jsonStr = jsonMatch[1]?.trim() || content;
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      console.error('[Eligibility] JSON parse error:', e);
+    }
+  }
+
+  return parseEligibilityManually(eligibilityCriteria);
+}
+
+/**
+ * Verifica si un paciente podría ser elegible
+ */
+export async function preScreenEligibility(
+  trialData: any,
+  userAnswers: Record<string, string>
+): Promise<{
+  likelyEligible: boolean;
+  confidence: "high" | "medium" | "low";
+  reasons: string[];
+  concerns: string[];
+  recommendation: string;
+}> {
+  const eligibilityText = trialData.protocolSection?.eligibilityModule?.eligibilityCriteria || "";
+  const userProfile = Object.entries(userAnswers)
+    .map(([q, a]) => `${q}: ${a}`)
+    .join("\n");
+
+  const messages = [
+    {
+      role: "system",
+      content: `You are a pre-screening assistant. Analyze if a patient matches eligibility. Be conservative. Return JSON: {"likelyEligible": boolean, "confidence": "high|medium|low", "reasons": ["why eligible"], "concerns": ["potential issues"], "recommendation": "next steps"}`
+    },
+    {
+      role: "user",
+      content: `ELIGIBILITY:\n${eligibilityText}\n\nPATIENT:\n${userProfile}\n\nWould they qualify?`
+    }
+  ];
+
+  const content = await callOpenRouter(CHAT_MODEL, messages, 400, 0.2);
+
+  if (content) {
+    try {
+      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+                        content.match(/```\n?([\s\S]*?)\n?```/) ||
+                        [null, content];
+      const jsonStr = jsonMatch[1]?.trim() || content;
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      console.error('[PreScreen] JSON parse error:', e);
+    }
+  }
+
+  return {
+    likelyEligible: false,
+    confidence: "low",
+    reasons: [],
+    concerns: ["Unable to analyze - contact study directly"],
+    recommendation: "Contact the study team to verify eligibility."
+  };
 }
 
 // Helpers privados
@@ -355,7 +324,6 @@ function parseEligibilityManually(criteria: string): { inclusion: string[]; excl
   const lines = criteria.split(/\n/);
   const inclusion: string[] = [];
   const exclusion: string[] = [];
-
   let currentSection: "inclusion" | "exclusion" | null = null;
 
   for (const line of lines) {
