@@ -3,81 +3,17 @@ const { lang = "en" } = Astro.props;
 import HIPAAAuthorization from './HIPAAAuthorization.astro';
 
 const content = lang === "en" ? {
-  title: "Thanks for joining the registry.",
-  subtitle: "Please answer a few basic questions to check your eligibility for current studies.",
+  title: "Join the NYC Patient Registry.",
+  subtitle: "Connect with breakthrough clinical research in your community. Direct access to leading physicians.",
   steps: [
-    {
-      title: "Basic Info",
-      fields: [
-        { label: "Date of birth", name: "dob", type: "date", required: true },
-        { label: "Gender", name: "gender", type: "select", options: ["Male", "Female", "Non-binary", "Prefer not to say"], required: true }
-      ]
-    },
-    {
-      title: "Primary Goal",
-      fields: [
-        { 
-          label: "What is your primary goal for joining this program?", 
-          name: "goal", 
-          type: "radio", 
-          options: [
-            "I want to maintain my current weight / I have no weight concerns.",
-            "I am looking to lose a small amount (10–25 lbs).",
-            "I need to lose a significant amount (30 lbs or more)."
-          ], 
-          required: true 
-        }
-      ]
-    },
-    {
-      title: "Prescription History",
-      fields: [
-        { 
-          label: "Have you used any prescription medications for weight loss in the past 6 months?", 
-          name: "medications", 
-          type: "radio", 
-          options: [
-            "Yes, currently taking.",
-            "Used in the past, but stopped more than 3 months ago.",
-            "Used in the past, but stopped less than 3 months ago.",
-            "No, never used."
-          ], 
-          required: true 
-        }
-      ]
-    },
-    {
-      title: "Interests",
-      fields: [
-        { 
-          label: "Besides Weight Management and Metabolic Health, are you interested in studies related to any of the following? (Select all that apply)", 
-          name: "interests", 
-          type: "checkbox", 
-          options: [
-            "Blood Sugar / Metabolism",
-            "Heart Health & Blood Pressure",
-            "Liver Health",
-            "Breathing & Lungs",
-            "Skin Care & Health",
-            "Cholesterol Management",
-            "Sleep Health",
-            "Kidney Function & Health",
-            "Joint Pain & Mobility",
-            "Mood & Brain",
-            "None of the above"
-          ], 
-          required: true 
-        }
-      ]
-    },
     {
       title: "Location",
       fields: [
         { 
-          label: "Are you willing to attend recurring study visits at leading research clinics in New York City?", 
+          label: "Are you willing to attend visits at research clinics in the NYC area?", 
           name: "willing_to_visit", 
           type: "radio", 
-          options: ["Yes", "No"], 
+          options: ["Yes, I live in or near NYC", "No, I am not in the area"], 
           required: true 
         },
         { label: "Zip Code", name: "zipcode", type: "text", placeholder: "10001", required: true }
@@ -93,93 +29,29 @@ const content = lang === "en" ? {
       ]
     }
   ],
-  legal: "By clicking \"Submit,\" I authorize Echelon Clinical Research to contact me at the number provided above regarding current and future matching research opportunities. I understand these communications may be sent via text/SMS, email, or phone, and may utilize automated technology, including pre-recorded messages or artificial voice. I agree to the [Privacy Policy] and [Terms of Service]. Reply STOP to opt out.",
+  legal: "By clicking \"Submit,\" I authorize Echelon Clinical Research to contact me regarding research opportunities. I agree to the [Privacy Policy]. No clinical data is collected here.",
   buttons: {
-    next: "Next Step",
-    prev: "Previous",
-    submit: "Submit"
+    next: "Continue",
+    prev: "Back",
+    submit: "Apply to Registry"
   },
   success: {
-    title: "Application Received!",
-    message: "Thank you for joining our registry. Our team will review your information and contact you if you match any of our current or upcoming studies.",
-    dismiss: "Dismiss"
+    title: "Registration Success!",
+    message: "Welcome to the Echelon registry. Our team will contact you shortly.",
+    dismiss: "Done"
   }
 } : {
-  title: "Gracias por unirse al registro.",
-  subtitle: "Responda algunas preguntas básicas para verificar su elegibilidad para los estudios actuales.",
+  title: "Únete al Registro en NYC.",
+  subtitle: "Conéctate con investigación clínica innovadora en tu comunidad.",
   steps: [
-    {
-      title: "Información Básica",
-      fields: [
-        { label: "Fecha de nacimiento", name: "dob", type: "date", required: true },
-        { label: "Género", name: "gender", type: "select", options: ["Masculino", "Femenino", "No binario", "Prefiero no decirlo"], required: true }
-      ]
-    },
-    {
-      title: "Objetivo Principal",
-      fields: [
-        { 
-          label: "¿Cuál es su objetivo principal al unirse a este programa?", 
-          name: "goal", 
-          type: "radio", 
-          options: [
-            "Quiero mantener mi peso actual / No tengo preocupaciones de peso.",
-            "Busco perder una pequeña cantidad (10–25 lbs).",
-            "Necesito perder una cantidad significativa (30 lbs o más)."
-          ], 
-          required: true 
-        }
-      ]
-    },
-    {
-      title: "Historial de Medicamentos",
-      fields: [
-        { 
-          label: "¿Ha usado algún medicamento recetado para perder peso en los últimos 6 meses?", 
-          name: "medications", 
-          type: "radio", 
-          options: [
-            "Sí, los tomo actualmente.",
-            "Usado en el pasado, pero dejé de tomarlo hace más de 3 meses.",
-            "Usado en el pasado, pero dejé de tomarlo hace menos de 3 meses.",
-            "No, nunca usado."
-          ], 
-          required: true 
-        }
-      ]
-    },
-    {
-      title: "Intereses",
-      fields: [
-        { 
-          label: "Además del control de peso y la salud metabólica, ¿le interesan estudios relacionados con alguno de los siguientes? (Seleccione todos los que correspondan)", 
-          name: "interests", 
-          type: "checkbox", 
-          options: [
-            "Azúcar en Sangre / Metabolismo",
-            "Salud del Corazón y Presión Arterial",
-            "Salud del Hígado",
-            "Respiración y Pulmones",
-            "Cuidado de la Piel y Salud",
-            "Control del Colesterol",
-            "Salud del Sueño",
-            "Función Renal y Salud",
-            "Dolor Articular y Movilidad",
-            "Estado de Ánimo y Cerebro",
-            "Ninguno de los anteriores"
-          ], 
-          required: true 
-        }
-      ]
-    },
     {
       title: "Ubicación",
       fields: [
         { 
-          label: "¿Está dispuesto a asistir a visitas recurrentes del estudio en clínicas de investigación líderes en la ciudad de Nueva York?", 
+          label: "¿Está dispuesto a asistir a visitas en el área de NYC?", 
           name: "willing_to_visit", 
           type: "radio", 
-          options: ["Sí", "No"], 
+          options: ["Sí, vivo en o cerca de NYC", "No, no estoy en el área"], 
           required: true 
         },
         { label: "Código Postal", name: "zipcode", type: "text", placeholder: "10001", required: true }
@@ -195,16 +67,16 @@ const content = lang === "en" ? {
       ]
     }
   ],
-  legal: "Al hacer clic en \"Enviar\", autorizo a Echelon Clinical Research a contactarme al número proporcionado anteriormente con respecto a las oportunidades de investigación actuales y futuras que coincidan. Entiendo que estas comunicaciones pueden enviarse a través de mensajes de texto/SMS, correo electrónico o teléfono, y pueden utilizar tecnología automatizada, incluidos mensajes pregrabados o voz artificial. Acepto la [Política de Privacidad] y los [Términos de Servicio]. Responda STOP para darse de baja.",
+  legal: "Al hacer clic en \"Enviar\", autorizo a Echelon Clinical Research a contactarme. No se recogen datos clínicos aquí.",
   buttons: {
-    next: "Siguiente Paso",
-    prev: "Anterior",
-    submit: "Enviar"
+    next: "Continuar",
+    prev: "Atrás",
+    submit: "Unirse al Registro"
   },
   success: {
-    title: "¡Solicitud Recibida!",
-    message: "Gracias por unirse a nuestro registro. Nuestro equipo revisará su información y se comunicará con usted si coincide con alguno de nuestros estudios actuales o futuros.",
-    dismiss: "Descartar"
+    title: "¡Registro Exitoso!",
+    message: "Bienvenido al registro de Echelon. Nuestro equipo se pondrá en contacto pronto.",
+    dismiss: "Finalizar"
   }
 };
 

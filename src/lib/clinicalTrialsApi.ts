@@ -278,9 +278,10 @@ export function transformTrialData(apiTrial: ClinicalTrial): Trial {
   const allCities = Array.from(citiesSet);
   const allStates = Array.from(statesSet);
 
-  // Prefer US locations so city/state fields are meaningful for the "Primary" card view
+  // Prioritize New York locations so city/state fields match our NYC focus
+  const nyLocations = allLocations.filter(l => (l.state === 'NY' || l.state === 'New York' || (l.city && l.city.toLowerCase().includes('new york'))));
   const usLocations = allLocations.filter(l => !l.country || l.country === 'United States');
-  const primaryLocation = usLocations[0] || allLocations[0] || {};
+  const primaryLocation = nyLocations[0] || usLocations[0] || allLocations[0] || {};
 
   // Build AI summary from available data
   const conditions = protocol.conditionsModule?.conditions || [];

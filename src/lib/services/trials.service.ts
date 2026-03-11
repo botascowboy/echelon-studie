@@ -124,7 +124,14 @@ export const TrialsService = {
      * Fetch trials with filtering and pagination
      */
     async getTrials(filters: TrialFilters = {}): Promise<TrialsResponse> {
-        const { page = 1, pageSize = 9, q, location, phase, compensation } = filters;
+        const { page = 1, pageSize = 9, q, phase, compensation } = filters;
+        let { location } = filters;
+
+        // Force location to New York City if none provided and we are in single-city mode
+        if (!location && TARGET_CITIES.length === 1) {
+            location = TARGET_CITIES[0].name;
+        }
+
         let allTrials: Trial[] = [];
         let source = 'api';
 

@@ -13,46 +13,6 @@ export const TARGET_CITIES = [
     lat: 40.7128,
     lng: -74.0060,
     timezone: 'America/New_York'
-  },
-  {
-    id: 'miami',
-    name: 'Miami',
-    state: 'FL',
-    stateName: 'Florida',
-    displayName: 'Miami',
-    lat: 25.7617,
-    lng: -80.1918,
-    timezone: 'America/New_York'
-  },
-  {
-    id: 'houston',
-    name: 'Houston',
-    state: 'TX',
-    stateName: 'Texas',
-    displayName: 'Houston',
-    lat: 29.7604,
-    lng: -95.3698,
-    timezone: 'America/Chicago'
-  },
-  {
-    id: 'losangeles',
-    name: 'Los Angeles',
-    state: 'CA',
-    stateName: 'California',
-    displayName: 'Los Angeles',
-    lat: 34.0522,
-    lng: -118.2437,
-    timezone: 'America/Los_Angeles'
-  },
-  {
-    id: 'sanfrancisco',
-    name: 'San Francisco',
-    state: 'CA',
-    stateName: 'California',
-    displayName: 'San Francisco',
-    lat: 37.7749,
-    lng: -122.4194,
-    timezone: 'America/Los_Angeles'
   }
 ] as const;
 
@@ -60,11 +20,7 @@ export type TargetCity = typeof TARGET_CITIES[number]['id'];
 
 // Map city names to API search terms
 export const CITY_SEARCH_TERMS: Record<string, string> = {
-  'nyc': 'New York',
-  'miami': 'Miami',
-  'houston': 'Houston',
-  'losangeles': 'Los Angeles',
-  'sanfrancisco': 'San Francisco'
+  'nyc': 'New York'
 };
 
 // Check if a location matches one of our target cities

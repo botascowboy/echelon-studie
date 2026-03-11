@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import ChatBot from '../components/ChatBot.astro';
+import LeadModal from '../components/LeadModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 	lang?: string;
 }
 
-const { title, description = "Echelon Studies - Clinical Trial Patient Recruitment in NYC and Nationwide", lang = "en" } = Astro.props;
+const { title, description = "Echelon Studies - Clinical Trial Patient Recruitment in New York City", lang = "en" } = Astro.props;
 ---
 
 <!doctype html>
@@ -46,5 +47,6 @@ const { title, description = "Echelon Studies - Clinical Trial Patient Recruitme
 	<body class="min-h-screen bg-background text-foreground selection:bg-primary/30 antialiased">
 		<slot />
 		<ChatBot lang={lang === 'es' ? 'es' : 'en'} />
+		<LeadModal lang={lang === 'es' ? 'es' : 'en'} />
 	</body>
 </html>

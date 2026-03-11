@@ -2,116 +2,80 @@
 const { lang = "en" } = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-white pt-24 pb-0">
-
-  <!-- Aurora gradient background (withpower-style blurred ellipses) -->
-  <svg class="absolute left-0 top-0 -z-10 h-[680px] w-full" fill="none" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1512 680" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#hero-blur)">
-      <!-- Green / teal blobs (brand accent) -->
-      <ellipse cx="900" cy="200" rx="380" ry="200" fill="#00a381" opacity="0.18"/>
-      <ellipse cx="1100" cy="320" rx="280" ry="150" fill="#00c49a" opacity="0.14"/>
-      <ellipse cx="700"  cy="350" rx="320" ry="180" fill="#00a381" opacity="0.10"/>
-      <!-- Navy blobs (brand primary) -->
-      <ellipse cx="1300" cy="150" rx="250" ry="130" fill="#002147" opacity="0.10"/>
-      <ellipse cx="200"  cy="400" rx="300" ry="160" fill="#003070" opacity="0.08"/>
-      <!-- Warm accent -->
-      <ellipse cx="500"  cy="100" rx="200" ry="100" fill="#38d9c0" opacity="0.13"/>
-      <ellipse cx="1200" cy="450" rx="180" ry="90"  fill="#00e5b0" opacity="0.09"/>
-      <!-- White center wash -->
-      <ellipse cx="756"  cy="300" rx="600" ry="340" fill="white" opacity="0.72"/>
-    </g>
-    <defs>
-      <filter id="hero-blur" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" x="-200" y="-100" width="2000" height="900">
-        <feGaussianBlur stdDeviation="65"/>
-      </filter>
-    </defs>
-  </svg>
-
-  <!-- Grain texture overlay -->
-  <div class="pointer-events-none absolute inset-0 -z-10" style="background-image:url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'2\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E'); opacity:0.04; mix-blend-mode:multiply;"></div>
-
-  <div class="mx-auto w-full max-w-screen-xl px-4 md:px-8">
-
-    <!-- Hero text block -->
-    <div class="mx-auto max-w-3xl text-center pt-10 pb-12">
-
-      <!-- Eyebrow badge -->
-      <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-60"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-        </span>
-        <span class="text-[11px] font-black uppercase tracking-[0.2em] text-accent">
-          {lang === 'en' ? 'Weight Loss Trials — NYC · Miami · Houston · LA · SF' : 'Ensayos de Pérdida de Peso — 5 Ciudades'}
-        </span>
-      </div>
-
-      <!-- Main headline -->
-      <h1 class="font-extrabold tracking-tight leading-[1.05] text-[2.75rem] md:text-[4.25rem] text-slate-900 mb-5">
-        {lang === 'en' ? 'Get paid to' : 'Te pagan para'}<br/>
-        <span style="color:#00a381">{lang === 'en' ? 'lose weight.' : 'bajar de peso.'}</span>
-      </h1>
-
-      <!-- Sub -->
-      <p class="mx-auto max-w-xl text-[1.2rem] md:text-[1.35rem] leading-[1.5] font-semibold tracking-tight text-slate-500 mb-10">
-        {lang === 'en'
-          ? 'Join a paid weight-loss clinical trial near you. Access Ozempic, Wegovy & Mounjaro — free of charge.'
-          : 'Únete a un ensayo clínico de pérdida de peso cerca de ti. Accede a Ozempic, Wegovy y Mounjaro — sin costo.'}
-      </p>
-
-      <!-- CTA buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
-        <a href="#trials"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-9 py-4 bg-[#002147] text-white text-sm font-bold tracking-wide hover:opacity-90 transition-all shadow-lg">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          {lang === 'en' ? 'Browse Open Trials' : 'Ver Ensayos Abiertos'}
-        </a>
-        <a href="#trials"
-          onclick="document.getElementById('search-input')?.focus()"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-9 py-4 border-2 border-slate-200 bg-white text-slate-700 text-sm font-bold tracking-wide hover:border-accent hover:text-accent transition-all">
-          {lang === 'en' ? 'Check My Eligibility' : 'Verificar Elegibilidad'}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-      </div>
-
-      <!-- Trust micro-stats row -->
-      <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
-        {[
-          { icon: '💊', stat: '200+', label: lang === 'en' ? 'Active Trials' : 'Ensayos Activos' },
-          { icon: '💰', stat: '$1,500', label: lang === 'en' ? 'Max Compensation' : 'Compensación Máx.' },
-          { icon: '🏥', stat: '100%', label: lang === 'en' ? 'Free — No Insurance Needed' : 'Gratis — Sin seguro' },
-          { icon: '🏙️', stat: '5', label: lang === 'en' ? 'Major US Cities' : 'Ciudades Principales' },
-        ].map(({ icon, stat, label }) => (
-          <div class="flex items-center gap-2">
-            <span class="text-base">{icon}</span>
-            <span class="font-bold text-slate-800">{stat}</span>
-            <span class="text-slate-400">{label}</span>
-          </div>
-        ))}
-      </div>
+<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#001529] pt-20">
+    <!-- Luxury Cinematic Background -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#001529] via-[#002147] to-[#001020]"></div>
+        <!-- Glowing Orbs -->
+        <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-accent/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-primary/30 rounded-full blur-[120px] animate-pulse" style="animation-duration: 8s;"></div>
+        <!-- Grain Texture -->
+        <div class="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none" style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
     </div>
 
-    <!-- City pills -->
-    <div class="flex flex-wrap items-center justify-center gap-2 pb-14">
-      {[
-        { name: 'New York', short: 'NYC', icon: '🗽', id: 'nyc' },
-        { name: 'Miami', short: 'Miami', icon: '🌴', id: 'miami' },
-        { name: 'Houston', short: 'Houston', icon: '🚀', id: 'houston' },
-        { name: 'Los Angeles', short: 'LA', icon: 'losangeles' },
-        { name: 'San Francisco', short: 'SF', icon: 'sanfrancisco' },
-      ].map((city) => (
-        <a
-          href={`/${lang}/city/${city.id}`}
-          class="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-slate-200 bg-white hover:border-accent hover:bg-accent/5 transition-all text-sm font-semibold text-slate-600 hover:text-accent"
-        >
-          <span>{city.name === 'Los Angeles' ? '🌆' : city.name === 'San Francisco' ? '🌉' : city.icon}</span>
-          <span>{city.short}</span>
-        </a>
-      ))}
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-5xl mx-auto text-center">
+            <!-- Luxury Badge -->
+            <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl text-white/90 text-[10px] font-black uppercase tracking-[0.5em] mb-12 animate-fade-in shadow-2xl">
+                <span class="flex h-2 w-2 rounded-full bg-accent animate-ping"></span>
+                {lang === 'en' ? 'Exclusive NYC Clinical Network' : 'Red Clínica Exclusiva de NYC'}
+            </div>
+
+            <h1 class="text-5xl md:text-8xl lg:text-[7rem] font-black text-white mb-8 leading-[0.95] tracking-tighter animate-title h-auto py-2">
+                {lang === 'en' ? 'The Future of' : 'El Futuro de la'} <br/>
+                <span class="text-gradient filter drop-shadow-[0_20px_50px_rgba(0,163,129,0.3)]">
+                    {lang === 'en' ? 'Medical Research.' : 'Investigación Médica.'}
+                </span>
+            </h1>
+            
+            <p class="text-lg md:text-2xl text-white/60 mb-16 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up" style="animation-delay: 0.2s;">
+                {lang === 'en' 
+                    ? 'Direct access to breakthrough clinical trials in the five boroughs. Join New York\'s elite medical registry today.' 
+                    : 'Acceso directo a ensayos clínicos innovadores en los cinco condados. Únete hoy al registro médico de élite de Nueva York.'}
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <a href="#trials" class="group relative px-12 py-6 bg-white rounded-2xl font-black text-primary text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_-10px_rgba(255,255,255,0.3)] overflow-hidden">
+                    <span class="relative z-10">{lang === 'en' ? 'View NYC Trials' : 'Ver Ensayos en NYC'}</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-accent/20 to-transparent translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
+                </a>
+                <a href="#contact" class="px-12 py-6 rounded-2xl font-black text-white text-sm uppercase tracking-[0.2em] border-2 border-white/10 hover:bg-white/5 transition-all backdrop-blur-sm">
+                    {lang === 'en' ? 'Join Registry' : 'Unirse al Registro'}
+                </a>
+            </div>
+
+            <!-- Precision Stats Row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 mt-32 pt-16 border-t border-white/5 animate-fade-in" style="animation-delay: 0.6s;">
+                {[
+                    { label: lang === 'en' ? 'Active NYC Trials' : 'Ensayos en NYC', value: '450+' },
+                    { label: lang === 'en' ? 'Research Centers' : 'Centros de Inv.', value: '12' },
+                    { label: lang === 'en' ? 'Total Stipends' : 'Compensación Total', value: '$25M+' },
+                    { label: lang === 'en' ? 'Medical Board' : 'Junta Médica', value: 'Elite' }
+                ].map(stat => (
+                    <div class="text-center group cursor-default">
+                        <div class="text-3xl md:text-4xl font-black text-white mb-2 group-hover:text-accent transition-colors tracking-tighter">{stat.value}</div>
+                        <div class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] group-hover:text-white/50 transition-colors">{stat.label}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
     </div>
-
-  </div>
-
-  <!-- Bottom wave fade into next section -->
-  <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
 </section>
+
+<style>
+    @keyframes title {
+        from { opacity: 0; transform: translateY(30px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .animate-title {
+        animation: title 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+        opacity: 0;
+        animation: fade-in-up 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+</style>

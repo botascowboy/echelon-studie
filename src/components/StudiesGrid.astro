@@ -19,19 +19,19 @@ const { lang = "en", initialLocation = "" } = Astro.props;
         {lang === 'en' ? 'Now Recruiting' : 'Reclutando Ahora'}
       </div>
       <h2 class="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-primary">
-        {lang === 'en' ? 'Weight Loss' : 'Ensayos de'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Trials.' : 'Pérdida de Peso.'}</span>
+        {lang === 'en' ? 'Weight Loss' : 'Ensayos en'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Trials in NYC.' : 'New York City.'}</span>
       </h2>
       <p class="text-slate-500 text-lg font-medium leading-relaxed max-w-2xl mx-auto">
         {lang === 'en'
-          ? 'Every study below offers free access to cutting-edge treatments. Many pay up to $1,500. No insurance needed.'
-          : 'Cada estudio ofrece acceso gratuito a tratamientos de vanguardia. Muchos pagan hasta $1,500. Sin seguro médico.'}
+          ? 'Elite weight loss studies available right here in New York City. Access cutting-edge treatments at no cost.'
+          : 'Ensayos de élite disponibles aquí en New York City. Accede a tratamientos de vanguardia sin costo.'}
       </p>
     </div>
 
     <!-- Filter Bar -->
-    <div class="max-w-5xl mx-auto mb-10">
+    <div class="max-w-4xl mx-auto mb-10">
       <div class="bg-white rounded-3xl p-5 shadow-lg shadow-slate-200/50 border border-slate-100">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Search -->
           <div class="relative">
             <input
@@ -44,15 +44,9 @@ const { lang = "en", initialLocation = "" } = Astro.props;
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
-          <!-- Location -->
-          <select id="location-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
-            <option value="">{lang === 'en' ? 'All Cities' : 'Todas las Ciudades'}</option>
-            <option value="New York, NY" selected={initialLocation === 'New York City'}>🗽 NYC</option>
-            <option value="Miami, FL" selected={initialLocation === 'Miami'}>🌴 Miami</option>
-            <option value="Houston, TX" selected={initialLocation === 'Houston'}>🚀 Houston</option>
-            <option value="Los Angeles, CA" selected={initialLocation === 'Los Angeles'}>🌆 Los Angeles</option>
-            <option value="San Francisco, CA" selected={initialLocation === 'San Francisco'}>🌉 San Francisco</option>
-          </select>
+          <!-- Hidden Location (Always NYC) -->
+          <input type="hidden" id="location-filter" value="New York" />
+          
           <!-- Phase -->
           <select id="phase-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
             <option value="">{lang === 'en' ? 'All Phases' : 'Todas las Fases'}</option>
@@ -63,7 +57,7 @@ const { lang = "en", initialLocation = "" } = Astro.props;
           <!-- Compensation -->
           <select id="compensation-filter" class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all appearance-none cursor-pointer text-sm">
             <option value="">{lang === 'en' ? 'All Studies' : 'Todos'}</option>
-            <option value="true">{lang === 'en' ? '💰 Paid Studies Only' : '💰 Solo estudios pagados'}</option>
+            <option value="true">{lang === 'en' ? '💰 Paid Only' : '💰 Solo pagados'}</option>
             <option value="false">{lang === 'en' ? 'No Payment' : 'Sin pago'}</option>
           </select>
         </div>
@@ -124,8 +118,6 @@ const { lang = "en", initialLocation = "" } = Astro.props;
 </section>
 
 <script>
-  import { TrialsService } from '../lib/services/trials.service';
-
   class TrialsManager {
     lang: string;
     currentPage: number;
@@ -169,7 +161,7 @@ const { lang = "en", initialLocation = "" } = Astro.props;
 
     initEvents() {
       const search = document.getElementById('search-input') as HTMLInputElement;
-      const location = document.getElementById('location-filter') as HTMLSelectElement;
+      const location = document.getElementById('location-filter') as HTMLInputElement;
       const phase = document.getElementById('phase-filter') as HTMLSelectElement;
       const compensation = document.getElementById('compensation-filter') as HTMLSelectElement;
       const prev = document.getElementById('prev-page') as HTMLButtonElement;
@@ -191,7 +183,6 @@ const { lang = "en", initialLocation = "" } = Astro.props;
       };
 
       search?.addEventListener('input', debounce(handler, 300));
-      location?.addEventListener('change', handler);
       phase?.addEventListener('change', handler);
       compensation?.addEventListener('change', handler);
 
@@ -199,33 +190,45 @@ const { lang = "en", initialLocation = "" } = Astro.props;
       next?.addEventListener('click', () => { if (this.currentPage < this.totalPages) { this.currentPage++; this.load(); }});
     }
 
+    setState(state: 'loading' | 'results' | 'empty') {
+      if (this.loading) this.loading.classList.toggle('hidden', state !== 'loading');
+      if (this.grid) this.grid.classList.toggle('hidden', state !== 'results');
+      if (this.empty) this.empty.classList.toggle('hidden', state !== 'empty');
+      if (this.pagination) this.pagination.classList.toggle('hidden', state !== 'results' || this.totalPages <= 1);
+    }
+
     async load() {
+      if (!this.grid) return;
       this.setState('loading');
       
       try {
-        const data = await TrialsService.getTrials({
-          ...this.currentFilters,
-          page: this.currentPage
+        const queryParams = new URLSearchParams({
+          page: this.currentPage.toString(),
+          pageSize: '9'
         });
 
+        if (this.currentFilters.q) queryParams.set('q', this.currentFilters.q);
+        if (this.currentFilters.location) queryParams.set('location', this.currentFilters.location);
+        if (this.currentFilters.phase) queryParams.set('phase', this.currentFilters.phase);
+        if (this.currentFilters.compensation) queryParams.set('compensation', this.currentFilters.compensation);
+
+        const response = await fetch(`/api/trials?${queryParams.toString()}`);
+        if (!response.ok) throw new Error('API fetch failed');
+        
+        const data = await response.json();
+
         if (data.trials && data.trials.length > 0) {
-          this.totalPages = data.totalPages;
+          this.totalPages = data.totalPages || 1;
           this.render(data);
           this.setState('results');
         } else {
           this.setState('empty');
         }
       } catch (error) {
-        console.error('Error loading trials:', error);
+        console.error('[TrialsManager] Failed to load:', error);
+        // On error, show empty state instead of infinite loading
         this.setState('empty');
       }
-    }
-
-    setState(state) {
-      this.loading.classList.toggle('hidden', state !== 'loading');
-      this.grid.classList.toggle('hidden', state !== 'results');
-      this.empty.classList.toggle('hidden', state !== 'empty');
-      this.pagination.classList.toggle('hidden', state !== 'results' || this.totalPages <= 1);
     }
 
     render(data) {

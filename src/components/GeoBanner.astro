@@ -33,12 +33,8 @@ const { lang = "en" } = Astro.props;
     if (!banner || !geoText) return;
 
     try {
-      // 1. Get city from IP (reliable for local dev & production)
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      
-      const city = data.city || (lang === 'en' ? 'your area' : 'tu zona');
-      const count = Math.floor(Math.random() * 15) + 8; // Simulate count based on city
+      const city = "New York City";
+      const count = Math.floor(Math.random() * 15) + 40; // Simulate count for NYC
 
       if (lang === 'en') {
         geoText.innerHTML = `There are <span class="text-accent font-black">${count}</span> weight-loss studies active in <span class="text-primary font-black">${city}</span>.`;
@@ -53,11 +49,11 @@ const { lang = "en" } = Astro.props;
 
     } catch (e) {
       console.error('Geo error:', e);
-      // Fallback: don't show or show generic
+      // Fallback
       if (lang === 'en') {
-        geoText.innerHTML = `Multiple weight-loss studies available in <span class="text-primary font-black">Major US Cities</span>.`;
+        geoText.innerHTML = `Multiple weight-loss studies available in <span class="text-primary font-black">New York City</span>.`;
       } else {
-        geoText.innerHTML = `Múltiples estudios de peso disponibles en <span class="text-primary font-black">Ciudades Principales</span>.`;
+        geoText.innerHTML = `Múltiples estudios de peso disponibles en <span class="text-primary font-black">New York City</span>.`;
       }
       setTimeout(() => {
         banner.classList.remove('translate-y-20', 'opacity-0');

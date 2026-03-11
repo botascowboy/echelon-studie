@@ -15,6 +15,7 @@ export const LeadCreateSchema = z.object({
     email: z.string().email("Invalid email address"),
     phone: z.string().min(10, "Phone number is too short").max(20),
     city: z.string().max(100).optional().default(''),
+    zipCode: z.string().max(10).optional().default(''),
     age: z.string().optional().default(''),
     bmi: z.enum(['underweight', 'normal', 'overweight', 'obese', 'extremely-obese']).optional().default('normal'),
     conditions: z.array(z.string()).optional().default([]),

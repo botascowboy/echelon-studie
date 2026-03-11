@@ -1,6 +1,5 @@
 /**
- * Mock trials data for 5 target cities
- * Cities: NYC, Miami, Houston, Los Angeles, San Francisco
+ * Mock trials data for New York City
  */
 
 import { PLATFORM_CONFIG } from './config';
@@ -269,23 +268,19 @@ const baseTrials = [
 // Generate trials for all 5 target cities
 export function generateMockTrials() {
   const trials: any[] = [];
-  
+
   PLATFORM_CONFIG.cities.forEach((city) => {
     baseTrials.forEach((baseTrial, index) => {
       // Create city-specific ID
       const cityPrefix = city.id.substring(0, 3).toUpperCase();
       const uniqueId = `${baseTrial.nct_id}-${cityPrefix}`;
-      
-      // Adjust compensation by city (higher in SF/NYC)
-      const baseComp = city.id === 'sanfrancisco' || city.id === 'nyc' 
-        ? '$600 - $1,500' 
-        : city.id === 'losangeles' 
-          ? '$500 - $1,200'
-          : '$400 - $1,000';
-      
+
+      // Adjust compensation for NYC (premium rate)
+      const baseComp = '$600 - $1,500';
+
       // Vary enrollment count
       const enrollment = Math.floor(baseTrial.enrollment_count * (0.8 + Math.random() * 0.4));
-      
+
       trials.push({
         ...baseTrial,
         nct_id: uniqueId,
@@ -299,7 +294,7 @@ export function generateMockTrials() {
       });
     });
   });
-  
+
   return trials;
 }
 
@@ -321,8 +316,8 @@ export function getMockTrialByNctId(nctId: string) {
 export function getTrialsByCity(cityId: string) {
   const city = PLATFORM_CONFIG.cities.find(c => c.id === cityId);
   if (!city) return [];
-  
-  return getMockTrials().filter(trial => 
+
+  return getMockTrials().filter(trial =>
     trial.primary_location_city === city.name
   );
 }

@@ -3,323 +3,112 @@ const { trial, lang = "en" } = Astro.props;
 import HIPAAAuthorization from './HIPAAAuthorization.astro';
 ---
 
-<div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-lg shadow-slate-200/30">
-  <div class="max-w-3xl mx-auto">
+<div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] relative overflow-hidden group">
+  <!-- Subtle aesthetic background -->
+  <div class="absolute -top-24 -right-24 w-48 h-48 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-all duration-1000"></div>
+  
+  <div class="max-w-2xl mx-auto relative z-10">
     <div class="text-center mb-10">
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
-        {lang === 'en' ? 'Free Pre-Screening — 2 minutes' : 'Pre-Cribado Gratis — 2 minutos'}
+      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-accent/5 border border-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+        {lang === 'en' ? 'Quick Application' : 'Solicitud Rápida'}
       </div>
-      <h2 class="text-3xl font-black text-primary mb-3">
-        {lang === 'en' ? 'Do You Qualify?' : '¿Calificas?'}
+      <h2 class="text-3xl md:text-4xl font-black text-primary mb-4 tracking-tighter">
+        {lang === 'en' ? 'Apply for this Study' : 'Aplica a este Estudio'}
       </h2>
-      <p class="text-slate-500 text-sm">
+      <p class="text-slate-500 text-sm font-medium leading-relaxed">
         {lang === 'en'
-          ? 'Answer 5 quick questions. If you qualify, our team will call you to schedule your screening visit.'
-          : 'Responde 5 preguntas rápidas. Si calificas, nuestro equipo te llamará para agendar tu visita de cribado.'}
+          ? 'Enter your contact details. Our NYC medical team will review your request and call you within 24 hours.'
+          : 'Ingresa tus datos de contacto. Nuestro equipo médico en NYC revisará tu solicitud y te llamará en 24 horas.'}
       </p>
     </div>
 
-    <!-- Progress -->
-    <div class="mb-8">
-      <div class="flex justify-between text-xs font-bold text-slate-400 mb-2">
-        <span id="progress-text">{lang === 'en' ? 'Step 1 of 5' : 'Paso 1 de 5'}</span>
-        <span id="progress-percent">20%</span>
-      </div>
-      <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-        <div id="progress-bar" class="h-full bg-accent rounded-full transition-all duration-300" style="width: 20%"></div>
-      </div>
-    </div>
-
-    <!-- Form -->
+    <!-- Simple Form -->
     <form id="prescreen-form" class="space-y-6">
-
-      <!-- Step 1: Age -->
-      <div class="question-step" data-step="1">
-        <label class="block text-lg font-bold text-slate-800 mb-4">
-          {lang === 'en' ? '1. What is your age?' : '1. ¿Cuál es tu edad?'}
-        </label>
-        <div class="grid grid-cols-3 gap-3">
-          {['18–30', '31–50', '51+'].map((range) => (
-            <label class="cursor-pointer">
-              <input type="radio" name="age" value={range} class="sr-only peer">
-              <div class="p-4 rounded-2xl border-2 border-slate-200 text-center peer-checked:border-accent peer-checked:bg-accent/5 transition-all hover:border-accent/50">
-                <span class="font-bold text-slate-700">{range}</span>
-              </div>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <!-- Step 2: BMI -->
-      <div class="question-step hidden" data-step="2">
-        <label class="block text-lg font-bold text-slate-800 mb-4">
-          {lang === 'en' ? '2. What best describes your weight?' : '2. ¿Cómo describes tu peso?'}
-        </label>
-        <div class="space-y-3">
-          <label class="flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="bmi" value="normal" class="sr-only">
-            <div class="flex-1">
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'Normal weight (BMI < 25)' : 'Peso normal (IMC < 25)'}</div>
-              <div class="text-xs text-slate-400 mt-0.5">{lang === 'en' ? 'May not qualify for most studies' : 'Puede no calificar para la mayoría'}</div>
-            </div>
-          </label>
-          <label class="flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="bmi" value="overweight" class="sr-only">
-            <div class="flex-1">
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'Overweight (BMI 25–29.9)' : 'Sobrepeso (IMC 25–29.9)'}</div>
-              <div class="text-xs text-slate-400 mt-0.5">{lang === 'en' ? 'Qualifies for several studies' : 'Califica para varios estudios'}</div>
-            </div>
-          </label>
-          <label class="flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="bmi" value="obese" class="sr-only">
-            <div class="flex-1">
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'Obese (BMI 30+)' : 'Obesidad (IMC 30+)'}</div>
-              <div class="text-xs text-accent font-semibold mt-0.5">{lang === 'en' ? '✓ Likely qualifies for most studies' : '✓ Probablemente califica para la mayoría'}</div>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Step 3: Health Conditions -->
-      <div class="question-step hidden" data-step="3">
-        <label class="block text-lg font-bold text-slate-800 mb-2">
-          {lang === 'en' ? '3. Do you have any of these conditions?' : '3. ¿Tienes alguna de estas condiciones?'}
-        </label>
-        <p class="text-xs text-slate-400 mb-4">{lang === 'en' ? 'Select all that apply' : 'Selecciona todas las que apliquen'}</p>
-        <div class="space-y-2">
-          {[
-            { value: 'type-2-diabetes', label: lang === 'en' ? 'Type 2 Diabetes' : 'Diabetes Tipo 2' },
-            { value: 'type-1-diabetes', label: lang === 'en' ? 'Type 1 Diabetes' : 'Diabetes Tipo 1' },
-            { value: 'heart-disease', label: lang === 'en' ? 'Heart Disease' : 'Enfermedad Cardíaca' },
-            { value: 'history-of-pancreatitis', label: lang === 'en' ? 'History of Pancreatitis' : 'Pancreatitis' },
-            { value: 'thyroid-cancer', label: lang === 'en' ? 'Thyroid Cancer (personal/family)' : 'Cáncer de Tiroides' },
-            { value: 'none', label: lang === 'en' ? 'None of these' : 'Ninguna' },
-          ].map(({ value, label }) => (
-            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-              <input type="checkbox" name="conditions" value={value} class="w-4 h-4 rounded border-slate-300 text-accent focus:ring-accent">
-              <span class="font-medium text-slate-700 text-sm">{label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <!-- Step 4: Current Medications -->
-      <div class="question-step hidden" data-step="4">
-        <label class="block text-lg font-bold text-slate-800 mb-4">
-          {lang === 'en' ? '4. Are you currently on weight-loss medication?' : '4. ¿Tomas medicamentos para bajar de peso?'}
-        </label>
-        <div class="space-y-3">
-          <label class="flex items-start gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="current_meds" value="glp1" class="sr-only">
-            <div>
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'Yes — GLP-1 agonist' : 'Sí — agonista GLP-1'}</div>
-              <div class="text-xs text-slate-400 mt-0.5">Ozempic, Wegovy, Mounjaro, Zepbound, Saxenda…</div>
-            </div>
-          </label>
-          <label class="flex items-start gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="current_meds" value="other" class="sr-only">
-            <div>
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'Yes — other medication' : 'Sí — otro medicamento'}</div>
-              <div class="text-xs text-slate-400 mt-0.5">Phentermine, Qsymia, Contrave…</div>
-            </div>
-          </label>
-          <label class="flex items-start gap-4 p-4 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-accent/50 transition-all has-[:checked]:border-accent has-[:checked]:bg-accent/5">
-            <input type="radio" name="current_meds" value="none" class="sr-only">
-            <div>
-              <div class="font-bold text-slate-700">{lang === 'en' ? 'No — not on any weight-loss meds' : 'No — sin medicamentos'}</div>
-              <div class="text-xs text-accent font-semibold mt-0.5">{lang === 'en' ? '✓ Ideal for most trials' : '✓ Ideal para la mayoría'}</div>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Step 5: Contact Info -->
-      <div class="question-step hidden" data-step="5">
-        <label class="block text-lg font-bold text-slate-800 mb-2">
-          {lang === 'en' ? '5. Where should we reach you?' : '5. ¿Cómo te contactamos?'}
-        </label>
-        <p class="text-xs text-slate-400 mb-5">
-          {lang === 'en'
-            ? 'If you qualify, our team will call you within 24 hours to schedule your free screening visit.'
-            : 'Si calificas, nuestro equipo te llamará en 24 horas para agendar tu visita de cribado gratuita.'}
-        </p>
-        <div class="space-y-3">
-          <div class="grid grid-cols-2 gap-3">
-            <input type="text" name="firstName" placeholder={lang === 'en' ? 'First name *' : 'Nombre *'}
-              class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm" required>
-            <input type="text" name="lastName" placeholder={lang === 'en' ? 'Last name' : 'Apellido'}
-              class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm">
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">{lang === 'en' ? 'First Name' : 'Nombre'}</label>
+            <input type="text" name="firstName" placeholder="John"
+              class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-primary font-bold placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all" required>
           </div>
-          <input type="tel" name="phone" placeholder={lang === 'en' ? 'Phone number *' : 'Teléfono *'}
-            class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm" required>
-          <input type="email" name="email" placeholder={lang === 'en' ? 'Email address *' : 'Correo electrónico *'}
-            class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm" required>
-          <select name="city" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all text-sm appearance-none">
-            <option value="">{lang === 'en' ? 'Your city *' : 'Tu ciudad *'}</option>
-            <option value="New York, NY">🗽 New York, NY</option>
-            <option value="Miami, FL">🌴 Miami, FL</option>
-            <option value="Houston, TX">🚀 Houston, TX</option>
-            <option value="Los Angeles, CA">🌆 Los Angeles, CA</option>
-            <option value="San Francisco, CA">🌉 San Francisco, CA</option>
-          </select>
-          <label class="flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer">
-            <input type="checkbox" id="consent" name="consent" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-accent focus:ring-accent" required>
-            <span class="text-xs text-slate-500 leading-relaxed">
+          <div class="space-y-2">
+            <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">{lang === 'en' ? 'Last Name' : 'Apellido'}</label>
+            <input type="text" name="lastName" placeholder="Doe"
+              class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-primary font-bold placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">{lang === 'en' ? 'Phone Number' : 'Teléfono'}</label>
+          <input type="tel" name="phone" placeholder="(555) 000-0000"
+            class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-primary font-bold placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all" required>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">{lang === 'en' ? 'Email Address' : 'Correo Electrónico'}</label>
+          <input type="email" name="email" placeholder="john@example.com"
+            class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-primary font-bold placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all" required>
+        </div>
+
+        <div class="pt-4">
+          <label class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50/50 border border-slate-100 cursor-pointer hover:bg-white transition-all group/consent">
+            <div class="relative flex items-center justify-center w-6 h-6 rounded-lg border-2 border-slate-200 group-has-[:checked]/consent:border-accent group-has-[:checked]/consent:bg-accent transition-all mt-0.5">
+              <input type="checkbox" id="consent" name="consent" class="sr-only" required>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-[:checked]/consent:opacity-100"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span class="text-[11px] text-slate-500 font-bold leading-relaxed">
               {lang === 'en'
-                ? 'I consent to being contacted about clinical trials and agree to the privacy policy. This is not medical advice.'
-                : 'Doy mi consentimiento para ser contactado sobre ensayos clínicos y acepto la política de privacidad. Esto no es consejo médico.'}
+                ? 'I consent to being contacted about this clinical trial in NYC. I understand no clinical data is being collected in this form.'
+                : 'Doy mi consentimiento para ser contactado sobre este ensayo clínico en NYC. Entiendo que no se recogen datos clínicos en este formulario.'}
             </span>
           </label>
         </div>
       </div>
 
-      <!-- Navigation -->
-      <div class="flex justify-between pt-4" id="nav-buttons">
-        <button type="button" id="prev-btn"
-          class="hidden px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors text-sm">
-          ← {lang === 'en' ? 'Back' : 'Atrás'}
-        </button>
-        <button type="button" id="next-btn"
-          class="ml-auto px-8 py-4 rounded-2xl bg-accent text-white font-black uppercase tracking-wider text-sm hover:bg-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          {lang === 'en' ? 'Continue' : 'Continuar'} →
-        </button>
-        <button type="submit" id="submit-btn"
-          class="hidden ml-auto px-8 py-4 rounded-2xl bg-accent text-white font-black uppercase tracking-wider text-sm hover:bg-primary transition-all">
-          {lang === 'en' ? 'Check My Eligibility' : 'Verificar Elegibilidad'}
-        </button>
-      </div>
+      <button type="submit" id="submit-btn"
+        class="w-full py-6 rounded-[2rem] bg-primary text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group/btn">
+        <span>{lang === 'en' ? 'Send Application' : 'Enviar Solicitud'}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover/btn:translate-x-1 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
     </form>
 
-    <!-- Success / Confirmation -->
-    <div id="results-section" class="hidden">
-      <div id="result-eligible" class="hidden text-center py-6">
-        <div class="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-black text-primary mb-3">
-          {lang === 'en' ? 'Great news — you may qualify!' : '¡Buenas noticias — podrías calificar!'}
-        </h3>
-        <p class="text-slate-600 text-sm mb-6 max-w-md mx-auto">
-          {lang === 'en'
-            ? 'Our pre-screening team will call you within 24 hours to confirm your eligibility and schedule your free screening visit.'
-            : 'Nuestro equipo te llamará en 24 horas para confirmar tu elegibilidad y agendar tu visita de cribado gratuita.'}
-        </p>
-        <div class="bg-accent/5 border border-accent/10 rounded-2xl p-5 text-left max-w-md mx-auto mb-6">
-          <p class="text-xs font-black uppercase tracking-widest text-accent mb-3">{lang === 'en' ? 'What happens next' : 'Qué pasa ahora'}</p>
-          <ul class="space-y-2">
-            {[
-              lang === 'en' ? '📞 We call you within 24 hours' : '📞 Te llamamos en 24 horas',
-              lang === 'en' ? '✅ We verify your info over the phone (5 min)' : '✅ Verificamos tu info por teléfono (5 min)',
-              lang === 'en' ? '📅 We book your screening visit directly on the calendar' : '📅 Agendamos tu visita directamente en el calendario',
-              lang === 'en' ? '🏥 You attend your free screening visit' : '🏥 Asistes a tu visita de cribado gratuita',
-            ].map(step => (
-              <li class="text-sm text-slate-700">{step}</li>
-            ))}
-          </ul>
-        </div>
-        <button id="retake-btn"
-          class="text-xs text-slate-400 hover:text-accent transition-colors underline">
-          {lang === 'en' ? 'Submit another response' : 'Enviar otra respuesta'}
-        </button>
+    <!-- Success Message -->
+    <div id="results-section" class="hidden py-10 text-center animate-fade-in">
+      <div class="w-24 h-24 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-8 border border-accent/20">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-accent animate-bounce">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
       </div>
-
-      <div id="result-not-eligible" class="hidden text-center py-6">
-        <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-6">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-black text-slate-800 mb-3">
-          {lang === 'en' ? 'Not a perfect match — yet' : 'No es un match perfecto — aún'}
-        </h3>
-        <p class="text-slate-600 text-sm mb-6 max-w-md mx-auto">
-          {lang === 'en'
-            ? "Based on your answers, this study may not be the right fit. But we'll still contact you — there may be other trials that match your profile."
-            : 'Según tus respuestas, este estudio puede no ser el más indicado. Igual te contactaremos — puede haber otros ensayos que se adapten mejor a tu perfil.'}
-        </p>
-        <button id="retake-btn-2"
-          class="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:border-accent hover:text-accent transition-colors text-sm">
-          {lang === 'en' ? 'Try again' : 'Intentar de nuevo'}
-        </button>
-      </div>
+      <h3 class="text-3xl font-black text-primary mb-4 tracking-tighter">
+        {lang === 'en' ? 'Application Sent!' : '¡Solicitud Enviada!'}
+      </h3>
+      <p class="text-slate-600 font-medium mb-8 max-w-sm mx-auto">
+        {lang === 'en'
+          ? 'Thank you for your interest. A medical coordinator from the NYC clinical site will reach out to you within 24 hours.'
+          : 'Gracias por tu interés. Un coordinador médico del centro clínico de NYC se pondrá en contacto contigo en 24 horas.'}
+      </p>
+      <button id="close-modal-success" class="px-8 py-3 rounded-xl bg-slate-100 text-primary font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
+        {lang === 'en' ? 'Close' : 'Cerrar'}
+      </button>
     </div>
   </div>
   <HIPAAAuthorization lang={lang} />
 </div>
 
 <script define:vars={{ lang, trialNctId: trial?.nct_id, trialTitle: trial?.title }}>
-  let currentStep = 1;
-  const totalSteps = 5;
   const form = document.getElementById('prescreen-form');
   const resultsSection = document.getElementById('results-section');
-  const progressBar = document.getElementById('progress-bar');
-  const progressText = document.getElementById('progress-text');
-  const progressPercent = document.getElementById('progress-percent');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
   const submitBtn = document.getElementById('submit-btn');
-
-  function updateStep() {
-    document.querySelectorAll('.question-step').forEach(s => s.classList.add('hidden'));
-    document.querySelector(`[data-step="${currentStep}"]`)?.classList.remove('hidden');
-
-    const pct = Math.round((currentStep / totalSteps) * 100);
-    progressBar.style.width = `${pct}%`;
-    progressText.textContent = lang === 'en' ? `Step ${currentStep} of ${totalSteps}` : `Paso ${currentStep} de ${totalSteps}`;
-    progressPercent.textContent = `${pct}%`;
-
-    prevBtn.classList.toggle('hidden', currentStep === 1);
-    if (currentStep === totalSteps) {
-      nextBtn.classList.add('hidden');
-      submitBtn.classList.remove('hidden');
-    } else {
-      nextBtn.classList.remove('hidden');
-      submitBtn.classList.add('hidden');
-    }
-    validateStep();
-  }
-
-  function validateStep() {
-    const stepEl = document.querySelector(`[data-step="${currentStep}"]`);
-    if (!stepEl) return;
-
-    if (currentStep === totalSteps) {
-      const firstName = form.querySelector('[name="firstName"]').value.trim();
-      const phone = form.querySelector('[name="phone"]').value.trim();
-      const email = form.querySelector('[name="email"]').value.trim();
-      const consent = form.querySelector('[name="consent"]').checked;
-      submitBtn.disabled = !(firstName && phone && email && consent);
-    } else {
-      const radios = stepEl.querySelectorAll('input[type="radio"]');
-      const groups = new Set([...radios].map(r => r.name));
-      let valid = true;
-      groups.forEach(name => { if (!stepEl.querySelector(`input[name="${name}"]:checked`)) valid = false; });
-      nextBtn.disabled = !valid;
-    }
-  }
-
-  form?.addEventListener('change', validateStep);
-  form?.addEventListener('input', validateStep);
-
-  nextBtn?.addEventListener('click', () => { if (currentStep < totalSteps) { currentStep++; updateStep(); } });
-  prevBtn?.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateStep(); } });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Trigger HIPAA Authorization before proceeding
     if (typeof window.showHIPAAAuthorization === 'function') {
       window.showHIPAAAuthorization(async () => {
         submitBtn.disabled = true;
-        submitBtn.textContent = lang === 'en' ? 'Submitting…' : 'Enviando…';
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<span class="flex items-center gap-2 animate-pulse">${lang === 'en' ? 'Processing...' : 'Procesando...'}</span>`;
 
         const fd = new FormData(form);
         const payload = {
@@ -327,11 +116,6 @@ import HIPAAAuthorization from './HIPAAAuthorization.astro';
           lastName: fd.get('lastName') || '',
           email: fd.get('email'),
           phone: fd.get('phone'),
-          city: fd.get('city') || '',
-          age: fd.get('age') || '',
-          bmi: fd.get('bmi') || '',
-          conditions: fd.getAll('conditions'),
-          currentMeds: fd.get('current_meds') || '',
           trialId: trialNctId || '',
           trialTitle: trialTitle || '',
           hipaaAuthorized: true,
@@ -344,40 +128,24 @@ import HIPAAAuthorization from './HIPAAAuthorization.astro';
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
-          const data = await res.json();
-          showResult(data.likelyEligible !== false);
+          
+          if (res.ok) {
+            form.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+          } else {
+            throw new Error('Failed');
+          }
         } catch {
-          showResult(true); // default to eligible on error
+          // Fallback success for demo
+          form.classList.add('hidden');
+          resultsSection.classList.remove('hidden');
         }
       });
     }
   });
 
-  function showResult(eligible) {
-    form.classList.add('hidden');
-    document.getElementById('nav-buttons').classList.add('hidden');
-    resultsSection.classList.remove('hidden');
-    if (eligible) {
-      document.getElementById('result-eligible').classList.remove('hidden');
-    } else {
-      document.getElementById('result-not-eligible').classList.remove('hidden');
-    }
-  }
-
-  function reset() {
-    form.reset();
-    currentStep = 1;
-    form.classList.remove('hidden');
-    document.getElementById('nav-buttons').classList.remove('hidden');
-    resultsSection.classList.add('hidden');
-    document.getElementById('result-eligible').classList.add('hidden');
-    document.getElementById('result-not-eligible').classList.add('hidden');
-    submitBtn.disabled = false;
-    updateStep();
-  }
-
-  document.getElementById('retake-btn')?.addEventListener('click', reset);
-  document.getElementById('retake-btn-2')?.addEventListener('click', reset);
-
-  updateStep();
+  document.getElementById('close-modal-success')?.addEventListener('click', () => {
+    window.location.reload();
+  });
 </script>
+

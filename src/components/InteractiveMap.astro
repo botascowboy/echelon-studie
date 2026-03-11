@@ -6,7 +6,11 @@ import { TARGET_CITIES } from '../lib/config';
 const currentCity = cityId ? TARGET_CITIES.find(c => c.id === cityId) : null;
 ---
 
-<section id="map-section" class="py-16 md:py-24 bg-slate-50 overflow-hidden">
+<section id="map-section" class="py-16 md:py-32 bg-[#000d1a] relative overflow-hidden">
+    <!-- Background Magic -->
+    <div class="absolute top-0 right-0 w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+
   <div class="mx-auto max-w-screen-xl px-4 md:px-8">
 
     <!-- Section heading -->
@@ -16,19 +20,23 @@ const currentCity = cityId ? TARGET_CITIES.find(c => c.id === cityId) : null;
           {cityId ? `${currentCity?.name} Local Network` : (lang === 'en' ? 'Live Study Network' : 'Red de Estudios en Vivo')}
         </span>
       </div>
-      <h2 class="text-3xl md:text-5xl font-extrabold mb-5 tracking-tight text-slate-900">
-        {cityId ? currentCity?.name : (lang === 'en' ? 'Nationwide' : 'Cobertura')} <span style="color:#00a381">{cityId ? currentCity?.state : (lang === 'en' ? 'Coverage' : 'Nacional')}</span>
+      <h2 class="text-3xl md:text-5xl font-extrabold mb-5 tracking-tight text-white">
+        {cityId ? currentCity?.name : (lang === 'en' ? 'NYC Metro' : 'Cobertura')} <span class="text-accent">{cityId ? currentCity?.state : (lang === 'en' ? 'Coverage' : 'en NYC')}</span>
       </h2>
-      <p class="text-slate-500 text-lg font-medium leading-relaxed">
+      <p class="text-slate-400 text-lg font-medium leading-relaxed">
         {lang === 'en'
-          ? `Explore active clinical trials in ${cityId ? currentCity?.name : 'the United States'}. Real-time site mapping.`
-          : `Explora ensayos clínicos activos en ${cityId ? currentCity?.name : 'Estados Unidos'}. Mapeo en tiempo real.`}
+          ? `Explore active clinical trials in New York City. Real-time site mapping.`
+          : `Explora ensayos clínicos activos en New York City. Mapeo en tiempo real.`}
       </p>
     </div>
 
     <!-- Map card -->
     <div class="relative w-full max-w-6xl mx-auto bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden" style="height: 700px;">
-      <div id="leaflet-map" class="w-full h-full z-10" data-focus-lat={currentCity?.lat} data-focus-lng={currentCity?.lng} data-focus-zoom={cityId ? 11 : 4}></div>
+      <div id="leaflet-map" class="w-full h-full z-10" 
+        data-focus-lat={currentCity?.lat} 
+        data-focus-lng={currentCity?.lng} 
+        data-focus-zoom={cityId ? 11 : 4}
+        data-lang={lang}></div>
       
       <!-- Overlay Loader -->
       <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
@@ -57,20 +65,22 @@ const currentCity = cityId ? TARGET_CITIES.find(c => c.id === cityId) : null;
     const mapEl = document.getElementById('leaflet-map');
     if (!mapEl || (mapEl as any)._leaflet_id) return;
 
-    const lat = parseFloat(mapEl.getAttribute('data-focus-lat') || '39.8283');
-    const lng = parseFloat(mapEl.getAttribute('data-focus-lng') || '-98.5795');
-    const zoom = parseInt(mapEl.getAttribute('data-focus-zoom') || '4');
+    const lat = parseFloat(mapEl.getAttribute('data-focus-lat') || '40.7128');
+    const lng = parseFloat(mapEl.getAttribute('data-focus-lng') || '-74.0060');
+    const zoom = parseInt(mapEl.getAttribute('data-focus-zoom') || '10');
 
     const map = L.map('leaflet-map', {
         center: [lat, lng],
         zoom: zoom,
         zoomControl: false,
-        attributionControl: false
+        attributionControl: false,
+        scrollWheelZoom: false // Premium feel, don't hijack scroll
     });
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // Dark/Premium map theme (CartoDB Dark Matter)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19
     }).addTo(map);
 
@@ -89,64 +99,90 @@ const currentCity = cityId ? TARGET_CITIES.find(c => c.id === cityId) : null;
         }
     });
 
-    fetch('/api/trials?pageSize=100').then(res => res.json()).then(data => {
-      const trials = data.trials || [];
-      const loader = document.getElementById('map-loader');
+    const mapLang = mapEl.getAttribute('data-lang') || 'en';
 
-      const CITY_COORDS = {
-        "new york": { lat: 40.7128, lng: -74.0060 },
-        "miami": { lat: 25.7617, lng: -80.1918 },
-        "houston": { lat: 29.7604, lng: -95.3698 },
-        "los angeles": { lat: 34.0522, lng: -118.2437 },
-        "san francisco": { lat: 37.7749, lng: -122.4194 }
-      };
+    const loadMapData = async () => {
+        const loader = document.getElementById('map-loader');
+        try {
+            const res = await fetch('/api/trials?pageSize=100');
+            if (!res.ok) throw new Error('Map data fetch failed');
+            const data = await res.json();
+            const trials = data.trials || [];
 
-      const emeraldIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: `<div class="marker-pin"></div>`,
-        iconSize: [30, 42],
-        iconAnchor: [15, 42]
-      });
+            const CITY_COORDS = {
+                "new york": { lat: 40.7128, lng: -74.0060 }
+            };
 
-      trials.forEach((trial) => {
-        const city = (trial.primary_location_city || '').toLowerCase();
-        let trialCoords = null;
-        
-        for (const [key, base] of Object.entries(CITY_COORDS)) {
-            if (city.includes(key)) {
-                const jitter = 0.05;
-                trialCoords = {
-                    lat: base.lat + (Math.random() - 0.5) * jitter,
-                    lng: base.lng + (Math.random() - 0.5) * jitter
-                };
-                break;
+            const emeraldIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div class="marker-pin"></div>`,
+                iconSize: [30, 42],
+                iconAnchor: [15, 42]
+            });
+
+            trials.forEach((trial) => {
+                const city = (trial.primary_location_city || '').toLowerCase();
+                const state = (trial.primary_location_state || '').toUpperCase();
+                let trialCoords = null;
+                
+                const isNYC = city.includes('new york') || 
+                              city.includes('brooklyn') || 
+                              city.includes('queens') || 
+                              city.includes('bronx') || 
+                              city.includes('staten island') ||
+                              state === 'NY' || 
+                              state === 'NEW YORK';
+                
+                if (isNYC) {
+                    const base = CITY_COORDS["new york"];
+                    const jitter = 0.15; // Jitter to cover NYC metro area
+                    trialCoords = {
+                        lat: base.lat + (Math.random() - 0.5) * (jitter * 0.8),
+                        lng: base.lng + (Math.random() - 0.5) * jitter
+                    };
+                }
+
+                if (trialCoords) {
+                    const sanitizedTitle = trial.title.replace(/[`'"]/g, "");
+                    const popupContent = `
+                        <div class="p-6 min-w-[280px] font-sans bg-white">
+                            <div class="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-3">${trial.nct_id}</div>
+                            <div class="text-xl font-black text-primary mb-4 leading-tight">${trial.title}</div>
+                            <div class="text-xs text-slate-400 font-bold mb-6 flex items-center gap-1.5 uppercase tracking-widest">
+                                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span> ${trial.primary_location_city}${trial.primary_location_state ? `, ${trial.primary_location_state}` : ''}
+                            </div>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button onclick="openLeadModal('${trial.nct_id}', '${sanitizedTitle}')" class="w-full py-4 bg-accent text-white rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-lg shadow-accent/20">
+                                    ${mapLang === 'en' ? '⚡ Apply Now' : '⚡ Aplicar Ahora'}
+                                </button>
+                                <a href="/trial/${trial.nct_id}" class="w-full py-4 text-slate-400 text-center rounded-xl text-[10px] font-black uppercase tracking-widest hover:text-primary transition-all">
+                                    ${mapLang === 'en' ? 'View Full Details' : 'Ver Detalles'}
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    const m = L.marker([trialCoords.lat, trialCoords.lng], { icon: emeraldIcon }).bindPopup(popupContent);
+                    markers.addLayer(m);
+                }
+            });
+
+            map.addLayer(markers);
+            
+            // If we have markers, fit bounds to them if it's not a specific city view
+            if (!mapEl.getAttribute('data-focus-lat') && markers.getLayers().length > 0) {
+                map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+            }
+        } catch (error) {
+            console.error('[Map Error]:', error);
+        } finally {
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
             }
         }
+    };
 
-        if (trialCoords) {
-            const popupContent = `
-                <div class="p-2 min-w-[200px] font-sans">
-                    <div class="text-[9px] font-black text-accent uppercase tracking-widest mb-1">${trial.nct_id}</div>
-                    <div class="text-sm font-bold text-slate-900 mb-2 leading-tight">${trial.title}</div>
-                    <div class="text-[11px] text-slate-500 font-bold mb-3 flex items-center gap-1">
-                        <span>📍</span> ${trial.primary_location_city}
-                    </div>
-                    <a href="/trial/${trial.nct_id}" class="block w-full text-center py-2 bg-accent text-white rounded-lg text-xs font-bold hover:bg-accent-dark transition-colors no-underline">
-                        View Study Details
-                    </a>
-                </div>
-            `;
-            const m = L.marker([trialCoords.lat, trialCoords.lng], { icon: emeraldIcon }).bindPopup(popupContent);
-            markers.addLayer(m);
-        }
-      });
-
-      map.addLayer(markers);
-      if (loader) {
-          loader.style.opacity = '0';
-          setTimeout(() => loader.style.display = 'none', 500);
-      }
-    });
+    loadMapData();
   }
 
   document.addEventListener('astro:page-load', initLeafletMap);
