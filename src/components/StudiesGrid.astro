@@ -221,6 +221,9 @@ const { lang = "en", initialLocation = "" } = Astro.props;
           this.totalPages = data.totalPages || 1;
           this.render(data);
           this.setState('results');
+
+          // Scroll to top of trials section
+          document.getElementById('trials')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           this.setState('empty');
         }
