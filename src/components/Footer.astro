@@ -78,8 +78,12 @@ const currentYear = new Date().getFullYear();
 				© {currentYear} Echelon Studies. {lang === "en" ? "Excellence in Clinical Care." : "Excelencia en Cuidado Clínico."}
 			</p>
 			<div class="flex gap-12">
-				<a href="#" class="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">Privacy Policy</a>
-				<a href="#" class="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">Compliance</a>
+				<a href="/privacy-policy" class="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">
+					{lang === "en" ? "Privacy Policy" : "Política de Privacidad"}
+				</a>
+				<a href={`/${lang}#faq`} class="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">
+					{lang === "en" ? "FAQ" : "Preguntas Frecuentes"}
+				</a>
 			</div>
 		</div>
 	</div>

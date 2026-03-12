@@ -1,16 +1,14 @@
 ---
-const { lang = "en" } = Astro.props;
+import { useTranslations, type Lang } from '../lib/i18n';
 
-const navItems = lang === "en" ? [
-	{ name: "Mission", href: `/${lang}#mission` },
-	{ name: "Clinical Trials", href: `/${lang}#trials` },
-	{ name: "Participation", href: `/${lang}#participation` },
-	{ name: "Contact", href: `/${lang}#contact` },
-] : [
-	{ name: "Misión", href: `/${lang}#mission` },
-	{ name: "Ensayos Clínicos", href: `/${lang}#trials` },
-	{ name: "Participación", href: `/${lang}#participation` },
-	{ name: "Contacto", href: `/${lang}#contact` },
+const { lang = "en" } = Astro.props as { lang: Lang };
+const t = useTranslations(lang);
+
+const navItems = [
+	{ name: t('nav.mission'), href: `/${lang}#mission` },
+	{ name: t('nav.trials'), href: `/${lang}#trials` },
+	{ name: t('nav.participation'), href: `/${lang}#participation` },
+	{ name: t('nav.contact'), href: `/${lang}#contact` },
 ];
 
 const toggleLang = lang === "en" ? "es" : "en";
@@ -47,7 +45,7 @@ const toggleLabel = lang === "en" ? "ES" : "EN";
 					href={`/${lang}#contact`}
 					class="hidden sm:inline-flex items-center justify-center px-8 py-3 rounded-full bg-accent text-white text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20 hover:bg-primary transition-all duration-500 hover:scale-105 active:scale-95"
 				>
-					{lang === "en" ? "Join Registry" : "Unirse al Registro"}
+					{t('nav.join')}
 				</a>
 				
 				<button id="mobile-menu-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 text-primary relative z-[110]" aria-label="Menu">
@@ -62,15 +60,15 @@ const toggleLabel = lang === "en" ? "ES" : "EN";
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 bg-white/95 backdrop-blur-2xl z-[105] opacity-0 pointer-events-none transition-all duration-500 lg:hidden">
-      <div class="flex flex-col items-center justify-center h-full space-y-10 p-10">
-        <img src="/logo.png" alt="Logo" class="h-16 w-auto mb-10 opacity-0 transform translate-y-8 transition-all mobile-nav-link" />
+      <div class="flex flex-col items-center justify-center h-full gap-6 p-8">
+        <img src="/logo.png" alt="Logo" class="h-14 w-auto mb-6 opacity-0 transform translate-y-8 transition-all mobile-nav-link" />
         {navItems.map((item, i) => (
-          <a href={item.href} class="mobile-nav-link text-4xl font-black text-slate-300 hover:text-primary transition-all duration-300 transform translate-y-8 opacity-0" style={`transition-delay: ${i * 50}ms`}>
+          <a href={item.href} class="mobile-nav-link text-2xl sm:text-3xl font-bold text-slate-600 hover:text-primary transition-all duration-300 transform translate-y-8 opacity-0 text-center whitespace-nowrap" style={`transition-delay: ${(i + 1) * 75}ms`}>
             {item.name}
           </a>
         ))}
-        <a href={`/${lang}#contact`} class="mobile-nav-link mt-10 px-12 py-5 rounded-full bg-primary text-white font-black text-lg uppercase tracking-widest shadow-2xl shadow-primary/20 transition-all duration-300 transform translate-y-8 opacity-0" style={`transition-delay: ${navItems.length * 50}ms`}>
-          {lang === "en" ? "Join Registry" : "Unirse al Registro"}
+        <a href={`/${lang}#contact`} class="mobile-nav-link mt-6 px-8 py-4 rounded-full bg-primary text-white font-bold text-base uppercase tracking-wider shadow-xl shadow-primary/20 transition-all duration-300 transform translate-y-8 opacity-0 text-center" style={`transition-delay: ${(navItems.length + 1) * 75}ms`}>
+          {t('nav.join')}
         </a>
       </div>
     </div>

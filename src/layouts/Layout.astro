@@ -8,26 +8,205 @@ interface Props {
 	title: string;
 	description?: string;
 	lang?: string;
+	canonicalUrl?: string;
+	ogImage?: string;
 }
 
-const { title, description = "Echelon Studies - Clinical Trial Patient Recruitment in New York City", lang = "en" } = Astro.props;
+const { 
+	title, 
+	lang = "en",
+	canonicalUrl,
+	ogImage = "/og-image.jpg"
+} = Astro.props;
+
+// SEO descriptions by language
+const defaultDescriptions = {
+	en: "Echelon Studies - Join clinical trials in NYC. Access breakthrough weight loss medications, get compensated, and contribute to medical research. FDA-regulated, HIPAA compliant.",
+	es: "Echelon Studies - Participa en ensayos clínicos en NYC. Accede a medicamentos innovadores para perder peso, recibe compensación y contribuye a la investigación médica."
+};
+
+const description = Astro.props.description || defaultDescriptions[lang as keyof typeof defaultDescriptions] || defaultDescriptions.en;
+
+// Base URL for canonical links
+const siteUrl = "https://echelonstudies.com";
+const currentPath = Astro.url.pathname;
+const canonical = canonicalUrl || `${siteUrl}${currentPath}`;
+const alternateEn = `${siteUrl}/en`;
+const alternateEs = `${siteUrl}/es`;
+
+// Organization Schema
+const organizationSchema = {
+	"@context": "https://schema.org",
+	"@type": "MedicalOrganization",
+	"name": "Echelon Studies",
+	"alternateName": "Echelon Clinical Research",
+	"url": siteUrl,
+	"logo": `${siteUrl}/logo.png`,
+	"description": defaultDescriptions.en,
+	"address": {
+		"@type": "PostalAddress",
+		"addressLocality": "New York",
+		"addressRegion": "NY",
+		"addressCountry": "US"
+	},
+	"areaServed": {
+		"@type": "City",
+		"name": "New York City"
+	},
+	"medicalSpecialty": ["Endocrinology", "Obesity Medicine", "Clinical Research"],
+	"sameAs": [
+		"https://clinicaltrials.gov"
+	]
+};
+
+// WebSite Schema for search
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	"name": "Echelon Studies",
+	"url": siteUrl,
+	"potentialAction": {
+		"@type": "SearchAction",
+		"target": `${siteUrl}/en#trials?q={search_term_string}`,
+		"query-input": "required name=search_term_string"
+	}
+};
+
+// Medical Service Schema
+const medicalServiceSchema = {
+	"@context": "https://schema.org",
+	"@type": "MedicalBusiness",
+	"name": "Echelon Studies Clinical Trial Recruitment",
+	"description": lang === "es" 
+		? "Reclutamiento de pacientes para ensayos clínicos de pérdida de peso en Nueva York"
+		: "Clinical trial patient recruitment for weight loss studies in New York City",
+	"url": canonical,
+	"areaServed": {
+		"@type": "City",
+		"name": "New York City",
+		"containedInPlace": {
+			"@type": "State",
+			"name": "New York"
+		}
+	},
+	"medicalSpecialty": "Obesity Medicine",
+	"availableService": {
+		"@type": "MedicalProcedure",
+		"name": lang === "es" ? "Ensayo Clínico para Pérdida de Peso" : "Weight Loss Clinical Trial",
+		"procedureType": "Clinical Trial"
+	},
+	"isAcceptingNewPatients": true
+};
+
+// FAQ Schema (for the FAQ section)
+const faqSchema = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	"mainEntity": [
+		{
+			"@type": "Question",
+			"name": lang === "es" ? "¿Qué son los ensayos clínicos?" : "What are clinical trials?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": lang === "es" 
+					? "Un ensayo clínico es un estudio de investigación para responder preguntas específicas sobre nuevos tratamientos o vacunas. Todos están regulados por la FDA y supervisados por una Junta de Revisión Independiente (IRB)."
+					: "A clinical trial is a research study to answer specific questions about new treatments or vaccines. All trials are FDA-regulated and monitored by an Independent Review Board (IRB)."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": lang === "es" ? "¿Tiene algún costo participar?" : "Does it cost anything to participate?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": lang === "es"
+					? "No. Los participantes calificados nunca pagan por la atención relacionada con el estudio. Todo se proporciona sin costo."
+					: "No. Qualified participants never pay for care related to the study. All study-related medications, doctor visits, and health monitoring are provided at no cost."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": lang === "es" ? "¿Se ofrece compensación?" : "Is compensation provided?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": lang === "es"
+					? "Sí. La mayoría de los ensayos clínicos ofrecen compensación para cubrir su tiempo y gastos de viaje por cada visita a la clínica."
+					: "Yes. Most clinical trials offer compensation to cover your time and travel expenses for each clinic visit."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": lang === "es" ? "¿Es segura la investigación clínica?" : "Is clinical research safe?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": lang === "es"
+					? "La seguridad del paciente es la prioridad. Todos los estudios están regulados por la FDA y monitoreados por una Junta de Revisión Independiente (IRB)."
+					: "Patient safety is the top priority. All studies are FDA-regulated and monitored by an Independent Review Board (IRB) to ensure ethical standards are met."
+			}
+		}
+	]
+};
 ---
 
 <!doctype html>
 <html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<ClientRouter />
-		<title>{title}</title>
-		<meta name="description" content={description} />
 		
-		<!-- Google Fonts -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta name="keywords" content={lang === "es" 
+			? "ensayos clínicos NYC, pérdida de peso, GLP-1, Ozempic, Wegovy, investigación médica, compensación, Nueva York"
+			: "clinical trials NYC, weight loss trials, GLP-1, Ozempic, Wegovy, medical research, paid studies, New York"} />
+		<meta name="author" content="Echelon Studies" />
+		<meta name="robots" content="index, follow" />
+		
+		<!-- Canonical & Language Alternates -->
+		<link rel="canonical" href={canonical} />
+		<link rel="alternate" hreflang="en" href={alternateEn} />
+		<link rel="alternate" hreflang="es" href={alternateEs} />
+		<link rel="alternate" hreflang="x-default" href={alternateEn} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={`${siteUrl}${ogImage}`} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:locale" content={lang === "es" ? "es_ES" : "en_US"} />
+		<meta property="og:site_name" content="Echelon Studies" />
+		
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={canonical} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+		
+		<!-- Additional SEO -->
+		<meta name="theme-color" content="#002147" />
+		<meta name="msapplication-TileColor" content="#002147" />
+		
+		<!-- Structured Data / JSON-LD -->
+		<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(medicalServiceSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+		
+		<!-- Google Fonts - Optimized Loading -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
 		
 		<style is:global>
 			:root {

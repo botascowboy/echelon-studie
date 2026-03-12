@@ -3,9 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-const { lang = 'en' } = Astro.params;
+// Detect language from accept-language header or default to en
+const acceptLang = Astro.request.headers.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
+const lang = acceptLang === 'es' ? 'es' : 'en';
 
-const content = {
+const content: Record<string, any> = {
   en: {
     title: "Privacy Policy & HIPAA Notice",
     lastUpdated: "Last updated: February 26, 2024",
@@ -67,8 +69,14 @@ const content = {
 const t = content[lang] || content.en;
 ---
 
-<Layout title={t.title}>
-  <Header />
+<Layout 
+  title={`${t.title} | Echelon Studies`}
+  description={lang === 'es' 
+    ? 'Política de privacidad y aviso HIPAA de Echelon Studies. Protegemos su información de salud con los más altos estándares de seguridad.'
+    : 'Echelon Studies Privacy Policy and HIPAA Notice. We protect your health information with the highest security standards.'}
+  lang={lang}
+>
+  <Header lang={lang} />
   <main class="pt-32 pb-20 px-6">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-black text-primary mb-4">{t.title}</h1>
@@ -99,5 +107,5 @@ const t = content[lang] || content.en;
       </div>
     </div>
   </main>
-  <Footer />
+  <Footer lang={lang} />
 </Layout>

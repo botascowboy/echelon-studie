@@ -145,7 +145,7 @@ const content = lang === "en" ? {
     <div class="max-w-4xl mx-auto">
       <div class="text-center mb-20 animate-fade-in">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/5 border border-accent/10 text-accent text-[9px] font-black uppercase tracking-[0.3em] mb-6">
-          Patient Education
+          {lang === 'en' ? 'Patient Education' : 'Educación del Paciente'}
         </div>
         <h2 class="text-4xl md:text-7xl font-black mb-6 tracking-tighter text-primary">
           {lang === 'en' ? 'Common' : 'Preguntas'} <span class="text-gradient leading-tight">{lang === 'en' ? 'Questions.' : 'Frecuentes.'}</span>

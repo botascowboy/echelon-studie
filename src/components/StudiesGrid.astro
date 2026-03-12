@@ -252,9 +252,25 @@ const { lang = "en", initialLocation = "" } = Astro.props;
 
     getCardTemplate(trial) {
       const isRecruiting = trial.overall_status === 'RECRUITING' || trial.status_label === 'Recruiting';
-      const city = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || 'Various Locations';
+      const city = [trial.primary_location_city, trial.primary_location_state].filter(Boolean).join(', ') || (this.lang === 'en' ? 'Various Locations' : 'Varias Ubicaciones');
       const phaseMap = { PHASE3:'emerald', PHASE2:'blue', PHASE1:'amber', PHASE4:'teal', NA:'slate' };
       const phaseCol = phaseMap[trial.phase] || 'slate';
+      
+      // Translate phase labels
+      const phaseLabels = {
+        en: { PHASE1: 'Phase 1', PHASE2: 'Phase 2', PHASE3: 'Phase 3', PHASE4: 'Phase 4', NA: 'N/A' },
+        es: { PHASE1: 'Fase 1', PHASE2: 'Fase 2', PHASE3: 'Fase 3', PHASE4: 'Fase 4', NA: 'N/A' }
+      };
+      const phaseLabel = phaseLabels[this.lang]?.[trial.phase] || trial.phase_label || trial.phase;
+
+      // Status labels
+      const statusLabels = {
+        en: { recruiting: 'Recruiting', active: 'Active', completed: 'Completed' },
+        es: { recruiting: 'Reclutando', active: 'Activo', completed: 'Completado' }
+      };
+      const statusLabel = isRecruiting 
+        ? statusLabels[this.lang]?.recruiting 
+        : statusLabels[this.lang]?.active;
       
       return `
         <article class="group relative bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-xl flex flex-col h-full">
@@ -262,10 +278,10 @@ const { lang = "en", initialLocation = "" } = Astro.props;
           <div class="p-8 flex flex-col h-full gap-6">
             <div class="flex items-center justify-between">
               <span class="text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full ${isRecruiting ? 'bg-accent text-white' : 'bg-slate-100 text-slate-500'}">
-                ${isRecruiting ? (this.lang === 'en' ? 'Recruiting' : 'Reclutando') : 'Active'}
+                ${statusLabel}
               </span>
               <span class="text-[10px] font-black uppercase tracking-widest text-${phaseCol}-600 bg-${phaseCol}-50 px-3 py-1.5 rounded-full border border-${phaseCol}-100">
-                ${trial.phase_label || trial.phase}
+                ${phaseLabel}
               </span>
             </div>
             
@@ -277,14 +293,14 @@ const { lang = "en", initialLocation = "" } = Astro.props;
             <div class="space-y-2.5">
               <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
                 <div class="text-accent">📍</div>
-                <div class="text-[11px] font-black uppercase tracking-tighter text-slate-400 mr-auto">${this.lang === 'en' ? 'Location' : 'Ciudad'}</div>
+                <div class="text-[11px] font-black uppercase tracking-tighter text-slate-400 mr-auto">${this.lang === 'en' ? 'Location' : 'Ubicación'}</div>
                 <div class="text-xs font-bold text-slate-700">${city}</div>
               </div>
               ${trial.has_compensation ? `
                 <div class="flex items-center gap-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
                   <div class="text-emerald-500">💰</div>
-                  <div class="text-[11px] font-black uppercase tracking-tighter text-emerald-600 mr-auto">${this.lang === 'en' ? 'Compensation' : 'Pago'}</div>
-                  <div class="text-xs font-black text-emerald-700">${trial.compensation_amount || (this.lang === 'en' ? '$500+' : '$500+')}</div>
+                  <div class="text-[11px] font-black uppercase tracking-tighter text-emerald-600 mr-auto">${this.lang === 'en' ? 'Compensation' : 'Compensación'}</div>
+                  <div class="text-xs font-black text-emerald-700">${trial.compensation_amount || '$500+'}</div>
                 </div>
               ` : ''}
             </div>
@@ -293,7 +309,7 @@ const { lang = "en", initialLocation = "" } = Astro.props;
               <button onclick="openLeadModal('${trial.nct_id}', \`${trial.title.replace(/'/g, "")}\`)" class="flex-1 py-4 rounded-2xl bg-accent text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-lg shadow-accent/20">
                  ${this.lang === 'en' ? '⚡ Apply' : '⚡ Aplicar'}
               </button>
-              <a href="/trial/${trial.nct_id}" class="w-12 h-12 flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:text-accent hover:border-accent transition-all">
+              <a href="/trial/${trial.nct_id}" class="w-12 h-12 flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:text-accent hover:border-accent transition-all" title="${this.lang === 'en' ? 'View Details' : 'Ver Detalles'}">
                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                  </svg>

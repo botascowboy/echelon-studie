@@ -7,7 +7,101 @@ import PreScreener from '../../components/PreScreener.astro';
 import { TrialsInternalService } from '../../lib/services/trials-internal.service';
 
 const { nctId } = Astro.params;
-const lang = "en"; // To be improved later with full i18n routing
+// Detect language from accept-language header
+const acceptLang = Astro.request.headers.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
+const lang = acceptLang === 'es' ? 'es' : 'en';
+
+// UI translations for the trial detail page
+const ui = {
+  en: {
+    notFound: 'Trial Not Found',
+    notFoundDesc: "This trial doesn't exist or has ended.",
+    backToTrials: '← Back to All Trials',
+    home: 'Home',
+    weightLossTrials: 'Weight Loss Trials',
+    recruiting: 'Recruiting',
+    active: 'Active',
+    paidStudy: '💰 Paid Study',
+    studyOverview: 'Study Overview',
+    duration: 'Duration',
+    visits: 'Visits',
+    goal: 'Goal',
+    doIQualify: 'Do I Qualify?',
+    inclusion: 'Inclusion',
+    exclusion: 'Exclusion',
+    age: 'Age',
+    sex: 'Sex',
+    proceduresSteps: 'Procedures & Steps',
+    askStudyTeam: 'Ask the Study Team',
+    recommendedQuestions: 'Recommended Questions',
+    verifySource: 'Verify official source →',
+    availableNow: 'Available Now',
+    checkEligibility: 'Check Eligibility',
+    startApplication: 'Start your application and see if you qualify for this research study in less than 2 minutes.',
+    applyOnline: 'Apply Online',
+    free: 'Free',
+    secure: 'Secure',
+    private: 'Private',
+    compensation: 'Compensation',
+    amountVaries: 'Amount varies',
+    compensationDesc: 'Eligible participants receive payment for clinic visits and travel.',
+    facilityLocation: 'Facility Location',
+    multipleCities: 'Multiple Cities',
+    leadSponsor: 'Lead Sponsor',
+    confidential: 'Confidential',
+    safetyStandards: 'Safety Standards',
+    irbMonitored: 'IRB Monitored Study',
+    phase1: 'Phase 1',
+    phase2: 'Phase 2',
+    phase3: 'Phase 3',
+    phase4: 'Phase 4'
+  },
+  es: {
+    notFound: 'Ensayo No Encontrado',
+    notFoundDesc: 'Este ensayo no existe o ha terminado.',
+    backToTrials: '← Volver a Todos los Ensayos',
+    home: 'Inicio',
+    weightLossTrials: 'Ensayos de Pérdida de Peso',
+    recruiting: 'Reclutando',
+    active: 'Activo',
+    paidStudy: '💰 Estudio Pagado',
+    studyOverview: 'Resumen del Estudio',
+    duration: 'Duración',
+    visits: 'Visitas',
+    goal: 'Meta',
+    doIQualify: '¿Califico?',
+    inclusion: 'Inclusión',
+    exclusion: 'Exclusión',
+    age: 'Edad',
+    sex: 'Sexo',
+    proceduresSteps: 'Procedimientos y Pasos',
+    askStudyTeam: 'Preguntas al Equipo',
+    recommendedQuestions: 'Preguntas Recomendadas',
+    verifySource: 'Verificar fuente oficial →',
+    availableNow: 'Disponible Ahora',
+    checkEligibility: 'Verificar Elegibilidad',
+    startApplication: 'Inicia tu solicitud y descubre si calificas para este estudio de investigación en menos de 2 minutos.',
+    applyOnline: 'Aplicar Online',
+    free: 'Gratis',
+    secure: 'Seguro',
+    private: 'Privado',
+    compensation: 'Compensación',
+    amountVaries: 'Monto variable',
+    compensationDesc: 'Los participantes elegibles reciben pago por visitas clínicas y transporte.',
+    facilityLocation: 'Ubicación del Centro',
+    multipleCities: 'Múltiples Ciudades',
+    leadSponsor: 'Patrocinador Principal',
+    confidential: 'Confidencial',
+    safetyStandards: 'Estándares de Seguridad',
+    irbMonitored: 'Estudio Monitoreado por IRB',
+    phase1: 'Fase 1',
+    phase2: 'Fase 2',
+    phase3: 'Fase 3',
+    phase4: 'Fase 4'
+  }
+};
+
+const t = ui[lang];
 
 if (!nctId) {
   return Astro.redirect('/404');
@@ -29,7 +123,7 @@ const tags               = trial?.ai_tags || [];
 ---
 
 <Layout
-  title={trial ? `${trial.title} | Weight Loss Trial` : "Trial Not Found"}
+  title={trial ? `${trial.title} | Weight Loss Trial` : t.notFound}
   description={trial?.ai_summary || trial?.brief_summary || "Clinical trial details"}
 >
   <Header lang={lang} />
@@ -42,8 +136,8 @@ const tags               = trial?.ai_tags || [];
             <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
           </svg>
         </div>
-        <h1 class="text-3xl font-black text-slate-800 mb-3">Trial Not Found</h1>
-        <p class="text-slate-500 mb-8">This trial doesn't exist or has ended.</p>
+        <h1 class="text-3xl font-black text-slate-800 mb-3">{t.notFound}</h1>
+        <p class="text-slate-500 mb-8">{t.notFoundDesc}</p>
         <a href="/#trials" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-accent text-white font-black text-sm uppercase tracking-wider hover:bg-primary transition-colors">
           ← Back to All Trials
         </a>
