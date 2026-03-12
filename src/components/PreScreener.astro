@@ -52,17 +52,17 @@ import HIPAAAuthorization from './HIPAAAuthorization.astro';
         </div>
 
         <div class="pt-4">
-          <label class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50/50 border border-slate-100 cursor-pointer hover:bg-white transition-all group/consent">
-            <div class="relative flex items-center justify-center w-6 h-6 rounded-lg border-2 border-slate-200 group-has-[:checked]/consent:border-accent group-has-[:checked]/consent:bg-accent transition-all mt-0.5">
-              <input type="checkbox" id="consent" name="consent" class="sr-only" required>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-[:checked]/consent:opacity-100"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <span class="text-[11px] text-slate-500 font-bold leading-relaxed">
-              {lang === 'en'
-                ? 'I consent to being contacted about this clinical trial in NYC. I understand no clinical data is being collected in this form.'
-                : 'Doy mi consentimiento para ser contactado sobre este ensayo clínico en NYC. Entiendo que no se recogen datos clínicos en este formulario.'}
-            </span>
-          </label>
+<label class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50/50 border border-slate-100 cursor-pointer hover:bg-white transition-all">
+  <input type="checkbox" id="consent" name="consent" class="peer sr-only" required>
+  <div class="relative flex items-center justify-center w-6 h-6 rounded-lg border-2 border-slate-200 peer-checked:border-accent peer-checked:bg-accent transition-all mt-0.5">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="peer-checked:opacity-100 opacity-0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  </div>
+  <span class="text-[11px] text-slate-500 font-bold leading-relaxed">
+    {lang === 'en'
+      ? 'I consent to being contacted about this clinical trial in NYC. I understand no clinical data is being collected in this form.'
+      : 'Doy mi consentimiento para ser contactado sobre este ensayo clínico en NYC. Entiendo que no se recogen datos clínicos en este formulario.'}
+  </span>
+</label>
         </div>
       </div>
 
